@@ -365,9 +365,28 @@ class RPGSystem {
 
     resetAllProgress() {
         if (confirm('⚠️ This will reset ALL your progress! Are you sure?')) {
+            // Clear storage
             clearStorage();
-            location.reload();
+            
+            // Reset all properties to initial values
+            this.level = 1;
+            this.xp = 0;
+            this.completedSessions = 0;
+            this.totalMinutes = 0;
+            this.currentStreak = 0;
+            this.bestStreak = 0;
+            this.achievements = [];
+            this.lastActiveDate = '';
+            
+            // Update display immediately
+            this.updateDisplay();
+            
+            // Show confirmation
+            showNotification('🔄 All progress reset!');
+            
+            return true;
         }
+        return false;
     }
 
     // ===== GETTERS =====

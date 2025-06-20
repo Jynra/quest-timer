@@ -192,7 +192,12 @@ class DebugMode {
     }
 
     resetProgress() {
-        this.rpgSystem.resetAllProgress();
+        const wasReset = this.rpgSystem.resetAllProgress();
+        if (wasReset) {
+            // Also reset timer if needed
+            this.timer.resetTimer();
+            console.log('💀 All progress reset');
+        }
     }
 
     // ===== TESTING UTILITIES =====
