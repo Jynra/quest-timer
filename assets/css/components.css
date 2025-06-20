@@ -1,0 +1,254 @@
+/* ===== CHARACTER CARD ===== */
+.character-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.character-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.character-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #fbbf24;
+}
+
+.level-badge {
+    background: linear-gradient(45deg, #6366f1, #8b5cf6);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* ===== XP BAR ===== */
+.xp-bar-container {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    height: 20px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.xp-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #34d399);
+    transition: width 0.5s ease;
+    border-radius: 10px;
+}
+
+.xp-text {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #9ca3af;
+}
+
+/* ===== STATS GRID ===== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fbbf24;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: #9ca3af;
+}
+
+/* ===== TIMER SECTION ===== */
+.timer-section {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+}
+
+.timer-display {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #fbbf24;
+    margin-bottom: 20px;
+    font-family: 'Courier New', monospace;
+}
+
+.session-type {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: #34d399;
+}
+
+/* ===== PROGRESS RING ===== */
+.progress-ring {
+    transform: rotate(-90deg);
+    margin-bottom: 20px;
+}
+
+.progress-ring-circle {
+    transition: stroke-dashoffset 0.1s linear;
+    stroke: #34d399;
+    stroke-width: 4;
+    fill: none;
+}
+
+.progress-ring-bg {
+    stroke: rgba(255, 255, 255, 0.1);
+    stroke-width: 4;
+    fill: none;
+}
+
+/* ===== NOTIFICATIONS ===== */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(45deg, #10b981, #34d399);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+    z-index: 100;
+    font-weight: 600;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+/* ===== ACHIEVEMENTS ===== */
+.achievements {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.achievement-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
+.achievement-icon {
+    font-size: 1.5rem;
+}
+
+.achievement-text {
+    flex-grow: 1;
+}
+
+.achievement-title {
+    font-weight: 600;
+    color: #fbbf24;
+}
+
+.achievement-desc {
+    font-size: 0.8rem;
+    color: #9ca3af;
+}
+
+/* ===== DEBUG PANEL ===== */
+.debug-panel {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid #6366f1;
+    border-radius: 10px;
+    padding: 15px;
+    z-index: 1000;
+    transform: translateX(-300px);
+    transition: transform 0.3s ease;
+    width: 280px;
+}
+
+.debug-panel.show {
+    transform: translateX(0);
+}
+
+.debug-toggle {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    z-index: 1001;
+    transition: all 0.3s ease;
+}
+
+.debug-toggle:hover {
+    background: #8b5cf6;
+    transform: scale(1.1);
+}
+
+.debug-title {
+    color: #fbbf24;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.debug-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.debug-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    background: #374151;
+    color: white;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.debug-btn:hover {
+    background: #4b5563;
+}
+
+.debug-btn.danger {
+    background: #dc2626;
+}
+
+.debug-btn.danger:hover {
+    background: #ef4444;
+}

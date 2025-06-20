@@ -1,194 +1,216 @@
-# quest-timer
-A pomodoro method app with rpg mecanics
 # ⚔️ Quest Timer - RPG Pomodoro PWA
 
 ## 🎯 Description
 
-Quest Timer transforms the traditional Pomodoro Technique into an engaging RPG experience. Complete focus sessions to gain XP, level up your character, unlock achievements, and build productivity streaks - all while maintaining peak concentration and work efficiency.
+Quest Timer transforme la technique Pomodoro traditionnelle en une expérience RPG engageante. Complétez des sessions de concentration pour gagner de l'XP, faire évoluer votre personnage, débloquer des succès et construire des séries de productivité - tout en maintenant une concentration maximale et une efficacité de travail.
 
-## ✨ Features
+## 📁 Structure du projet
 
-### 🍅 Core Pomodoro Functionality
-- **25-minute focus sessions** with customizable timer
-- **5-minute short breaks** and **15-minute long breaks**
-- **Visual progress ring** showing session completion
-- **Audio/visual notifications** for session transitions
-- **Pause/resume functionality** for flexibility
+```
+quest-timer/
+├── index.html                 # Page principale (HTML minimal)
+├── manifest.json             # Manifeste PWA
+├── sw.js                     # Service Worker
+├── README.md                 # Cette documentation
+├── assets/
+│   ├── css/
+│   │   ├── main.css          # Styles de base et layout
+│   │   ├── components.css    # Styles des composants UI
+│   │   └── animations.css    # Animations et effets visuels
+│   ├── js/
+│   │   ├── utils.js          # Fonctions utilitaires
+│   │   ├── timer.js          # Logique du timer Pomodoro
+│   │   ├── rpg.js           # Système RPG (XP, niveaux, succès)
+│   │   ├── debug.js         # Mode debug et outils de développement
+│   │   └── app.js           # Application principale et initialisation
+│   └── icons/
+│       └── (icônes PWA - à créer)
+└── docs/
+    └── README_expand.md     # Documentation des fonctionnalités futures
+```
 
-### 🎮 RPG Mechanics
-- **Character leveling system** with progressive XP requirements
-- **XP rewards** for completed sessions (50 + 5 per level)
-- **Achievement system** with unlockable badges
-- **Streak tracking** for daily consistency
-- **Animated floating XP** gains for immediate feedback
-- **Stats dashboard** showing total progress
+## ✨ Fonctionnalités
 
-### 📱 PWA Features
-- **Progressive Web App** - works offline and can be installed
-- **Responsive design** - optimized for mobile and desktop
-- **Local storage** - all progress saved locally
-- **Cross-platform** - works on any device with a web browser
-- **No installation required** - runs directly in browser
+### 🍅 Fonctionnalité Pomodoro de base
+- **Sessions de concentration de 25 minutes** avec timer personnalisable
+- **Pauses courtes de 5 minutes** et **pauses longues de 15 minutes**
+- **Anneau de progression visuel** montrant l'achèvement de la session
+- **Notifications audio/visuelles** pour les transitions de session
+- **Fonctionnalité pause/reprise** pour la flexibilité
 
-### 🛠️ Debug Mode
-- **Development tools** for testing features quickly
-- **Fast-forward timer** functionality
-- **Instant session completion**
-- **Manual XP/level manipulation**
-- **Achievement testing** tools
+### 🎮 Mécaniques RPG
+- **Système de niveaux de personnage** avec exigences XP progressives
+- **Récompenses XP** pour les sessions terminées (50 + 5 par niveau)
+- **Système de succès** avec badges débloquables
+- **Suivi des séries** pour la cohérence quotidienne
+- **XP flottant animé** pour un retour immédiat
+- **Tableau de bord des statistiques** montrant le progrès total
 
-## 🚀 Getting Started
+### 📱 Fonctionnalités PWA
+- **Progressive Web App** - fonctionne hors ligne et peut être installée
+- **Design responsive** - optimisé pour mobile et desktop
+- **Stockage local** - tout le progrès sauvegardé localement
+- **Multiplateforme** - fonctionne sur tout appareil avec navigateur web
+- **Aucune installation requise** - fonctionne directement dans le navigateur
 
-### Prerequisites
-- Modern web browser (Chrome, Firefox, Safari, Edge)
-- No additional dependencies required
+### 🛠️ Mode Debug
+- **Outils de développement** pour tester rapidement les fonctionnalités
+- **Avance rapide du timer**
+- **Achèvement instantané de session**
+- **Manipulation manuelle XP/niveau**
+- **Outils de test des succès**
 
-### Installation
+## 🚀 Installation et utilisation
 
-1. **Download the files:**
+### Prérequis
+- Navigateur web moderne (Chrome, Firefox, Safari, Edge)
+- Aucune dépendance supplémentaire requise
+
+### Installation de base
+
+1. **Téléchargez les fichiers :**
    ```bash
    git clone <repository-url>
    cd quest-timer
    ```
 
-2. **For basic usage:**
-   - Open `index.html` in your web browser
-   - Start using immediately!
+2. **Pour utilisation basique :**
+   - Ouvrez `index.html` dans votre navigateur web
+   - Commencez à utiliser immédiatement !
 
-3. **For PWA deployment:**
-   - Host files on HTTPS server
-   - Add proper `manifest.json` and `service-worker.js`
-   - Users can "Add to Home Screen"
+3. **Pour déploiement PWA :**
+   - Hébergez les fichiers sur un serveur HTTPS
+   - Les utilisateurs peuvent "Ajouter à l'écran d'accueil"
 
-### File Structure
-```
-quest-timer/
-├── index.html          # Main application file
-├── manifest.json       # PWA manifest (for production)
-├── sw.js              # Service worker (for production)
-├── README.md          # This file
-└── README_expand.md   # Future features documentation
-```
+### Développement local
+```bash
+# Serveur local simple
+python -m http.server 8000
+# ou
+npx serve .
 
-## 🎮 How to Play
-
-### Getting Started
-1. **Start your first quest** by clicking "Start Quest"
-2. **Focus for 25 minutes** - resist distractions!
-3. **Complete the session** to gain XP and level up
-4. **Take your earned break** (5 or 15 minutes)
-5. **Repeat and build streaks** for maximum rewards
-
-### Leveling System
-- **Level 1**: 100 XP required
-- **Level 2**: 250 XP required
-- **Level 3**: 450 XP required
-- **Formula**: `level * 100 + (level - 1) * 50`
-
-### Achievement Examples
-- 🎯 **First Quest**: Complete your first Pomodoro
-- 💪 **Dedicated**: Complete 10 Pomodoros
-- 🧠 **Focused Master**: Complete 25 Pomodoros
-- 🔥 **Streak Warrior**: Maintain a 5-day streak
-- ⏰ **Time Master**: Focus for 10 hours total
-
-### Debug Mode
-Access debug tools by clicking the 🐛 button:
-- ⏩ **Skip 5 minutes**: Fast-forward timer
-- ✅ **Complete Session**: Instantly finish current session
-- ⭐ **Add 100 XP**: Manual XP boost
-- 🚀 **Force Level Up**: Instant level advancement
-
-## 🔧 Customization
-
-### Timer Settings
-Modify these variables in the JavaScript:
-```javascript
-this.focusTime = 25 * 60;      // 25 minutes
-this.breakTime = 5 * 60;       // 5 minutes  
-this.longBreakTime = 15 * 60;  // 15 minutes
+# Ouvrez http://localhost:8000
 ```
 
-### XP System
-Adjust XP rewards and requirements:
-```javascript
-const xpGained = 50 + (this.level * 5);  // XP per session
-getXPForLevel(level) {
-    return level * 100 + (level - 1) * 50;  // XP needed for level
-}
-```
+## 🎮 Comment jouer
 
-### Styling
-- Edit CSS variables for colors and themes
-- Modify glassmorphism effects in `.character-card` and `.timer-section`
-- Customize animations in `@keyframes` sections
+### Démarrage
+1. **Commencez votre première quête** en cliquant sur "Start Quest"
+2. **Concentrez-vous pendant 25 minutes** - résistez aux distractions !
+3. **Terminez la session** pour gagner de l'XP et monter de niveau
+4. **Prenez votre pause méritée** (5 ou 15 minutes)
+5. **Répétez et construisez des séries** pour des récompenses maximales
 
-## 🌟 Technology Stack
+### Système de niveaux
+- **Niveau 1** : 100 XP requis
+- **Niveau 2** : 250 XP requis
+- **Niveau 3** : 450 XP requis
+- **Formule** : `niveau * 100 + (niveau - 1) * 50`
 
-- **Frontend**: Pure HTML5, CSS3, JavaScript (ES6+)
-- **Storage**: Browser LocalStorage API
-- **Notifications**: Web Notifications API
-- **PWA**: Service Workers, Web App Manifest
-- **Styling**: CSS Grid, Flexbox, CSS Animations
-- **Icons**: Unicode Emojis (universal compatibility)
+### Exemples de succès
+- 🎯 **Première Quête** : Terminez votre premier Pomodoro
+- 💪 **Dévoué** : Terminez 10 Pomodoros
+- 🧠 **Maître Concentré** : Terminez 25 Pomodoros
+- 🔥 **Guerrier des Séries** : Maintenez une série de 5 jours
+- ⏰ **Maître du Temps** : Concentrez-vous pendant 10 heures au total
 
-## 📊 Browser Support
+## 🔧 Architecture technique
+
+### Modules JavaScript
+
+#### `utils.js` - Fonctions utilitaires
+- Formatage du temps
+- Gestion des notifications
+- Stockage localStorage
+- Animations et utilitaires
+
+#### `timer.js` - Logique du timer
+- Classe Timer principale
+- Gestion des sessions (focus/pause)
+- Anneau de progression
+- Callbacks pour intégration RPG
+
+#### `rpg.js` - Système RPG
+- Gestion XP et niveaux
+- Système de succès
+- Suivi des statistiques
+- Persistance des données
+
+#### `debug.js` - Mode debug
+- Panel de debug
+- Raccourcis clavier
+- Outils de test
+- Monitoring des performances
+
+#### `app.js` - Application principale
+- Initialisation de l'app
+- Coordination des modules
+- Gestion des événements
+- Fonctionnalités PWA
+
+### Styles CSS
+
+#### `main.css` - Styles de base
+- Reset et styles de base
+- Layout et grille
+- Boutons et contrôles
+- Design responsive
+
+#### `components.css` - Composants UI
+- Carte de personnage
+- Section timer
+- Panneau de succès
+- Panel de debug
+
+#### `animations.css` - Animations
+- Effets de niveau
+- XP flottant
+- Transitions
+- Effets de hover
+
+## 🌟 Stack technologique
+
+- **Frontend** : HTML5, CSS3, JavaScript (ES6+) pur
+- **Stockage** : API localStorage du navigateur
+- **Notifications** : API Web Notifications
+- **PWA** : Service Workers, Manifeste d'application web
+- **Styling** : CSS Grid, Flexbox, Animations CSS
+- **Icônes** : Emojis Unicode (compatibilité universelle)
+
+## 📊 Support navigateur
 
 - ✅ Chrome 60+
 - ✅ Firefox 55+
 - ✅ Safari 11+
 - ✅ Edge 79+
-- ✅ Mobile browsers (iOS Safari, Chrome Mobile)
+- ✅ Navigateurs mobiles (iOS Safari, Chrome Mobile)
 
-## 🤝 Contributing
+## 🤝 Contribution
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+1. Forkez le repository
+2. Créez une branche de fonctionnalité
+3. Effectuez vos modifications
+4. Testez minutieusement
+5. Soumettez une pull request
 
-### Development Setup
-```bash
-# Clone repository
-git clone <repository-url>
-cd quest-timer
+## 📝 Licence
 
-# For development, use a local server
-python -m http.server 8000
-# or
-npx serve .
+Licence MIT - voir le fichier LICENSE pour les détails
 
-# Open http://localhost:8000
-```
+## 🙏 Remerciements
 
-## 📝 License
+- **Technique Pomodoro** par Francesco Cirillo
+- **Mécaniques RPG** inspirées des systèmes de progression classiques
+- **Design Glassmorphism** tendance pour l'esthétique UI moderne
 
-MIT License - see LICENSE file for details
+## 🐛 Rapports de bugs et demandes de fonctionnalités
 
-## 🙏 Acknowledgments
-
-- **Pomodoro Technique** by Francesco Cirillo
-- **RPG mechanics** inspired by classic progression systems
-- **Glassmorphism design** trend for modern UI aesthetics
-
-## 🐛 Bug Reports & Feature Requests
-
-Please open an issue on GitHub with:
-- **Browser and version**
-- **Steps to reproduce**
-- **Expected vs actual behavior**
-- **Screenshots if applicable**
-
-## 📈 Roadmap
-
-See `README_expand.md` for detailed future feature plans including:
-- Character classes and specializations
-- Equipment and inventory system
-- Daily quests and challenges
-- Social features and leaderboards
-- Advanced statistics and analytics
+Veuillez ouvrir une issue sur GitHub avec :
+- **Navigateur et version**
+- **Étapes pour reproduire**
+- **Comportement attendu vs réel**
+- **Captures d'écran si applicable**
 
 ---
 
-**Happy focusing! May your productivity be legendary! ⚔️✨**
+**Bonne concentration ! Que votre productivité soit légendaire ! ⚔️✨**
