@@ -161,9 +161,22 @@ class DebugMode {
     }
 
     completeSession() {
+        const wasBreak = this.timer.isBreak;
+        const sessionCount = this.timer.currentSessionCount;
+        
+        // Force complete the session
         this.timer.forceComplete();
-        showNotification('✅ Session completed instantly');
-        console.log('✅ Session force completed');
+        
+        // Enhanced feedback messages (AMÉLIORATION)
+        if (wasBreak) {
+            showNotification(`🔄 Debug: Break completed → Focus session ready`);
+            console.log('🔄 Debug: Break completed, switching to focus session');
+        } else {
+            const nextIsLongBreak = (sessionCount + 1) % 4 === 0;
+            const breakType = nextIsLongBreak ? 'Long Break (15min)' : 'Short Break (5min)';
+            showNotification(`✅ Debug: Focus completed → ${breakType} ready`);
+            console.log(`✅ Debug: Focus session completed, switching to ${breakType}`);
+        }
     }
 
     addXP(amount = 100) {

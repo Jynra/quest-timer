@@ -177,19 +177,30 @@ class Timer {
         this.updateDisplay();
         this.updateProgressRing();
         
-        if (this.currentTime <= 0 && this.isRunning) {
+        if (this.currentTime <= 0) {
             this.completeSession();
         }
     }
 
     // Complete session instantly (for debug mode)
     forceComplete() {
+        const wasBreak = this.isBreak;
+        const sessionCount = this.currentSessionCount;
+        
         this.currentTime = 0;
         this.updateDisplay();
         this.updateProgressRing();
         
-        if (this.isRunning) {
-            this.completeSession();
+        // Always trigger complete session logic (CORRECTION)
+        this.completeSession();
+        
+        // Debug feedback
+        if (wasBreak) {
+            console.log('🔄 Debug: Break completed, switched to focus session');
+        } else {
+            const nextIsLongBreak = sessionCount % this.sessionsUntilLongBreak === 0;
+            const breakType = nextIsLongBreak ? 'Long Break (15min)' : 'Short Break (5min)';
+            console.log(`✅ Debug: Focus session completed, switched to ${breakType}`);
         }
     }
 

@@ -13,9 +13,15 @@ const urlsToCache = [
   './assets/js/rpg.js',
   './assets/js/debug.js',
   './assets/js/app.js',
-  // Add icon paths when available
+  './assets/icons/icon-72.png',
+  './assets/icons/icon-96.png',
+  './assets/icons/icon-128.png',
+  './assets/icons/icon-144.png',
+  './assets/icons/icon-152.png',
   './assets/icons/icon-192.png',
-  './assets/icons/icon-512.png'
+  './assets/icons/icon-384.png',
+  './assets/icons/icon-512.png',
+  './assets/icons/hourglass.png'
 ];
 
 // ===== INSTALL EVENT =====
@@ -26,11 +32,10 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('📦 Caching app shell');
-        return cache.addAll(urlsToCache);
+        return cache.addAll(urlsToCache.map(url => new Request(url, {cache: 'reload'})));
       })
       .then(() => {
         console.log('✅ Service Worker installed successfully');
-        // Force activation of new service worker
         return self.skipWaiting();
       })
       .catch((error) => {
@@ -44,46 +49,50 @@ self.addEventListener('activate', (event) => {
   console.log('🚀 Service Worker activating...');
   
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          // Delete old caches
-          if (cacheName !== CACHE_NAME) {
-            console.log('🗑️ Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    }).then(() => {
+    Promise.all([
+      // Clean old caches
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            if (cacheName !== CACHE_NAME) {
+              console.log('🗑️ Deleting old cache:', cacheName);
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      }),
+      // Take control immediately
+      self.clients.claim()
+    ]).then(() => {
       console.log('✅ Service Worker activated successfully');
-      // Take control of all pages immediately
-      return self.clients.claim();
     })
   );
 });
 
-// ===== FETCH EVENT =====
+// ===== FETCH EVENT - Cache First Strategy =====
 self.addEventListener('fetch', (event) => {
+  // Skip non-GET requests
+  if (event.request.method !== 'GET') return;
+  
+  // Skip external requests
+  if (!event.request.url.startsWith(self.location.origin)) return;
+  
   event.respondWith(
     caches.match(event.request)
-      .then((response) => {
-        // Return cached version if available
-        if (response) {
-          return response;
+      .then((cachedResponse) => {
+        if (cachedResponse) {
+          return cachedResponse;
         }
         
-        // Otherwise fetch from network
         return fetch(event.request)
           .then((response) => {
-            // Don't cache non-successful responses
+            // Check if valid response
             if (!response || response.status !== 200 || response.type !== 'basic') {
               return response;
             }
             
-            // Clone the response
+            // Clone and cache
             const responseToCache = response.clone();
-            
-            // Add to cache
             caches.open(CACHE_NAME)
               .then((cache) => {
                 cache.put(event.request, responseToCache);
@@ -92,7 +101,7 @@ self.addEventListener('fetch', (event) => {
             return response;
           })
           .catch(() => {
-            // If both cache and network fail, return offline page
+            // Fallback to offline page for documents
             if (event.request.destination === 'document') {
               return caches.match('./index.html');
             }
@@ -100,23 +109,6 @@ self.addEventListener('fetch', (event) => {
       })
   );
 });
-
-// ===== BACKGROUND SYNC =====
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'background-sync') {
-    console.log('🔄 Background sync triggered');
-    event.waitUntil(doBackgroundSync());
-  }
-});
-
-async function doBackgroundSync() {
-  try {
-    // Could sync progress data to cloud here
-    console.log('💾 Background sync completed');
-  } catch (error) {
-    console.error('❌ Background sync failed:', error);
-  }
-}
 
 // ===== PUSH NOTIFICATIONS =====
 self.addEventListener('push', (event) => {
@@ -197,6 +189,23 @@ self.addEventListener('message', (event) => {
   }
 });
 
+// ===== BACKGROUND SYNC =====
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'background-sync') {
+    console.log('🔄 Background sync triggered');
+    event.waitUntil(doBackgroundSync());
+  }
+});
+
+async function doBackgroundSync() {
+  try {
+    // Could sync progress data to cloud here
+    console.log('💾 Background sync completed');
+  } catch (error) {
+    console.error('❌ Background sync failed:', error);
+  }
+}
+
 // ===== PERIODIC BACKGROUND SYNC =====
 self.addEventListener('periodicsync', (event) => {
   if (event.tag === 'daily-stats') {
@@ -214,40 +223,14 @@ async function syncDailyStats() {
   }
 }
 
-// ===== UTILITY FUNCTIONS =====
+// ===== PWA INSTALLATION EVENTS =====
+self.addEventListener('beforeinstallprompt', (event) => {
+  console.log('📱 PWA install prompt triggered');
+});
 
-// Clean up old caches
-async function cleanupCaches() {
-  const cacheNames = await caches.keys();
-  const oldCaches = cacheNames.filter(name => 
-    name.startsWith('quest-timer-') && name !== CACHE_NAME
-  );
-  
-  await Promise.all(
-    oldCaches.map(cacheName => caches.delete(cacheName))
-  );
-}
-
-// Precache critical resources
-async function precacheResources() {
-  const cache = await caches.open(CACHE_NAME);
-  return cache.addAll(urlsToCache);
-}
-
-// Update cache with new resources
-async function updateCache() {
-  const cache = await caches.open(CACHE_NAME);
-  const requests = urlsToCache.map(url => fetch(url));
-  const responses = await Promise.all(requests);
-  
-  const cachePromises = responses.map((response, index) => {
-    if (response.ok) {
-      return cache.put(urlsToCache[index], response);
-    }
-  });
-  
-  return Promise.all(cachePromises);
-}
+self.addEventListener('appinstalled', (event) => {
+  console.log('🎉 PWA was installed successfully');
+});
 
 // ===== ERROR HANDLING =====
 self.addEventListener('error', (event) => {
