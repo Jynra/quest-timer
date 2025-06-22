@@ -1,12 +1,13 @@
 #!/bin/bash
 
-# Script de déploiement pour Quest Timer PWA
+# Script de déploiement pour Quest Timer PWA avec stack
 # Usage: ./deploy.sh [start|stop|restart|logs|build]
 # À exécuter depuis le répertoire quest-timer/docker/
 
 set -e
 
 PROJECT_NAME="quest-timer"
+STACK_NAME="quest-timer"  # Nom de la stack
 PORT=3046
 
 # Couleurs pour les logs
@@ -64,15 +65,15 @@ check_requirements() {
 
 # Construction de l'image
 build_image() {
-    log_info "Construction de l'image Docker..."
-    docker-compose build --no-cache
+    log_info "Construction de l'image Docker pour la stack $STACK_NAME..."
+    docker-compose -p $STACK_NAME build --no-cache
     log_success "Image construite avec succès"
 }
 
 # Démarrage des services
 start_services() {
-    log_info "Démarrage des services..."
-    docker-compose up -d
+    log_info "Démarrage de la stack $STACK_NAME..."
+    docker-compose -p $STACK_NAME up -d
     
     # Attendre que le service soit prêt
     log_info "Vérification de la disponibilité du service..."
@@ -88,7 +89,7 @@ start_services() {
         
         if [ $attempt -eq $max_attempts ]; then
             log_error "Le service n'est pas accessible après $max_attempts tentatives"
-            docker-compose logs
+            docker-compose -p $STACK_NAME logs
             exit 1
         fi
         
@@ -100,36 +101,36 @@ start_services() {
 
 # Arrêt des services
 stop_services() {
-    log_info "Arrêt des services..."
-    docker-compose down
-    log_success "Services arrêtés"
+    log_info "Arrêt de la stack $STACK_NAME..."
+    docker-compose -p $STACK_NAME down
+    log_success "Stack arrêtée"
 }
 
 # Redémarrage des services
 restart_services() {
-    log_info "Redémarrage des services..."
-    docker-compose restart
-    log_success "Services redémarrés"
+    log_info "Redémarrage de la stack $STACK_NAME..."
+    docker-compose -p $STACK_NAME restart
+    log_success "Stack redémarrée"
 }
 
 # Affichage des logs
 show_logs() {
-    docker-compose logs -f
+    docker-compose -p $STACK_NAME logs -f
 }
 
 # Nettoyage
 cleanup() {
-    log_info "Nettoyage des ressources Docker..."
-    docker-compose down -v
+    log_info "Nettoyage de la stack $STACK_NAME..."
+    docker-compose -p $STACK_NAME down -v
     docker system prune -f
     log_success "Nettoyage terminé"
 }
 
 # Surveillance de la santé
 health_check() {
-    log_info "Vérification de la santé du service..."
+    log_info "Vérification de la santé de la stack $STACK_NAME..."
     
-    container_status=$(docker-compose ps -q quest-timer | xargs docker inspect -f '{{.State.Health.Status}}' 2>/dev/null || echo "unknown")
+    container_status=$(docker-compose -p $STACK_NAME ps -q quest-timer | xargs docker inspect -f '{{.State.Health.Status}}' 2>/dev/null || echo "unknown")
     
     case $container_status in
         "healthy")
@@ -137,7 +138,7 @@ health_check() {
             ;;
         "unhealthy")
             log_error "Le service est en mauvaise santé"
-            docker-compose logs quest-timer
+            docker-compose -p $STACK_NAME logs quest-timer
             ;;
         "starting")
             log_warning "Le service est en cours de démarrage"
@@ -146,13 +147,19 @@ health_check() {
             log_warning "État de santé inconnu"
             ;;
     esac
+    
+    # Afficher les infos de la stack
+    echo ""
+    log_info "=== Informations de la stack $STACK_NAME ==="
+    docker-compose -p $STACK_NAME ps
 }
 
 # Affichage des informations
 show_info() {
-    log_info "=== Quest Timer Docker Info ==="
+    log_info "=== Quest Timer Docker Stack Info ==="
     echo "📍 URL: http://localhost:$PORT"
-    echo "🐳 Container: quest-timer-app"
+    echo "🌐 URL Publique: https://pomodoro.jynra.ch"
+    echo "🐳 Stack: $STACK_NAME"
     echo "📂 Répertoire: $(pwd)"
     echo "🎮 PWA: Prête à être installée"
     echo ""
@@ -202,13 +209,13 @@ case "${1:-start}" in
     *)
         echo "Usage: $0 {build|start|stop|restart|logs|health|cleanup|info|full}"
         echo ""
-        echo "⚔️ Quest Timer Docker Manager"
+        echo "⚔️ Quest Timer Docker Stack Manager"
         echo ""
         echo "Commandes disponibles:"
         echo "  build    - Construire l'image Docker"
-        echo "  start    - Démarrer les services"
-        echo "  stop     - Arrêter les services"
-        echo "  restart  - Redémarrer les services"
+        echo "  start    - Démarrer la stack $STACK_NAME"
+        echo "  stop     - Arrêter la stack $STACK_NAME"
+        echo "  restart  - Redémarrer la stack $STACK_NAME"
         echo "  logs     - Afficher les logs en temps réel"
         echo "  health   - Vérifier la santé du service"
         echo "  cleanup  - Nettoyer les ressources Docker"

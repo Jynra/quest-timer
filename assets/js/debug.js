@@ -1,4 +1,4 @@
-// ===== DEBUG MODE MODULE =====
+// ===== DEBUG MODE MODULE - PWA STANDALONE COMPATIBLE =====
 
 class DebugMode {
     constructor(timer, rpgSystem) {
@@ -136,6 +136,7 @@ class DebugMode {
         console.group('🐛 Quest Timer Debug Info');
         console.log('Timer State:', this.timer.getSessionInfo());
         console.log('RPG Stats:', this.rpgSystem.getStats());
+        console.log('PWA Mode:', window.matchMedia('(display-mode: standalone)').matches ? 'Standalone' : 'Browser');
         console.log('Storage Data:', {
             level: loadFromStorage('level'),
             xp: loadFromStorage('xp'),
@@ -160,23 +161,51 @@ class DebugMode {
         console.log(`⏩ Fast forwarded ${minutes} minutes`);
     }
 
+    // CORRECTION PRINCIPALE : Complete Session pour PWA Standalone
     completeSession() {
         const wasBreak = this.timer.isBreak;
         const sessionCount = this.timer.currentSessionCount;
         
-        // Force complete the session
-        this.timer.forceComplete();
+        console.log('🔧 Debug: Starting force complete session...');
+        console.log('🔧 Initial state:', { wasBreak, sessionCount, isRunning: this.timer.isRunning });
         
-        // Enhanced feedback messages (AMÉLIORATION)
-        if (wasBreak) {
-            showNotification(`🔄 Debug: Break completed → Focus session ready`);
-            console.log('🔄 Debug: Break completed, switching to focus session');
-        } else {
-            const nextIsLongBreak = (sessionCount + 1) % 4 === 0;
-            const breakType = nextIsLongBreak ? 'Long Break (15min)' : 'Short Break (5min)';
-            showNotification(`✅ Debug: Focus completed → ${breakType} ready`);
-            console.log(`✅ Debug: Focus session completed, switching to ${breakType}`);
+        // Force arrêter le timer si il tourne
+        if (this.timer.isRunning) {
+            this.timer.pauseTimer();
         }
+        
+        // Force compléter la session avec délai pour PWA standalone
+        this.timer.currentTime = 0;
+        this.timer.updateDisplay();
+        this.timer.updateProgressRing();
+        
+        // Utiliser setTimeout pour assurer l'exécution en mode standalone
+        setTimeout(() => {
+            console.log('🔧 Debug: Triggering complete session...');
+            this.timer.completeSession();
+            
+            // Double vérification après un autre délai
+            setTimeout(() => {
+                console.log('🔧 Debug: Verifying session state...');
+                const newState = this.timer.getSessionInfo();
+                console.log('🔧 New state:', newState);
+                
+                // Force mise à jour de l'affichage
+                this.timer.updateDisplay();
+                this.timer.updateProgressRing();
+                
+                // Messages informatifs améliorés
+                if (wasBreak) {
+                    showNotification(`🔄 Debug: Break completed → Focus session ready`);
+                    console.log('🔄 Debug: Break completed, switched to focus session');
+                } else {
+                    const nextIsLongBreak = (sessionCount + 1) % 4 === 0;
+                    const breakType = nextIsLongBreak ? 'Long Break (15min)' : 'Short Break (5min)';
+                    showNotification(`✅ Debug: Focus completed → ${breakType} ready`);
+                    console.log(`✅ Debug: Focus session completed, switched to ${breakType}`);
+                }
+            }, 100); // Délai pour PWA standalone
+        }, 50); // Délai initial pour PWA standalone
     }
 
     addXP(amount = 100) {
@@ -210,6 +239,21 @@ class DebugMode {
             // Also reset timer if needed
             this.timer.resetTimer();
             console.log('💀 All progress reset');
+        }
+    }
+
+    // ===== PWA STANDALONE UTILITIES =====
+    
+    isPWAStandalone() {
+        return window.matchMedia('(display-mode: standalone)').matches || 
+               window.navigator.standalone === true;
+    }
+    
+    logPWAMode() {
+        const isStandalone = this.isPWAStandalone();
+        console.log(`📱 PWA Mode: ${isStandalone ? 'Standalone' : 'Browser'}`);
+        if (isStandalone) {
+            console.log('🔧 Using PWA-specific timing adjustments');
         }
     }
 
@@ -267,7 +311,8 @@ class DebugMode {
             currentStreak: this.rpgSystem.currentStreak,
             bestStreak: this.rpgSystem.bestStreak,
             achievements: this.rpgSystem.achievements,
-            lastActiveDate: this.rpgSystem.lastActiveDate
+            lastActiveDate: this.rpgSystem.lastActiveDate,
+            pwaModeStandalone: this.isPWAStandalone()
         };
         
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -340,12 +385,14 @@ class DebugMode {
 
     startPerformanceMonitoring() {
         console.log('📊 Starting performance monitoring...');
+        this.logPWAMode();
         
         this.performanceData = {
             startTime: performance.now(),
             memoryUsage: [],
             frameRates: [],
-            timerAccuracy: []
+            timerAccuracy: [],
+            pwaModeStandalone: this.isPWAStandalone()
         };
         
         // Monitor memory usage (if available)
@@ -386,6 +433,7 @@ class DebugMode {
         
         console.group('📊 Performance Report');
         console.log('Monitoring Duration:', `${Math.round(duration)}ms`);
+        console.log('PWA Mode:', this.performanceData.pwaModeStandalone ? 'Standalone' : 'Browser');
         console.log('Memory Samples:', this.performanceData.memoryUsage.length);
         console.log('Timer Accuracy Samples:', this.performanceData.timerAccuracy.length);
         
@@ -452,6 +500,7 @@ class DebugMode {
         const report = {
             timestamp: new Date().toISOString(),
             userAgent: navigator.userAgent,
+            pwaModeStandalone: this.isPWAStandalone(),
             viewport: {
                 width: window.innerWidth,
                 height: window.innerHeight
