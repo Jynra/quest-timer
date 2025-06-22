@@ -4,13 +4,15 @@
 
 Quest Timer transforme la technique Pomodoro traditionnelle en une expérience RPG engageante. Complétez des sessions de concentration pour gagner de l'XP, faire évoluer votre personnage, débloquer des succès et construire des séries de productivité - tout en maintenant une concentration maximale et une efficacité de travail.
 
+**✨ Nouveauté : PWA Standalone disponible !** L'application peut maintenant être installée comme une vraie app native sur mobile et desktop.
+
 ## 📁 Structure du projet
 
 ```
 quest-timer/
 ├── index.html                 # Page principale (HTML minimal)
-├── manifest.json             # Manifeste PWA
-├── sw.js                     # Service Worker
+├── manifest.json             # Manifeste PWA (optimisé standalone)
+├── sw.js                     # Service Worker (cache amélioré)
 ├── README.md                 # Cette documentation
 ├── assets/
 │   ├── css/
@@ -19,16 +21,24 @@ quest-timer/
 │   │   └── animations.css    # Animations et effets visuels
 │   ├── js/
 │   │   ├── utils.js          # Fonctions utilitaires
-│   │   ├── timer.js          # Logique du timer Pomodoro
+│   │   ├── timer.js          # Logique du timer Pomodoro + reset complet
 │   │   ├── rpg.js           # Système RPG (XP, niveaux, succès)
-│   │   ├── debug.js         # Mode debug et outils de développement
+│   │   ├── debug.js         # Mode debug amélioré (PWA compatible)
 │   │   └── app.js           # Application principale et initialisation
-│   └── icons/
-│       └── (icônes PWA - à créer)
+│   └── icons/               # Icônes PWA (192x192, 512x512 requis)
+│       ├── icon-72.png
+│       ├── icon-96.png
+│       ├── icon-128.png
+│       ├── icon-144.png
+│       ├── icon-152.png
+│       ├── icon-192.png     # ⭐ Critique pour PWA
+│       ├── icon-384.png
+│       ├── icon-512.png     # ⭐ Critique pour PWA
+│       └── hourglass.png    # Favicon
 ├── docker/
 │   ├── Dockerfile           # Image Docker pour déploiement
 │   ├── nginx.conf          # Configuration Nginx optimisée PWA
-│   ├── docker-compose.yml # Orchestration Docker
+│   ├── docker-compose.yml # Orchestration Docker avec stack
 │   ├── .dockerignore      # Fichiers à exclure du build
 │   └── deploy.sh          # Script de déploiement automatisé
 └── docs/
@@ -43,6 +53,7 @@ quest-timer/
 - **Anneau de progression visuel** montrant l'achèvement de la session
 - **Notifications audio/visuelles** pour les transitions de session
 - **Fonctionnalité pause/reprise** pour la flexibilité
+- **Transitions automatiques** entre Focus et Break
 
 ### 🎮 Mécaniques RPG
 - **Système de niveaux de personnage** avec exigences XP progressives
@@ -52,27 +63,34 @@ quest-timer/
 - **XP flottant animé** pour un retour immédiat
 - **Tableau de bord des statistiques** montrant le progrès total
 
-### 📱 Fonctionnalités PWA
+### 📱 Fonctionnalités PWA (Nouveauté !)
 - **Progressive Web App** - fonctionne hors ligne et peut être installée
+- **Mode Standalone** - S'ouvre comme une vraie app (sans barre d'adresse)
+- **Installation native** - "Ajouter à l'écran d'accueil" sur mobile/desktop
 - **Design responsive** - optimisé pour mobile et desktop
 - **Stockage local** - tout le progrès sauvegardé localement
 - **Multiplateforme** - fonctionne sur tout appareil avec navigateur web
-- **Aucune installation requise** - fonctionne directement dans le navigateur
+- **Service Worker** - Cache intelligent pour usage hors ligne
+- **HTTPS requis** - Sécurité maximale pour mode standalone
 
-### 🛠️ Mode Debug
+### 🛠️ Mode Debug (Amélioré)
 - **Outils de développement** pour tester rapidement les fonctionnalités
-- **Avance rapide du timer**
-- **Achèvement instantané de session**
+- **Avance rapide du timer** (5 minutes par défaut)
+- **Achèvement instantané de session** (compatible PWA standalone)
 - **Manipulation manuelle XP/niveau**
 - **Outils de test des succès**
+- **Reset complet** - Remet l'app à l'état initial (nouveau !)
+- **Raccourcis clavier** - Ctrl+Shift+[touches]
+- **Diagnostic PWA** - Vérification des critères standalone
 
 ## 🚀 Installation et utilisation
 
 ### Prérequis
 - Navigateur web moderne (Chrome, Firefox, Safari, Edge)
+- **HTTPS requis** pour le mode PWA standalone
 - Docker et Docker Compose (pour le déploiement containerisé)
 
-### 🐳 Déploiement Docker (Recommandé)
+### 🐳 Déploiement Docker avec Stack (Recommandé)
 
 **1. Clonez le repository :**
 ```bash
@@ -80,7 +98,7 @@ git clone <repository-url>
 cd quest-timer
 ```
 
-**2. Déployez avec Docker :**
+**2. Déployez avec Docker Stack :**
 ```bash
 cd docker
 chmod +x deploy.sh
@@ -88,25 +106,45 @@ chmod +x deploy.sh
 ```
 
 **3. Accédez à l'application :**
-- **URL :** http://localhost:3046
-- **PWA :** Peut être installée comme application native
+- **URL Locale :** http://localhost:3046
+- **URL Publique :** https://votre-domaine.com (pour PWA standalone)
+- **PWA :** Installable comme application native
 
-**4. Gestion du container :**
+**4. Gestion de la stack :**
 ```bash
-# Voir les logs
+# Voir les logs de la stack
 ./deploy.sh logs
 
-# Vérifier la santé
+# Vérifier la santé de la stack
 ./deploy.sh health
 
-# Redémarrer
+# Redémarrer la stack
 ./deploy.sh restart
 
-# Arrêter
+# Arrêter la stack
 ./deploy.sh stop
 
-# Nettoyage complet
+# Informations de la stack
+./deploy.sh info
+
+# Nettoyage complet de la stack
 ./deploy.sh cleanup
+```
+
+### 🔒 Configuration HTTPS pour PWA Standalone
+
+**Option 1 : Reverse Proxy (Recommandé)**
+```bash
+# Utilisez Nginx Proxy Manager ou Traefik
+# Exemple avec domaine : https://domain.com
+# Certificat SSL automatique avec Let's Encrypt
+```
+
+**Option 2 : Certificat auto-signé (Dev)**
+```bash
+# Modifiez nginx.conf pour inclure SSL
+# Générez un certificat auto-signé
+# Acceptez l'avertissement de sécurité du navigateur
 ```
 
 ### 💻 Installation basique (sans Docker)
@@ -117,9 +155,10 @@ git clone <repository-url>
 cd quest-timer
 ```
 
-**2. Pour utilisation basique :**
-- Ouvrez `index.html` dans votre navigateur web
-- Commencez à utiliser immédiatement !
+**2. Générez les icônes PWA :**
+- Utilisez le générateur d'icônes fourni
+- Placez toutes les icônes dans `assets/icons/`
+- Vérifiez que icon-192.png et icon-512.png sont présents
 
 **3. Pour déploiement PWA :**
 - Hébergez les fichiers sur un serveur HTTPS
@@ -133,6 +172,7 @@ python -m http.server 8000
 npx serve .
 
 # Ouvrez http://localhost:8000
+# Note: PWA standalone nécessite HTTPS
 ```
 
 ## 🎮 Comment jouer
@@ -172,6 +212,7 @@ npx serve .
 - Gestion des sessions (focus/pause)
 - Anneau de progression
 - Callbacks pour intégration RPG
+- **Nouveau :** `resetToInitialState()` pour reset complet
 
 #### `rpg.js` - Système RPG
 - Gestion XP et niveaux
@@ -183,7 +224,9 @@ npx serve .
 - Panel de debug
 - Raccourcis clavier
 - Outils de test
-- Monitoring des performances
+- **Nouveau :** Compatible PWA standalone
+- **Nouveau :** Reset complet de l'application
+- **Nouveau :** Diagnostic PWA intégré
 
 #### `app.js` - Application principale
 - Initialisation de l'app
@@ -223,14 +266,16 @@ npx serve .
 - Headers de sécurité
 - Compression gzip
 - Cache stratégique
+- Support HTTPS
 
 #### `docker-compose.yml`
-- Orchestration des services
+- Orchestration des services avec stack nommée
 - Health checks automatiques
 - Port mapping configuré
+- Labels pour identification de la stack
 
 #### `deploy.sh`
-- Script de déploiement automatisé
+- Script de déploiement automatisé avec support stack
 - Gestion du cycle de vie
 - Monitoring intégré
 - Commandes utilitaires
@@ -242,16 +287,17 @@ npx serve .
 - **Notifications** : API Web Notifications
 - **PWA** : Service Workers, Manifeste d'application web
 - **Styling** : CSS Grid, Flexbox, Animations CSS
-- **Icônes** : Emojis Unicode (compatibilité universelle)
+- **Icônes** : Emojis Unicode + icônes PNG PWA
 - **Infrastructure** : Docker + Nginx Alpine
 - **Déploiement** : Docker Compose + Scripts automatisés
+- **Sécurité** : HTTPS, CSP, Headers sécurisés
 
 ## 📊 Support navigateur
 
-- ✅ Chrome 60+
-- ✅ Firefox 55+
-- ✅ Safari 11+
-- ✅ Edge 79+
+- ✅ Chrome 60+ (PWA standalone excellent)
+- ✅ Firefox 55+ (PWA standalone bon)
+- ✅ Safari 11+ (PWA standalone limité)
+- ✅ Edge 79+ (PWA standalone excellent)
 - ✅ Navigateurs mobiles (iOS Safari, Chrome Mobile)
 
 ## 🐳 Configuration Docker
@@ -264,6 +310,9 @@ PORT=3046
 # Configuration Nginx
 NGINX_HOST=localhost
 NGINX_PORT=80
+
+# Stack Docker
+STACK_NAME=quest-timer
 ```
 
 ### Health Checks
@@ -280,6 +329,31 @@ NGINX_PORT=80
 
 ## 🚨 Dépannage
 
+### Problèmes PWA Standalone
+
+**PWA s'ouvre dans le navigateur au lieu de standalone :**
+```bash
+# 1. Vérifiez HTTPS
+# La PWA DOIT être servie en HTTPS pour le mode standalone
+
+# 2. Vérifiez les icônes
+# Les icônes 192x192 et 512x512 sont OBLIGATOIRES
+
+# 3. Diagnostic PWA
+# F12 → Console → Tapez : diagnosePWA()
+
+# 4. Vider le cache
+# F12 → Application → Storage → Clear storage
+```
+
+**Générer les icônes PWA :**
+```bash
+# Utilisez le générateur d'icônes fourni
+# Ou créez manuellement :
+mkdir -p assets/icons
+# Placez icon-72.png, icon-96.png, ..., icon-512.png, hourglass.png
+```
+
 ### Problèmes Docker courants
 
 **Port déjà utilisé :**
@@ -289,23 +363,18 @@ ports:
   - "NOUVEAU_PORT:80"
 ```
 
-**Service ne démarre pas :**
+**Stack ne démarre pas :**
 ```bash
-# Vérifier les logs
+# Vérifier les logs de la stack
 ./deploy.sh logs
 
-# Vérifier l'état des containers
-docker-compose ps
+# Vérifier l'état de la stack
+./deploy.sh info
 
-# Rebuild complet
+# Rebuild complet de la stack
 ./deploy.sh cleanup
 ./deploy.sh full
 ```
-
-**PWA ne s'installe pas :**
-- Vérifiez que vous accédez via HTTP/HTTPS (pas file://)
-- Vérifiez que le manifest.json est accessible
-- Consultez les DevTools → Application → Manifest
 
 ### Debugging de l'application
 
@@ -318,19 +387,29 @@ docker-compose ps
 - **Espace** : Start/Pause timer
 - **R** : Reset timer
 - **Échap** : Fermer le panel debug
+- **Ctrl+Shift+C** : Complete session (debug)
+- **Ctrl+Shift+F** : Fast forward (debug)
+- **Ctrl+Shift+X** : Add XP (debug)
+
+**Diagnostic PWA :**
+```javascript
+// Dans la console (F12)
+diagnosePWA(); // Vérifie tous les critères PWA
+```
 
 ## 🤝 Contribution
 
 1. Forkez le repository
 2. Créez une branche de fonctionnalité
 3. Effectuez vos modifications
-4. Testez minutieusement (incluant les tests Docker)
+4. Testez minutieusement (incluant les tests Docker et PWA)
 5. Soumettez une pull request
 
 ### Standards de développement
 - Code JavaScript ES6+
 - CSS avec préfixes vendor si nécessaire
 - Tests de compatibilité navigateur
+- **Tests PWA** sur mobile et desktop
 - Documentation des nouvelles fonctionnalités
 - Tests Docker avant commit
 
@@ -344,27 +423,33 @@ Licence MIT - voir le fichier LICENSE pour les détails
 - **Mécaniques RPG** inspirées des systèmes de progression classiques
 - **Design Glassmorphism** tendance pour l'esthétique UI moderne
 - **Docker & Nginx** pour l'infrastructure robuste
+- **PWA Standards** pour l'expérience native
 
 ## 🐛 Rapports de bugs et demandes de fonctionnalités
 
 Veuillez ouvrir une issue sur GitHub avec :
 - **Navigateur et version**
-- **Environnement** (Docker/Local/PWA)
+- **Environnement** (Docker/Local/PWA Standalone/PWA Browser)
+- **Mode d'accès** (HTTP/HTTPS)
 - **Étapes pour reproduire**
 - **Comportement attendu vs réel**
 - **Captures d'écran si applicable**
 - **Logs Docker si pertinents**
+- **Résultat du diagnostic PWA** (`diagnosePWA()`)
 
 ### Logs utiles pour debug
 ```bash
-# Logs de l'application
+# Logs de la stack
 ./deploy.sh logs
 
-# État des containers
-docker-compose ps
+# État de la stack
+./deploy.sh info
 
-# Informations système
+# Santé de la stack
 ./deploy.sh health
+
+# Diagnostic PWA (dans la console navigateur)
+diagnosePWA()
 ```
 
 ---
@@ -375,7 +460,18 @@ docker-compose ps
 ## 🔗 Liens rapides
 
 - 🚀 **Déploiement rapide** : `cd docker && ./deploy.sh full`
-- 🌐 **Application** : http://localhost:3046
+- 🌐 **Application locale** : http://localhost:3046
+- 📱 **PWA Standalone** : Servir en HTTPS puis "Ajouter à l'écran d'accueil"
 - 🛠️ **Debug** : Cliquez sur 🐛 dans l'app
-- 📱 **PWA** : Installer depuis le navigateur
-- 🔧 **Logs** : `./deploy.sh logs`
+- 🔧 **Logs Stack** : `./deploy.sh logs`
+- 📊 **Diagnostic PWA** : Console → `diagnosePWA()`
+
+## 🎯 Changelog récent
+
+### v1.1.0 - PWA Standalone & Améliorations Debug
+- ✅ **PWA Standalone** - Vraie app native
+- ✅ **Reset complet** - Mode debug amélioré
+- ✅ **Docker Stack** - Gestion organisée des containers
+- ✅ **HTTPS Support** - Requis pour PWA standalone
+- ✅ **Diagnostic intégré** - Vérification PWA automatique
+- ✅ **Compatible mobile** - Optimisé pour smartphone/tablet

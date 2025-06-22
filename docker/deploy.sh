@@ -158,7 +158,7 @@ health_check() {
 show_info() {
     log_info "=== Quest Timer Docker Stack Info ==="
     echo "📍 URL: http://localhost:$PORT"
-    echo "🌐 URL Publique: https://pomodoro.jynra.ch"
+    echo "🌐 URL Publique: https://domain.ch"
     echo "🐳 Stack: $STACK_NAME"
     echo "📂 Répertoire: $(pwd)"
     echo "🎮 PWA: Prête à être installée"
