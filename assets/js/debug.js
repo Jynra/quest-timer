@@ -1,4 +1,4 @@
-// ===== DEBUG MODE MODULE - PWA STANDALONE COMPATIBLE =====
+// ===== DEBUG MODE MODULE =====
 
 class DebugMode {
     constructor(timer, rpgSystem) {
@@ -233,13 +233,43 @@ class DebugMode {
         console.log('🏆 Random achievement unlocked');
     }
 
+    // CORRECTION PRINCIPALE : Reset complet de l'application
     resetProgress() {
-        const wasReset = this.rpgSystem.resetAllProgress();
-        if (wasReset) {
-            // Also reset timer if needed
-            this.timer.resetTimer();
-            console.log('💀 All progress reset');
+        if (confirm('⚠️ This will reset ALL your progress AND return to initial state! Are you sure?')) {
+            console.log('💀 Starting complete reset...');
+            
+            // 1. Reset RPG System
+            const wasReset = this.rpgSystem.resetAllProgress();
+            
+            if (wasReset) {
+                // 2. Reset Timer to initial state (NOUVELLE FONCTIONNALITÉ)
+                console.log('🔄 Resetting timer to initial state...');
+                this.timer.resetToInitialState();
+                
+                // 3. Clear any debug state
+                console.log('🧹 Clearing debug state...');
+                
+                // 4. Confirmation and logging
+                console.log('💀 Complete reset finished:');
+                console.log('  - RPG progress: RESET');
+                console.log('  - Timer state: RESET to Focus Quest');
+                console.log('  - Session count: RESET to 0');
+                console.log('  - All displays: UPDATED');
+                
+                showNotification('🔄 Complete reset successful! Ready for a new quest!');
+                
+                // 5. Visual feedback
+                const characterCard = document.querySelector('.character-card');
+                const timerSection = document.querySelector('.timer-section');
+                
+                addTemporaryClass(characterCard, 'pulse', 2000);
+                addTemporaryClass(timerSection, 'pulse', 2000);
+                
+                return true;
+            }
+            return false;
         }
+        return false;
     }
 
     // ===== PWA STANDALONE UTILITIES =====

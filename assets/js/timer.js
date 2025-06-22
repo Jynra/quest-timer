@@ -107,6 +107,35 @@ class Timer {
         }
     }
 
+    // Reset complete to initial application state (for debug mode)
+    resetToInitialState() {
+        console.log('🔄 Timer: Resetting to initial state...');
+        
+        // Stop any running timer
+        this.isRunning = false;
+        clearInterval(this.timer);
+        
+        // Reset to initial focus session state
+        this.isBreak = false;
+        this.currentSessionCount = 0;
+        this.currentTime = this.focusTime; // 25 minutes
+        
+        // Reset UI elements
+        this.sessionType.textContent = '🎯 Focus Quest';
+        this.startBtn.textContent = 'Start Quest';
+        this.startBtn.classList.remove('btn-secondary');
+        this.startBtn.classList.add('btn-primary');
+        
+        // Remove visual effects
+        document.querySelector('.timer-section').classList.remove('timer-running');
+        
+        // Update displays
+        this.updateDisplay();
+        this.updateProgressRing();
+        
+        console.log('✅ Timer reset to initial state complete');
+    }
+
     completeSession() {
         clearInterval(this.timer);
         this.isRunning = false;
