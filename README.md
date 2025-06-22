@@ -413,9 +413,6 @@ diagnosePWA(); // Vérifie tous les critères PWA
 - Documentation des nouvelles fonctionnalités
 - Tests Docker avant commit
 
-## 📝 Licence
-
-Licence MIT - voir le fichier LICENSE pour les détails
 
 ## 🙏 Remerciements
 
