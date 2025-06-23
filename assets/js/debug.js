@@ -41,6 +41,10 @@ class DebugMode {
                         e.preventDefault();
                         this.fastForward();
                         break;
+                    case 'M':
+                        e.preventDefault();
+                        this.skip1Min();
+                        break;
                     case 'C':
                         e.preventDefault();
                         this.completeSession();
@@ -70,6 +74,11 @@ class DebugMode {
         // Fast forward timer
         document.getElementById('fastForward').addEventListener('click', () => {
             this.fastForward();
+        });
+
+        // Skip 1 minute
+        document.getElementById('skip1Min').addEventListener('click', () => {
+            this.skip1Min();
         });
 
         // Complete session instantly
@@ -147,6 +156,7 @@ class DebugMode {
         
         console.log('Keyboard Shortcuts:');
         console.log('  Ctrl+Shift+F: Fast Forward');
+        console.log('  Ctrl+Shift+M: Skip 1 minute');
         console.log('  Ctrl+Shift+C: Complete Session');
         console.log('  Ctrl+Shift+X: Add XP');
         console.log('  Ctrl+Shift+L: Level Up');
@@ -162,6 +172,12 @@ class DebugMode {
         this.timer.fastForward(minutes);
         showNotification(`⏩ Skipped ${minutes} minutes`);
         console.log(`⏩ Fast forwarded ${minutes} minutes`);
+    }
+
+    skip1Min() {
+        this.timer.fastForward(1);
+        showNotification(`⏩ Skipped 1 minute`);
+        console.log(`⏩ Skipped 1 minute`);
     }
 
     completeSession() {
