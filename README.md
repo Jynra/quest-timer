@@ -6,36 +6,45 @@ Quest Timer transforme la technique Pomodoro traditionnelle en une expérience R
 
 **✨ PWA Standalone disponible !** L'application peut être installée comme une vraie app native sur mobile et desktop.
 
+**🎮 Nouveau Design Bottom Nav !** Interface optimisée mobile-first avec contrôles en bas d'écran.
+
 ## ✨ Fonctionnalités principales
 
 ### 🍅 Timer Pomodoro intelligent
 - **Sessions de 25 minutes** avec pauses de 5/15 minutes
-- **Anneau de progression visuel** et affichage temps restant
+- **Cercle de progression visuel** et affichage temps restant optimisé mobile
 - **Alarmes sonores personnalisables** - 4 types de sons (Chime, Bell, Success, Beep)
 - **Contrôle volume** et activation/désactivation des sons
 - **Fonctionnalité pause/reprise** et transitions automatiques
 
 ### 🎮 Système RPG complet
 - **Progression XP équilibrée** : Plus on monte en niveau, plus on gagne d'XP
-- **Récompenses croissantes** : 55 XP → 60 XP → 65 XP par session
-- **Système de niveaux** : 100 → 250 → 450 → 700 XP total
+- **Récompenses croissantes** : 55 XP → 60 XP → 65 XP par session (selon niveau)
+- **Système de niveaux progressif** : 100 → 250 → 450 → 700 → 1000+ XP total
 - **11 succès débloquables** : Première quête, Streak warrior, Time master...
-- **Statistiques détaillées** : Sessions, temps total, streaks
-- **Effets visuels** : XP flottant, animations de level up
+- **Statistiques en temps réel** : Sessions, temps total, streaks
+- **Effets visuels** : XP flottant, animations de level up (sans son)
+
+### 📱 Design Bottom Nav Mobile-First
+- **Interface compacte** - Tout visible sans scroll sur mobile
+- **Contrôles fixes en bas** - Toujours accessibles au pouce
+- **Stats mini intégrées** - 3 métriques essentielles en un coup d'œil
+- **Barre XP responsive** - Progression visuelle optimisée
+- **Touch feedback** - Vibrations et animations tactiles
 
 ### 📱 Application PWA native
 - **Installation sur mobile/desktop** - Fonctionne comme une vraie app
 - **Mode Standalone** - S'ouvre sans barre d'adresse
 - **Fonctionne hors ligne** - Tout sauvé localement
-- **Design responsive** - Optimisé tous écrans
+- **Design responsive** - 320px → desktop, optimisé tous écrans
 
 ### 🛠️ Mode Debug avancé
 - **Skip 1/5 minutes** - Test rapide du timer
 - **Complete Session** - Simulation de fin de session
 - **Add XP/Level Up** - Manipulation précise de la progression  
 - **Test des sons** - Vérification du système audio
-- **Reset complet** - Remise à zéro totale
-- **10 raccourcis clavier** - Contrôle rapide
+- **Reset complet** - Remise à zéro totale sans rechargement
+- **Panel slide-in** - Interface debug moderne
 
 ## 🚀 Installation rapide
 
@@ -68,71 +77,83 @@ python -m http.server 8000
 ### Démarrage
 1. **Start Quest** → Démarrer une session focus de 25min
 2. **Restez concentré** jusqu'à l'alarme sonore
-3. **Gagnez 55+ XP** et montez de niveau
+3. **Gagnez 55+ XP** et montez de niveau (XP croissant par niveau)
 4. **Prenez votre pause** de 5 ou 15min
 5. **Construisez des streaks** quotidiens
 
-### Progression XP
+### Progression XP (Corrigée)
 | Niveau | XP Total | XP Requis | XP/Session | Sessions |
 |--------|----------|-----------|------------|----------|
 | 1 → 2  | 100      | 100       | 55         | ~2       |
 | 2 → 3  | 250      | +150      | 60         | ~3       |
-| 3 → 4  | 450      | +200      | 65         | ~4       |
+| 3 → 4  | 450      | +200      | 65         | ~3       |
 | 4 → 5  | 700      | +250      | 70         | ~4       |
+| 5 → 6  | 1000     | +300      | 75         | ~4       |
+| 6 → 7  | 1350     | +350      | 80         | ~4       |
+| 7+     | +400...  | +50/niv   | +5/niv     | ~4-5     |
 
-*Progression parfaitement équilibrée - pas de grind !*
+*Progression parfaitement équilibrée - croissance continue !*
 
 ### Succès emblématiques
 - 🎯 **Première Quête** - Terminez votre premier Pomodoro
 - 🔥 **Streak Warrior** - 5 jours consécutifs  
 - ⏰ **Time Master** - 10 heures de focus total
+- 🏆 **Expert** - Atteignez le niveau 10
 - 👑 **Productivity Guru** - Atteignez le niveau 20
 
 ## ⚙️ Contrôles et raccourcis
 
-### Interface principale
-- **🔔 Sound** - Active/désactive les alarmes
+### Interface Bottom Nav
+- **🔔 Sound** - Active/désactive les alarmes (bottom nav)
 - **🎵 Type** - Choisit le son (Chime/Bell/Success/Beep)
-- **🔊 Volume** - Ajuste le volume des alarmes
+- **🔊 Volume** - Ajuste le volume des alarmes (slider)
+- **🏆 Achievements** - Ouvre la modal des succès (top-left)
 
 ### Raccourcis clavier
 - **Espace** - Start/Pause timer
 - **R** - Reset timer  
+- **A** - Ouvrir/fermer achievements
 - **Ctrl+S** - Toggle son
-- **Échap** - Fermer debug
+- **Échap** - Fermer modals/debug
 
 ### Mode Debug (🐛)
-- **Ctrl+Shift+F** - Skip 5 minutes
-- **Ctrl+Shift+M** - Skip 1 minute
-- **Ctrl+Shift+C** - Complete session
-- **Ctrl+Shift+L** - Level up
-- **Ctrl+Shift+T** - Test sons
+- **Cliquer 🐛** - Ouvre/ferme le panel debug
+- **Skip 5/1 min** - Test rapide du timer
+- **Complete Session** - Termine la session instantanément
+- **Add XP** - Ajoute 100 XP
+- **Level Up** - Force le passage au niveau suivant
+- **Test Sounds** - Teste les sons focus/break
+- **Reset All** - Remise à zéro complète
 
 ## 🔧 Architecture technique
 
 ### Structure du projet
 ```
 quest-timer/
-├── index.html              # Interface utilisateur
+├── index.html              # Interface Bottom Nav
 ├── manifest.json           # Configuration PWA
 ├── sw.js                   # Service Worker
 ├── assets/
-│   ├── css/                # Styles (main, components, animations)
+│   ├── css/
+│   │   ├── main.css        # 🎨 Styles de base Bottom Nav
+│   │   ├── components.css  # 🧩 Composants Bottom Nav
+│   │   └── animations.css  # ✨ Animations et effets
 │   ├── js/
-│   │   ├── sound.js        # 🔔 Système sonore (NOUVEAU)
+│   │   ├── app.js          # 🚀 Application principale Bottom Nav
 │   │   ├── timer.js        # ⏱️ Logique timer + alarmes
-│   │   ├── rpg.js          # 🎮 Système XP/niveaux
-│   │   ├── debug.js        # 🛠️ Mode debug + contrôles sons
-│   │   ├── app.js          # 🚀 Application principale
+│   │   ├── rpg.js          # 🎮 Système XP/niveaux (corrigé)
+│   │   ├── sound.js        # 🔔 Système sonore
+│   │   ├── debug.js        # 🛠️ Mode debug + contrôles
 │   │   └── utils.js        # 🔧 Fonctions utilitaires
 │   └── icons/              # Icônes PWA (192x192, 512x512)
 └── docker/                 # Infrastructure Docker
 ```
 
 ### Stack technologique
-- **Frontend** : HTML5, CSS3, JavaScript ES6+ pur
+- **Frontend** : HTML5, CSS3, JavaScript ES6+ pur (modulaire)
+- **Design** : Mobile-first, Bottom Navigation, Glassmorphism
 - **Audio** : Web Audio API (sons générés, pas de fichiers)
-- **PWA** : Service Workers, Manifeste
+- **PWA** : Service Workers, Manifeste, Installation native
 - **Stockage** : localStorage (tout sauvé localement)
 - **Infra** : Docker + Nginx Alpine
 - **Développement** : Modifications instantanées (pas de cache)
@@ -157,6 +178,11 @@ cd docker
 
 ## 🚨 Dépannage
 
+### Interface Bottom Nav
+- **Scroll bloqué** : Normal, tout doit être visible sans scroll
+- **Boutons petits** : Optimisé pour les pouces, 44px minimum
+- **Stats pas à jour** : F5 ou redémarrer l'app
+
 ### PWA ne s'installe pas
 ```bash
 # 1. Vérifiez HTTPS (obligatoire)
@@ -165,9 +191,15 @@ cd docker
 ```
 
 ### Sons ne fonctionnent pas
-- **Vérifiez** que les sons sont activés (🔔)
-- **Testez** différents types de sons
+- **Vérifiez** que les sons sont activés (🔔 en bottom nav)
+- **Testez** différents types de sons via le sélecteur
 - **Interaction requise** : Cliquez dans l'app avant le premier son
+- **Volume** : Ajustez via le slider dans bottom nav
+
+### XP/Level bugs
+- **XP négatifs** : Fixed! Reset All remet vraiment à zéro
+- **Progression bloquée** : XP croît maintenant indéfiniment
+- **Reset incomplet** : Nouveau système sans rechargement
 
 ### Modifications non visibles
 ```bash
@@ -177,6 +209,16 @@ cd docker
 ```
 
 ## 🎯 Changelog
+
+### v2.0.0 - Bottom Nav Design 📱
+- ✅ **Interface Bottom Nav** - Contrôles fixes en bas optimisés mobile
+- ✅ **Design compact** - Pas de scroll, tout visible sur mobile
+- ✅ **Stats mini intégrées** - 3 métriques essentielles
+- ✅ **Touch feedback** - Vibrations et animations tactiles
+- ✅ **Responsive 320px+** - Support écrans ultra-petits
+- ✅ **Progression XP corrigée** - Croissance continue sans limite
+- ✅ **Reset sans rechargement** - Mise à jour instantanée
+- ✅ **Architecture modulaire** - CSS/JS séparés proprement
 
 ### v1.5.0 - Système Sonore Complet 🔔
 - ✅ **Alarmes personnalisables** - 4 types de sons
@@ -192,7 +234,7 @@ cd docker
 - ✅ **Skip 1 minute** - Contrôle précis du timer
 
 ### v1.3.0 - PWA Standalone 📱
-- ✅ **App native** - Installation mobile/desktop
+- ✅ **App native** - Installation mobile/desktop  
 - ✅ **Mode standalone** - Sans barre d'adresse
 - ✅ **Développement instantané** - Git pull + F5
 
@@ -203,8 +245,30 @@ cd docker
 - 🚀 **Déploiement** : `cd docker && ./deploy.sh full`
 - 🌐 **URL locale** : http://localhost:3046  
 - 📱 **PWA** : Ajouter à l'écran d'accueil (HTTPS requis)
-- 🐛 **Debug** : Cliquez sur 🐛 dans l'app
+- 🐛 **Debug** : Cliquez sur 🐛 dans l'app (top-right)
+- 🏆 **Achievements** : Cliquez sur 🏆 (top-left)
 - 📋 **Logs** : `./deploy.sh logs`
 
+## 📱 Optimisations Mobile
+
+### Interface Bottom Nav
+- **Timer hero** - Cercle de progression centré, taille adaptative
+- **Stats mini** - 3 colonnes compactes (Quests, Focus Time, Streak)
+- **XP bar** - Barre de progression avec indicateur visuel
+- **Bottom nav fixe** - Contrôles sons + boutons toujours accessibles
+
+### Touch Experience
+- **44px minimum** - Tous les éléments tactiles respectent les standards
+- **Vibration feedback** - Retour haptique sur actions importantes
+- **Swipe prevention** - Pas d'interfé avec la navigation bottom nav
+- **Viewport adaptatif** - Gestion correcte des height mobile
+
+### Performance Mobile
+- **No scroll design** - Interface complète visible sans défilement
+- **Debounced resize** - Gestion optimisée des changements d'orientation
+- **Lazy components** - Éléments non-critiques chargés à la demande
+- **PWA optimized** - Installation et mode standalone parfaits
+
 **🎮 Transformez votre productivité en aventure épique !**  
+**📱 Nouvelle expérience mobile Bottom Nav optimisée !**  
 **⚔️ Que votre concentration soit légendaire ! 🔔✨**
