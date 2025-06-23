@@ -45,10 +45,26 @@ class RPGSystem {
     }
 
     getXPForLevel(level) {
-        return level * 100 + (level - 1) * 50; // Progressive XP requirement
+        // Progression selon la documentation README:
+        // Niveau 1: 100 XP, Niveau 2: 250 XP, Niveau 3: 450 XP
+        // Pattern: 100 -> +150 -> +200 -> +250 -> +300...
+        if (level === 1) return 100;
+        if (level === 2) return 250;
+        if (level === 3) return 450;
+        
+        // Pour les niveaux supérieurs, progression croissante
+        let total = 450; // XP pour niveau 3
+        for (let i = 4; i <= level; i++) {
+            // Increment: 250 pour niveau 4, 300 pour niveau 5, etc.
+            let increment = 200 + 50 * (i - 3);
+            total += increment;
+        }
+        return total;
     }
 
     levelUp() {
+        const currentLevel = this.level;
+        
         this.level++;
         showNotification(`🎊 Level Up! You are now level ${this.level}!`);
         this.addAchievement('Level Up!', `Reached level ${this.level}`, '⭐');
@@ -61,7 +77,7 @@ class RPGSystem {
         // Play level up sound effect (if available)
         this.playLevelUpEffect();
         
-        // Check for another level up (in case of multiple level ups)
+        // Check for another level up (in case of multiple level ups from debug)
         const xpForCurrentLevel = this.getXPForLevel(this.level);
         if (this.xp >= xpForCurrentLevel) {
             setTimeout(() => this.levelUp(), 100); // Slight delay for visual effect
@@ -341,12 +357,6 @@ class RPGSystem {
         Object.entries(data).forEach(([key, value]) => {
             saveToStorage(key, value);
         });
-    }
-
-    // ===== DEBUG FUNCTIONS =====
-    
-    addDebugXP(amount = 100) {
-        this.gainXP(amount);
     }
 
     forceStreak() {
