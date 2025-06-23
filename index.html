@@ -467,7 +467,7 @@
         </div>
 
         <div class="timer-hero">
-            <div class="level-badge" id="levelBadge">Level 7 • Productivity Warrior</div>
+            <div class="level-badge" id="levelBadge">Level 1 • Productivity Warrior</div>
             
             <div class="progress-circle">
                 <svg class="progress-ring" width="180" height="180">
@@ -483,15 +483,15 @@
 
         <div class="stats-mini">
             <div class="mini-stat">
-                <div class="value" id="completedSessions">42</div>
+                <div class="value" id="completedSessions">0</div>
                 <div class="label">Quests</div>
             </div>
             <div class="mini-stat">
-                <div class="value" id="totalTime">17h 30m</div>
+                <div class="value" id="totalTime">0h 0m</div>
                 <div class="label">Focus Time</div>
             </div>
             <div class="mini-stat">
-                <div class="value" id="streak">12</div>
+                <div class="value" id="streak">0</div>
                 <div class="label">Streak</div>
             </div>
         </div>
@@ -499,7 +499,7 @@
         <div class="xp-section">
             <div class="xp-header">
                 <div class="character-name" id="characterName">Productivity Warrior</div>
-                <div class="xp-info" id="xpText">340 / 450 XP</div>
+                <div class="xp-info" id="xpText">0 / 100 XP</div>
             </div>
             <div class="xp-bar-container">
                 <div class="xp-bar" id="xpBar"></div>
@@ -562,12 +562,12 @@
                 this.sessionCount = 0;
                 this.timer = null;
                 
-                // RPG Stats
-                this.level = parseInt(localStorage.getItem('level') || '7');
-                this.xp = parseInt(localStorage.getItem('xp') || '340');
-                this.completedSessions = parseInt(localStorage.getItem('completedSessions') || '42');
-                this.totalMinutes = parseInt(localStorage.getItem('totalMinutes') || '1050');
-                this.currentStreak = parseInt(localStorage.getItem('currentStreak') || '12');
+                // RPG Stats - Valeurs par défaut INITIALES
+                this.level = parseInt(localStorage.getItem('level') || '1');
+                this.xp = parseInt(localStorage.getItem('xp') || '0');
+                this.completedSessions = parseInt(localStorage.getItem('completedSessions') || '0');
+                this.totalMinutes = parseInt(localStorage.getItem('totalMinutes') || '0');
+                this.currentStreak = parseInt(localStorage.getItem('currentStreak') || '0');
                 this.achievements = JSON.parse(localStorage.getItem('achievements') || '[]');
                 
                 // Sound settings
@@ -1049,8 +1049,37 @@
 
             debugReset() {
                 if (confirm('⚠️ This will reset ALL progress! Are you sure?')) {
+                    // Clear localStorage completely
                     localStorage.clear();
-                    location.reload();
+                    
+                    // Reset object properties to initial values
+                    this.level = 1;
+                    this.xp = 0;
+                    this.completedSessions = 0;
+                    this.totalMinutes = 0;
+                    this.currentStreak = 0;
+                    this.achievements = [];
+                    this.soundEnabled = true;
+                    this.soundType = 'chime';
+                    this.volume = 0.7;
+                    
+                    // Reset timer state
+                    this.isRunning = false;
+                    this.isBreak = false;
+                    this.currentTime = this.focusTime;
+                    this.sessionCount = 0;
+                    clearInterval(this.timer);
+                    
+                    // Update all displays immediately
+                    this.updateAll();
+                    
+                    // Reset button states
+                    this.elements.startBtn.textContent = 'Start Quest';
+                    this.elements.startBtn.className = 'btn btn-primary';
+                    this.elements.statusIndicator.textContent = 'Ready for your next quest';
+                    this.elements.sessionType.textContent = '🎯 Focus Quest';
+                    
+                    this.showNotification('🔄 All progress reset! Ready for a fresh start!');
                 }
             }
         }
