@@ -768,8 +768,22 @@
             }
 
             getXPForLevel(level) {
-                const levels = { 1: 100, 2: 250, 3: 450, 4: 700, 5: 1000, 6: 1350, 7: 1750, 8: 2200, 9: 2700, 10: 3250 };
-                return levels[level] || (3250 + (level - 10) * 600);
+                // Progression selon README: 100 → 250 → 450 → 700 → 1000...
+                // Pattern: +100, +150, +200, +250, +300, +350...
+                if (level === 1) return 100;
+                if (level === 2) return 250;
+                if (level === 3) return 450;
+                if (level === 4) return 700;
+                if (level === 5) return 1000;
+                
+                // Pour les niveaux supérieurs : progression croissante
+                let total = 1000; // XP pour niveau 5
+                for (let i = 6; i <= level; i++) {
+                    // Increment croissant: 350 pour niveau 6, 400 pour niveau 7, etc.
+                    let increment = 250 + 50 * (i - 4);
+                    total += increment;
+                }
+                return total;
             }
 
             levelUp() {
