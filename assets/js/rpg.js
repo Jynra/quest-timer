@@ -34,9 +34,9 @@ class RPGSystem {
         this.xp += amount;
         this.showFloatingXP(amount);
         
-        // Check for level up
-        const xpForNextLevel = this.getXPForLevel(this.level + 1);
-        if (this.xp >= xpForNextLevel) {
+        // Check for level up - CORRECTION ICI
+        const xpForCurrentLevel = this.getXPForLevel(this.level);
+        if (this.xp >= xpForCurrentLevel) {
             this.levelUp();
         }
         
@@ -60,6 +60,12 @@ class RPGSystem {
         
         // Play level up sound effect (if available)
         this.playLevelUpEffect();
+        
+        // Check for another level up (in case of multiple level ups)
+        const xpForCurrentLevel = this.getXPForLevel(this.level);
+        if (this.xp >= xpForCurrentLevel) {
+            setTimeout(() => this.levelUp(), 100); // Slight delay for visual effect
+        }
         
         this.saveProgress();
         this.updateDisplay();
