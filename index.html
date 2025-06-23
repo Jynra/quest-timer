@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quest Timer - RPG Pomodoro</title>
+    <title>Quest Timer - Bottom Nav</title>
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="./manifest.json">
@@ -15,173 +15,1460 @@
     
     <!-- Apple Touch Icons -->
     <link rel="apple-touch-icon" href="./assets/icons/icon-192.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/icon-192.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="./assets/icons/icon-152.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="./assets/icons/icon-144.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="./assets/icons/icon-128.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="./assets/icons/icon-128.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="./assets/icons/icon-96.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="./assets/icons/icon-72.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="./assets/icons/icon-72.png">
-    <link rel="apple-touch-icon" sizes="57x57" href="./assets/icons/icon-72.png">
-    
-    <!-- Microsoft Tiles -->
-    <meta name="msapplication-TileImage" content="./assets/icons/icon-144.png">
-    <meta name="msapplication-TileColor" content="#6366f1">
-    
-    <!-- PWA Meta Tags -->
-    <meta name="application-name" content="Quest Timer">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Quest Timer">
-    <meta name="description" content="Transform your Pomodoro sessions into epic RPG adventures">
-    <meta name="format-detection" content="telephone=no">
-    <meta name="mobile-web-app-capable" content="yes">
     
-    <!-- CSS Files -->
-    <link rel="stylesheet" href="./assets/css/main.css">
-    <link rel="stylesheet" href="./assets/css/components.css">
-    <link rel="stylesheet" href="./assets/css/animations.css">
+    <style>
+        /* ===== RESET & BASE STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #e5e7eb;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-bottom: 100px; /* Space for bottom nav */
+        }
+
+        /* ===== MAIN CONTAINER ===== */
+        .container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding: 1rem 1rem 100px;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        /* ===== HEADER SECTION ===== */
+        .header {
+            text-align: center;
+            padding: 1rem 0 2rem;
+            position: relative;
+        }
+
+        .app-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #fbbf24, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-indicator {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            color: #34d399;
+        }
+
+        /* ===== DEBUG TOGGLE (Top Right) ===== */
+        .debug-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 1001;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .debug-toggle:hover {
+            background: #8b5cf6;
+            transform: scale(1.1);
+        }
+
+        /* ===== TIMER HERO SECTION ===== */
+        .timer-hero {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem 1rem;
+            min-height: 60vh;
+        }
+
+        .level-indicator {
+            margin-bottom: 2rem;
+        }
+
+        .level-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fbbf24;
+        }
+
+        /* ===== PROGRESS CIRCLE ===== */
+        .progress-circle {
+            width: 220px;
+            height: 220px;
+            position: relative;
+            margin: 1rem auto 2rem;
+        }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+
+        .progress-ring-bg {
+            stroke: rgba(255, 255, 255, 0.1);
+            stroke-width: 8;
+            fill: none;
+        }
+
+        .progress-ring-circle {
+            stroke: #34d399;
+            stroke-width: 8;
+            fill: none;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.3s ease;
+        }
+
+        .timer-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .timer-display {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #fbbf24;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+            font-family: 'SF Mono', 'Consolas', monospace;
+            text-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+        }
+
+        .session-type {
+            font-size: 1.1rem;
+            color: #34d399;
+            font-weight: 500;
+        }
+
+        /* ===== MINI STATS ===== */
+        .stats-mini {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mini-stat {
+            text-align: center;
+        }
+
+        .mini-stat .value {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #fbbf24;
+            margin-bottom: 0.3rem;
+        }
+
+        .mini-stat .label {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== XP PROGRESS BAR ===== */
+        .xp-section {
+            margin: 1rem 0;
+            padding: 0 1rem;
+        }
+
+        .xp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .character-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #e5e7eb;
+        }
+
+        .xp-info {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .xp-bar-container {
+            height: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .xp-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #34d399);
+            width: 75%;
+            border-radius: 6px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .xp-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 4px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 0 6px 6px 0;
+        }
+
+        /* ===== BOTTOM NAVIGATION ===== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            z-index: 1000;
+        }
+
+        .bottom-controls {
+            display: flex;
+            gap: 1rem;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            min-height: 52px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+        }
+
+        .btn:active::before {
+            width: 100%;
+            height: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #6366f1, #8b5cf6);
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e5e7eb;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* ===== SOUND CONTROLS (Integrated in bottom nav) ===== */
+        .sound-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        }
+
+        .sound-toggle {
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 8px;
+            color: #e5e7eb;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sound-select {
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: #e5e7eb;
+            font-size: 0.8rem;
+        }
+
+        .volume-slider {
+            width: 60px;
+            accent-color: #6366f1;
+        }
+
+        /* ===== ACHIEVEMENTS MODAL ===== */
+        .achievements-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 50%;
+            color: #fbbf24;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .achievements-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .achievements-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .achievements-modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 350px;
+            width: 100%;
+            max-height: 70vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #fbbf24;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #e5e7eb;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .achievement-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .achievement-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            text-align: center;
+        }
+
+        .achievement-text {
+            flex: 1;
+        }
+
+        .achievement-title {
+            font-weight: 600;
+            color: #fbbf24;
+            margin-bottom: 0.2rem;
+        }
+
+        .achievement-desc {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        /* ===== NOTIFICATION ===== */
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: linear-gradient(45deg, #10b981, #34d399);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            transform: translateX(400px);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1500;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        /* ===== FLOATING XP ANIMATION ===== */
+        .floating-xp {
+            position: fixed;
+            font-weight: bold;
+            color: #10b981;
+            font-size: 1.5rem;
+            pointer-events: none;
+            z-index: 1600;
+            animation: floatUp 2.5s forwards;
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.8);
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(0.8);
+            }
+            30% {
+                transform: translateY(-30px) scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) scale(0.6);
+            }
+        }
+
+        /* ===== TIMER RUNNING EFFECTS ===== */
+        .timer-running .timer-display {
+            animation: timerGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes timerGlow {
+            from {
+                text-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+            }
+            to {
+                text-shadow: 0 0 30px rgba(251, 191, 36, 0.6);
+            }
+        }
+
+        .timer-running .progress-ring-circle {
+            stroke: #f59e0b;
+            filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.5));
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 375px) {
+            .timer-display {
+                font-size: 3rem;
+            }
+            
+            .progress-circle {
+                width: 180px;
+                height: 180px;
+            }
+            
+            .stats-mini {
+                gap: 2rem;
+                padding: 1rem;
+            }
+            
+            .mini-stat .value {
+                font-size: 1.2rem;
+            }
+            
+            .bottom-controls {
+                gap: 0.8rem;
+            }
+            
+            .btn {
+                padding: 0.8rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 320px) {
+            .app-title {
+                font-size: 1.5rem;
+            }
+            
+            .timer-display {
+                font-size: 2.5rem;
+            }
+            
+            .progress-circle {
+                width: 160px;
+                height: 160px;
+            }
+            
+            .stats-mini {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+
+        /* ===== PERFORMANCE OPTIMIZATIONS ===== */
+        .progress-ring-circle {
+            will-change: stroke-dashoffset;
+        }
+
+        .timer-display {
+            will-change: transform;
+        }
+
+        /* ===== ACCESSIBILITY ===== */
+        .btn:focus,
+        .debug-toggle:focus,
+        .achievements-btn:focus {
+            outline: 2px solid #6366f1;
+            outline-offset: 2px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* ===== LEVEL UP CELEBRATION ===== */
+        .level-up-celebration {
+            animation: levelUpBounce 1.5s ease-in-out;
+        }
+
+        @keyframes levelUpBounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-20px);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* ===== PULSE EFFECT ===== */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                opacity: 1; 
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 0.8; 
+                transform: scale(1.05);
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- Debug Toggle -->
+    <button class="debug-toggle" id="debugToggle">🐛</button>
+
+    <!-- Achievements Button -->
+    <button class="achievements-btn" id="achievementsBtn">🏆</button>
+
+    <!-- Main Container -->
     <div class="container">
-        <!-- Debug Panel -->
-        <button class="debug-toggle" id="debugToggle">🐛</button>
-        <div class="debug-panel" id="debugPanel">
-            <div class="debug-title">🛠️ Debug Mode</div>
-            <div class="debug-controls">
-                <button class="debug-btn" id="fastForward">⏩ Skip 5 minutes</button>
-                <button class="debug-btn" id="skip1Min">⏱️ Skip 1 minute</button>
-                <button class="debug-btn" id="completeSession">✅ Complete Session</button>
-                <button class="debug-btn" id="addXP">⭐ Add 100 XP</button>
-                <button class="debug-btn" id="levelUp">🚀 Force Level Up</button>
-                <button class="debug-btn" id="addStreak">🔥 Add to Streak</button>
-                <button class="debug-btn" id="unlockAchievement">🏆 Random Achievement</button>
-                <button class="debug-btn" id="toggleSound">🔔 Toggle Sound</button>
-                <button class="debug-btn" id="testSound">🎵 Test Sound</button>
-                <button class="debug-btn danger" id="resetProgress">💀 Reset All Progress</button>
+        <!-- Header -->
+        <div class="header">
+            <h1 class="app-title">⚔️ Quest Timer</h1>
+            <div class="status-indicator" id="statusIndicator">Ready for your next quest</div>
+        </div>
+
+        <!-- Timer Hero Section -->
+        <div class="timer-hero" id="timerHero">
+            <!-- Level Indicator -->
+            <div class="level-indicator">
+                <div class="level-badge" id="levelBadge">Level 7 • Productivity Warrior</div>
+            </div>
+            
+            <!-- Progress Circle -->
+            <div class="progress-circle">
+                <svg class="progress-ring" width="220" height="220">
+                    <circle class="progress-ring-bg" cx="110" cy="110" r="100"></circle>
+                    <circle class="progress-ring-circle" cx="110" cy="110" r="100" id="progressCircle"></circle>
+                </svg>
+                <div class="timer-content">
+                    <div class="timer-display" id="timerDisplay">25:00</div>
+                    <div class="session-type" id="sessionType">🎯 Focus Quest</div>
+                </div>
             </div>
         </div>
 
-        <div class="header">
-            <h1 class="title">⚔️ Quest Timer</h1>
+        <!-- Mini Stats -->
+        <div class="stats-mini">
+            <div class="mini-stat">
+                <div class="value" id="completedSessions">42</div>
+                <div class="label">Quests</div>
+            </div>
+            <div class="mini-stat">
+                <div class="value" id="totalTime">17h 30m</div>
+                <div class="label">Focus Time</div>
+            </div>
+            <div class="mini-stat">
+                <div class="value" id="streak">12</div>
+                <div class="label">Streak</div>
+            </div>
         </div>
 
-        <div class="character-card">
-            <div class="character-info">
+        <!-- XP Progress -->
+        <div class="xp-section">
+            <div class="xp-header">
                 <div class="character-name" id="characterName">Productivity Warrior</div>
-                <div class="level-badge">Level <span id="level">1</span></div>
+                <div class="xp-info" id="xpText">340 / 450 XP</div>
             </div>
             <div class="xp-bar-container">
                 <div class="xp-bar" id="xpBar"></div>
             </div>
-            <div class="xp-text" id="xpText">0 / 100 XP</div>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-value" id="completedSessions">0</div>
-                    <div class="stat-label">Quests Complete</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="totalTime">0h</div>
-                    <div class="stat-label">Time Focused</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="streak">0</div>
-                    <div class="stat-label">Current Streak</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="bestStreak">0</div>
-                    <div class="stat-label">Best Streak</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="timer-section">
-            <svg class="progress-ring" width="200" height="200">
-                <circle class="progress-ring-bg" cx="100" cy="100" r="80"></circle>
-                <circle class="progress-ring-circle" cx="100" cy="100" r="80" id="progressCircle"></circle>
-            </svg>
-            <div class="timer-display" id="timerDisplay">25:00</div>
-            <div class="session-type" id="sessionType">🎯 Focus Quest</div>
-            <div class="controls">
-                <button class="btn btn-primary" id="startBtn">Start Quest</button>
-                <button class="btn btn-secondary" id="resetBtn">Reset</button>
-            </div>
-            
-            <!-- NOUVEAU: Contrôles sonores -->
-            <div class="sound-controls" style="margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;">
-                <button class="btn btn-secondary" id="soundToggle" style="padding: 8px 12px; font-size: 0.9rem;">
-                    🔔 Sound
-                </button>
-                <select id="soundType" style="padding: 8px; border-radius: 6px; background: rgba(255, 255, 255, 0.1); color: #e5e7eb; border: 1px solid rgba(255, 255, 255, 0.2);">
-                    <option value="chime">🎵 Chime</option>
-                    <option value="bell">🔔 Bell</option>
-                    <option value="success">✨ Success</option>
-                    <option value="beep">📢 Beep</option>
-                </select>
-                <input type="range" id="volumeSlider" min="0" max="100" value="70" 
-                       style="width: 80px; accent-color: #6366f1;" 
-                       title="Volume">
-            </div>
-        </div>
-
-        <div class="achievements">
-            <h3 style="margin-bottom: 15px; text-align: center; color: #fbbf24;">🏆 Recent Achievements</h3>
-            <div id="achievementsList"></div>
         </div>
     </div>
 
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <!-- Sound Controls -->
+        <div class="sound-controls">
+            <button class="sound-toggle" id="soundToggle">🔔 Sound</button>
+            <select class="sound-select" id="soundType">
+                <option value="chime">🎵 Chime</option>
+                <option value="bell">🔔 Bell</option>
+                <option value="success">✨ Success</option>
+                <option value="beep">📢 Beep</option>
+            </select>
+            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="70">
+        </div>
+        
+        <!-- Main Controls -->
+        <div class="bottom-controls">
+            <button class="btn btn-primary" id="startBtn">Start Quest</button>
+            <button class="btn btn-secondary" id="resetBtn">Reset</button>
+        </div>
+    </div>
+
+    <!-- Achievements Modal -->
+    <div class="achievements-modal" id="achievementsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">🏆 Achievements</h3>
+                <button class="close-btn" id="closeAchievements">×</button>
+            </div>
+            <div id="achievementsList">
+                <div class="achievement-item">
+                    <div class="achievement-icon">🎯</div>
+                    <div class="achievement-text">
+                        <div class="achievement-title">First Quest</div>
+                        <div class="achievement-desc">Complete your first Pomodoro</div>
+                    </div>
+                </div>
+                <div class="achievement-item">
+                    <div class="achievement-icon">🔥</div>
+                    <div class="achievement-text">
+                        <div class="achievement-title">Streak Warrior</div>
+                        <div class="achievement-desc">Maintain a 5-day streak</div>
+                    </div>
+                </div>
+                <div class="achievement-item">
+                    <div class="achievement-icon">⏰</div>
+                    <div class="achievement-text">
+                        <div class="achievement-title">Time Master</div>
+                        <div class="achievement-desc">Focus for 10 hours total</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
     <div class="notification" id="notification"></div>
 
-    <!-- JavaScript Files -->
-    <script src="./assets/js/utils.js"></script>
-    <script src="./assets/js/sound.js"></script>
-    <script src="./assets/js/timer.js"></script>
-    <script src="./assets/js/rpg.js"></script>
-    <script src="./assets/js/debug.js"></script>
-    <script src="./assets/js/app.js"></script>
-    
-    <!-- NOUVEAU: Script pour contrôles sonores -->
     <script>
-        // Initialize sound controls when DOM is ready
-        document.addEventListener('DOMContentLoaded', () => {
-            // Wait for app initialization
-            setTimeout(() => {
-                if (window.soundSystem) {
-                    initializeSoundControls();
+        // ===== TIMER LOGIC =====
+        class QuestTimer {
+            constructor() {
+                this.focusTime = 25 * 60;
+                this.breakTime = 5 * 60;
+                this.longBreakTime = 15 * 60;
+                this.currentTime = this.focusTime;
+                this.isRunning = false;
+                this.isBreak = false;
+                this.sessionCount = 0;
+                this.timer = null;
+                
+                // RPG Stats
+                this.level = parseInt(localStorage.getItem('level') || '7');
+                this.xp = parseInt(localStorage.getItem('xp') || '340');
+                this.completedSessions = parseInt(localStorage.getItem('completedSessions') || '42');
+                this.totalMinutes = parseInt(localStorage.getItem('totalMinutes') || '1050');
+                this.currentStreak = parseInt(localStorage.getItem('currentStreak') || '12');
+                
+                // Sound settings
+                this.soundEnabled = JSON.parse(localStorage.getItem('soundEnabled') || 'true');
+                this.soundType = localStorage.getItem('soundType') || 'chime';
+                this.volume = parseFloat(localStorage.getItem('soundVolume') || '0.7');
+                
+                this.initializeElements();
+                this.setupEventListeners();
+                this.setupProgressRing();
+                this.updateDisplay();
+                this.updateStats();
+                this.initializeSoundControls();
+            }
+
+            initializeElements() {
+                this.timerDisplay = document.getElementById('timerDisplay');
+                this.sessionType = document.getElementById('sessionType');
+                this.startBtn = document.getElementById('startBtn');
+                this.resetBtn = document.getElementById('resetBtn');
+                this.progressCircle = document.getElementById('progressCircle');
+                this.statusIndicator = document.getElementById('statusIndicator');
+                this.timerHero = document.getElementById('timerHero');
+                
+                // Stats elements
+                this.levelBadge = document.getElementById('levelBadge');
+                this.completedSessionsEl = document.getElementById('completedSessions');
+                this.totalTimeEl = document.getElementById('totalTime');
+                this.streakEl = document.getElementById('streak');
+                this.characterName = document.getElementById('characterName');
+                this.xpText = document.getElementById('xpText');
+                this.xpBar = document.getElementById('xpBar');
+                
+                // Sound controls
+                this.soundToggle = document.getElementById('soundToggle');
+                this.soundTypeSelect = document.getElementById('soundType');
+                this.volumeSlider = document.getElementById('volumeSlider');
+            }
+
+            setupEventListeners() {
+                this.startBtn.addEventListener('click', () => this.toggleTimer());
+                this.resetBtn.addEventListener('click', () => this.resetTimer());
+                
+                // Achievements modal
+                document.getElementById('achievementsBtn').addEventListener('click', () => {
+                    document.getElementById('achievementsModal').classList.add('show');
+                });
+                
+                document.getElementById('closeAchievements').addEventListener('click', () => {
+                    document.getElementById('achievementsModal').classList.remove('show');
+                });
+                
+                // Close modal on outside click
+                document.getElementById('achievementsModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'achievementsModal') {
+                        document.getElementById('achievementsModal').classList.remove('show');
+                    }
+                });
+                
+                // Debug toggle
+                document.getElementById('debugToggle').addEventListener('click', () => {
+                    this.toggleDebugMode();
+                });
+                
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+                    
+                    switch(e.code) {
+                        case 'Space':
+                            e.preventDefault();
+                            this.toggleTimer();
+                            break;
+                        case 'KeyR':
+                            e.preventDefault();
+                            this.resetTimer();
+                            break;
+                        case 'KeyA':
+                            document.getElementById('achievementsModal').classList.toggle('show');
+                            break;
+                        case 'Escape':
+                            document.getElementById('achievementsModal').classList.remove('show');
+                            break;
+                    }
+                });
+            }
+
+            setupProgressRing() {
+                const radius = 100;
+                const circumference = 2 * Math.PI * radius;
+                this.progressCircle.style.strokeDasharray = circumference;
+                this.progressCircle.style.strokeDashoffset = circumference;
+            }
+
+            updateProgressRing() {
+                const totalTime = this.isBreak ? this.getBreakTime() : this.focusTime;
+                const progress = (totalTime - this.currentTime) / totalTime;
+                const radius = 100;
+                const circumference = 2 * Math.PI * radius;
+                const offset = circumference - (progress * circumference);
+                this.progressCircle.style.strokeDashoffset = offset;
+            }
+
+            toggleTimer() {
+                if (this.isRunning) {
+                    this.pauseTimer();
+                } else {
+                    this.startTimer();
                 }
-            }, 100);
-        });
-        
-        function initializeSoundControls() {
-            const soundToggle = document.getElementById('soundToggle');
-            const soundType = document.getElementById('soundType');
-            const volumeSlider = document.getElementById('volumeSlider');
-            
-            // Update UI based on current settings
-            const settings = window.soundSystem.getSettings();
-            soundToggle.textContent = settings.enabled ? '🔔 Sound' : '🔇 Muted';
-            soundType.value = settings.soundType;
-            volumeSlider.value = settings.volume * 100;
-            
-            // Sound toggle (PAS DE SON lors du clic)
-            soundToggle.addEventListener('click', () => {
-                window.soundSystem.toggle();
-                const newSettings = window.soundSystem.getSettings();
-                soundToggle.textContent = newSettings.enabled ? '🔔 Sound' : '🔇 Muted';
-            });
-            
-            // Sound type selection (SON DE TEST lors du changement)
-            soundType.addEventListener('change', (e) => {
-                window.soundSystem.setSoundType(e.target.value);
-            });
-            
-            // Volume control (PAS DE SON lors du changement de volume)
-            volumeSlider.addEventListener('input', (e) => {
-                const volume = e.target.value / 100;
-                window.soundSystem.setVolume(volume);
-            });
+            }
+
+            startTimer() {
+                this.isRunning = true;
+                this.startBtn.textContent = 'Pause Quest';
+                this.startBtn.classList.remove('btn-primary');
+                this.startBtn.classList.add('btn-secondary');
+                this.statusIndicator.textContent = 'Quest in progress...';
+                this.timerHero.classList.add('timer-running');
+                
+                this.timer = setInterval(() => {
+                    this.currentTime--;
+                    this.updateDisplay();
+                    this.updateProgressRing();
+                    
+                    if (this.currentTime <= 0) {
+                        this.completeSession();
+                    }
+                }, 1000);
+            }
+
+            pauseTimer() {
+                this.isRunning = false;
+                this.startBtn.textContent = 'Resume Quest';
+                this.startBtn.classList.remove('btn-secondary');
+                this.startBtn.classList.add('btn-primary');
+                this.statusIndicator.textContent = 'Quest paused';
+                this.timerHero.classList.remove('timer-running');
+                
+                clearInterval(this.timer);
+            }
+
+            resetTimer() {
+                this.isRunning = false;
+                this.currentTime = this.isBreak ? this.getBreakTime() : this.focusTime;
+                this.startBtn.textContent = 'Start Quest';
+                this.startBtn.classList.remove('btn-secondary');
+                this.startBtn.classList.add('btn-primary');
+                this.statusIndicator.textContent = 'Ready for your next quest';
+                this.timerHero.classList.remove('timer-running');
+                
+                clearInterval(this.timer);
+                this.updateDisplay();
+                this.updateProgressRing();
+            }
+
+            completeSession() {
+                clearInterval(this.timer);
+                this.isRunning = false;
+                this.timerHero.classList.remove('timer-running');
+                
+                if (!this.isBreak) {
+                    // Completed focus session
+                    this.sessionCount++;
+                    this.completedSessions++;
+                    this.totalMinutes += 25;
+                    
+                    // Award XP
+                    const xpGained = 55 + (this.level * 5);
+                    this.gainXP(xpGained);
+                    
+                    // Play sound
+                    this.playSound('focus');
+                    
+                    // Switch to break
+                    this.isBreak = true;
+                    this.currentTime = this.getBreakTime();
+                    this.sessionType.textContent = this.sessionCount % 4 === 0 ? 
+                        '🌟 Long Rest' : '☕ Short Rest';
+                    this.statusIndicator.textContent = 'Break time! You earned it.';
+                    
+                    this.showNotification(`🎉 Quest Complete! +${xpGained} XP`);
+                    this.showBrowserNotification('Quest Complete!', `You gained ${xpGained} XP!`);
+                    
+                } else {
+                    // Completed break
+                    this.playSound('break');
+                    
+                    this.isBreak = false;
+                    this.currentTime = this.focusTime;
+                    this.sessionType.textContent = '🎯 Focus Quest';
+                    this.statusIndicator.textContent = 'Ready for the next quest';
+                    
+                    this.showNotification('Break complete! Ready for your next quest? 🎯');
+                }
+                
+                this.startBtn.textContent = 'Start Quest';
+                this.startBtn.classList.remove('btn-secondary');
+                this.startBtn.classList.add('btn-primary');
+                
+                this.updateDisplay();
+                this.updateProgressRing();
+                this.updateStats();
+                this.saveProgress();
+            }
+
+            getBreakTime() {
+                return this.sessionCount % 4 === 0 ? this.longBreakTime : this.breakTime;
+            }
+
+            updateDisplay() {
+                const minutes = Math.floor(this.currentTime / 60);
+                const seconds = this.currentTime % 60;
+                this.timerDisplay.textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+
+            // ===== RPG SYSTEM =====
+            gainXP(amount) {
+                this.xp += amount;
+                this.showFloatingXP(amount);
+                
+                // Check for level up
+                const xpForCurrentLevel = this.getXPForLevel(this.level);
+                if (this.xp >= xpForCurrentLevel) {
+                    this.levelUp();
+                }
+                
+                this.updateStats();
+                this.saveProgress();
+            }
+
+            getXPForLevel(level) {
+                const levels = {
+                    1: 100, 2: 250, 3: 450, 4: 700, 5: 1000,
+                    6: 1350, 7: 1750, 8: 2200, 9: 2700, 10: 3250
+                };
+                return levels[level] || (3250 + (level - 10) * 600);
+            }
+
+            levelUp() {
+                this.level++;
+                this.showNotification(`🎊 Level Up! You are now level ${this.level}!`);
+                this.showBrowserNotification('Level Up!', `You reached level ${this.level}!`);
+                
+                // Visual effects
+                this.levelBadge.classList.add('level-up-celebration');
+                this.levelBadge.classList.add('pulse');
+                
+                setTimeout(() => {
+                    this.levelBadge.classList.remove('level-up-celebration');
+                    this.levelBadge.classList.remove('pulse');
+                }, 2000);
+                
+                this.playSound('levelup');
+                this.updateStats();
+                this.saveProgress();
+            }
+
+            showFloatingXP(amount) {
+                const floating = document.createElement('div');
+                floating.className = 'floating-xp';
+                floating.textContent = `+${amount} XP`;
+                
+                // Position near the center
+                const rect = this.timerHero.getBoundingClientRect();
+                floating.style.left = (rect.left + rect.width / 2 - 50) + 'px';
+                floating.style.top = (rect.top + rect.height / 2) + 'px';
+                
+                document.body.appendChild(floating);
+                
+                setTimeout(() => {
+                    if (document.body.contains(floating)) {
+                        document.body.removeChild(floating);
+                    }
+                }, 2500);
+            }
+
+            updateStats() {
+                // Update level badge
+                this.levelBadge.textContent = `Level ${this.level} • Productivity Warrior`;
+                
+                // Update stats
+                this.animateNumber(this.completedSessionsEl, this.completedSessions);
+                this.totalTimeEl.textContent = this.formatTotalTime(this.totalMinutes);
+                this.animateNumber(this.streakEl, this.currentStreak);
+                
+                // Update XP bar
+                const currentLevelXP = this.level === 1 ? 0 : this.getXPForLevel(this.level - 1);
+                const nextLevelXP = this.getXPForLevel(this.level);
+                const progressXP = this.xp - currentLevelXP;
+                const requiredXP = nextLevelXP - currentLevelXP;
+                
+                const xpProgress = (progressXP / requiredXP) * 100;
+                this.xpBar.style.width = `${Math.min(xpProgress, 100)}%`;
+                this.xpText.textContent = `${progressXP} / ${requiredXP} XP`;
+            }
+
+            animateNumber(element, targetValue) {
+                const currentValue = parseInt(element.textContent) || 0;
+                const duration = 500;
+                const startTime = performance.now();
+                
+                const animate = (currentTime) => {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    
+                    const current = Math.floor(currentValue + (targetValue - currentValue) * progress);
+                    element.textContent = current;
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    }
+                };
+                
+                requestAnimationFrame(animate);
+            }
+
+            formatTotalTime(totalMinutes) {
+                const hours = Math.floor(totalMinutes / 60);
+                const minutes = totalMinutes % 60;
+                return `${hours}h ${minutes}m`;
+            }
+
+            // ===== SOUND SYSTEM =====
+            initializeSoundControls() {
+                this.soundToggle.textContent = this.soundEnabled ? '🔔 Sound' : '🔇 Muted';
+                this.soundTypeSelect.value = this.soundType;
+                this.volumeSlider.value = this.volume * 100;
+                
+                this.soundToggle.addEventListener('click', () => {
+                    this.soundEnabled = !this.soundEnabled;
+                    this.soundToggle.textContent = this.soundEnabled ? '🔔 Sound' : '🔇 Muted';
+                    this.saveProgress();
+                });
+                
+                this.soundTypeSelect.addEventListener('change', (e) => {
+                    this.soundType = e.target.value;
+                    this.saveProgress();
+                    if (this.soundEnabled) {
+                        this.playSound('test');
+                    }
+                });
+                
+                this.volumeSlider.addEventListener('input', (e) => {
+                    this.volume = e.target.value / 100;
+                    this.saveProgress();
+                });
+            }
+
+            playSound(type) {
+                if (!this.soundEnabled) return;
+                
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    let frequency = 800;
+                    let duration = 300;
+                    
+                    switch(type) {
+                        case 'focus':
+                            // Play completion sound based on type
+                            if (this.soundType === 'chime') {
+                                this.playChime(audioContext);
+                                return;
+                            } else if (this.soundType === 'bell') {
+                                this.playBell(audioContext);
+                                return;
+                            } else if (this.soundType === 'success') {
+                                this.playSuccess(audioContext);
+                                return;
+                            }
+                            frequency = 800;
+                            duration = 500;
+                            break;
+                        case 'break':
+                            frequency = 600;
+                            duration = 300;
+                            break;
+                        case 'levelup':
+                            this.playLevelUpSound(audioContext);
+                            return;
+                        case 'test':
+                            frequency = 800;
+                            duration = 200;
+                            break;
+                    }
+                    
+                    oscillator.frequency.value = frequency;
+                    oscillator.type = 'sine';
+                    
+                    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                    gainNode.gain.linearRampToValueAtTime(this.volume, audioContext.currentTime + 0.01);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration / 1000);
+                    
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + duration / 1000);
+                } catch (error) {
+                    console.warn('Audio playback failed:', error);
+                }
+            }
+
+            playChime(audioContext) {
+                const notes = [523.25, 659.25, 783.99]; // C, E, G
+                notes.forEach((freq, index) => {
+                    setTimeout(() => {
+                        const oscillator = audioContext.createOscillator();
+                        const gainNode = audioContext.createGain();
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        
+                        oscillator.frequency.value = freq;
+                        oscillator.type = 'sine';
+                        
+                        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                        gainNode.gain.linearRampToValueAtTime(this.volume, audioContext.currentTime + 0.01);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+                        
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.4);
+                    }, index * 150);
+                });
+            }
+
+            playBell(audioContext) {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(1000, audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(600, audioContext.currentTime + 0.6);
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(this.volume, audioContext.currentTime + 0.01);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.6);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.6);
+            }
+
+            playSuccess(audioContext) {
+                const melody = [261.63, 329.63, 392.00, 523.25]; // C, E, G, C
+                melody.forEach((freq, index) => {
+                    setTimeout(() => {
+                        const oscillator = audioContext.createOscillator();
+                        const gainNode = audioContext.createGain();
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        
+                        oscillator.frequency.value = freq;
+                        oscillator.type = 'triangle';
+                        
+                        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                        gainNode.gain.linearRampToValueAtTime(this.volume, audioContext.currentTime + 0.01);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                        
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.2);
+                    }, index * 100);
+                });
+            }
+
+            playLevelUpSound(audioContext) {
+                const fanfare = [392, 523, 659, 784, 1047]; // G, C, E, G, C
+                fanfare.forEach((freq, index) => {
+                    setTimeout(() => {
+                        const oscillator = audioContext.createOscillator();
+                        const gainNode = audioContext.createGain();
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        
+                        oscillator.frequency.value = freq;
+                        oscillator.type = 'sawtooth';
+                        
+                        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                        gainNode.gain.linearRampToValueAtTime(this.volume, audioContext.currentTime + 0.01);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                        
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.3);
+                    }, index * 150);
+                });
+            }
+
+            // ===== NOTIFICATION SYSTEM =====
+            showNotification(message, duration = 3000) {
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, duration);
+            }
+
+            showBrowserNotification(title, message) {
+                if ('Notification' in window && Notification.permission === 'granted') {
+                    new Notification(title, {
+                        body: message,
+                        icon: './assets/icons/icon-192.png',
+                        badge: './assets/icons/icon-96.png',
+                        tag: 'quest-timer'
+                    });
+                }
+            }
+
+            // ===== DEBUG MODE =====
+            toggleDebugMode() {
+                const debugPanel = document.getElementById('debugPanel');
+                if (debugPanel) {
+                    debugPanel.classList.toggle('show');
+                } else {
+                    this.createDebugPanel();
+                }
+            }
+
+            createDebugPanel() {
+                const debugPanel = document.createElement('div');
+                debugPanel.id = 'debugPanel';
+                debugPanel.innerHTML = `
+                    <div style="position: fixed; top: 70px; left: 20px; background: rgba(0,0,0,0.9); border: 2px solid #6366f1; border-radius: 10px; padding: 15px; z-index: 2000; width: 280px; color: white;">
+                        <div style="color: #fbbf24; font-weight: bold; margin-bottom: 10px; text-align: center;">🛠️ Debug Mode</div>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <button onclick="questTimer.debugSkipMinutes(5)" style="padding: 8px; background: #374151; color: white; border: none; border-radius: 6px; cursor: pointer;">⏩ Skip 5 minutes</button>
+                            <button onclick="questTimer.debugSkipMinutes(1)" style="padding: 8px; background: #374151; color: white; border: none; border-radius: 6px; cursor: pointer;">⏱️ Skip 1 minute</button>
+                            <button onclick="questTimer.debugCompleteSession()" style="padding: 8px; background: #374151; color: white; border: none; border-radius: 6px; cursor: pointer;">✅ Complete Session</button>
+                            <button onclick="questTimer.debugAddXP(100)" style="padding: 8px; background: #374151; color: white; border: none; border-radius: 6px; cursor: pointer;">⭐ Add 100 XP</button>
+                            <button onclick="questTimer.debugLevelUp()" style="padding: 8px; background: #374151; color: white; border: none; border-radius: 6px; cursor: pointer;">🚀 Force Level Up</button>
+                            <button onclick="questTimer.debugTestSounds()" style="padding: 8px; background: #374151; color: white; border: none; border-radius: 6px; cursor: pointer;">🎵 Test Sounds</button>
+                            <button onclick="questTimer.debugReset()" style="padding: 8px; background: #dc2626; color: white; border: none; border-radius: 6px; cursor: pointer;">💀 Reset All</button>
+                            <button onclick="document.getElementById('debugPanel').remove()" style="padding: 8px; background: #4b5563; color: white; border: none; border-radius: 6px; cursor: pointer;">✕ Close</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(debugPanel);
+            }
+
+            // Debug functions
+            debugSkipMinutes(minutes) {
+                this.currentTime = Math.max(0, this.currentTime - (minutes * 60));
+                this.updateDisplay();
+                this.updateProgressRing();
+                if (this.currentTime <= 0) {
+                    this.completeSession();
+                }
+                this.showNotification(`⏩ Skipped ${minutes} minute${minutes > 1 ? 's' : ''}`);
+            }
+
+            debugCompleteSession() {
+                this.currentTime = 0;
+                this.completeSession();
+                this.showNotification('✅ Debug: Session completed');
+            }
+
+            debugAddXP(amount) {
+                this.gainXP(amount);
+                this.showNotification(`⭐ Debug: Added ${amount} XP`);
+            }
+
+            debugLevelUp() {
+                const xpNeeded = this.getXPForLevel(this.level) - this.xp;
+                if (xpNeeded > 0) {
+                    this.gainXP(xpNeeded);
+                }
+                this.showNotification('🚀 Debug: Level up triggered');
+            }
+
+            debugTestSounds() {
+                this.showNotification('🎵 Testing sounds...');
+                setTimeout(() => this.playSound('focus'), 0);
+                setTimeout(() => this.playSound('break'), 1000);
+                setTimeout(() => this.playSound('levelup'), 2000);
+            }
+
+            debugReset() {
+                if (confirm('⚠️ This will reset ALL progress! Are you sure?')) {
+                    localStorage.clear();
+                    location.reload();
+                }
+            }
+
+            // ===== SAVE/LOAD =====
+            saveProgress() {
+                const data = {
+                    level: this.level,
+                    xp: this.xp,
+                    completedSessions: this.completedSessions,
+                    totalMinutes: this.totalMinutes,
+                    currentStreak: this.currentStreak,
+                    soundEnabled: this.soundEnabled,
+                    soundType: this.soundType,
+                    soundVolume: this.volume
+                };
+                
+                Object.entries(data).forEach(([key, value]) => {
+                    localStorage.setItem(key, JSON.stringify(value));
+                });
+            }
         }
+
+        // ===== INITIALIZATION =====
+        let questTimer;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Request notification permission
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+            
+            // Initialize Quest Timer
+            questTimer = new QuestTimer();
+            window.questTimer = questTimer; // Make available globally for debug
+            
+            // PWA support
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => console.log('SW registered'))
+                    .catch(error => console.log('SW registration failed'));
+            }
+            
+            // Add touch feedback
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.95)';
+                    if ('vibrate' in navigator) {
+                        navigator.vibrate(10);
+                    }
+                });
+                
+                btn.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+            
+            // Handle PWA install prompt
+            let deferredPrompt;
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                
+                // Show install hint
+                questTimer.showNotification('📱 Install Quest Timer as an app for the best experience!', 5000);
+            });
+            
+            // Console welcome message
+            console.log('⚔️ Quest Timer - Bottom Nav Design');
+            console.log('🎮 Keyboard shortcuts:');
+            console.log('  Space: Start/Pause');
+            console.log('  R: Reset');
+            console.log('  A: Achievements');
+            console.log('  Escape: Close modals');
+            console.log('🐛 Debug mode available via 🐛 button');
+        });
+
+        // Handle app visibility changes
+        document.addEventListener('visibilitychange', () => {
+            if (questTimer) {
+                questTimer.saveProgress();
+            }
+        });
+
+        // Handle page unload
+        window.addEventListener('beforeunload', () => {
+            if (questTimer) {
+                questTimer.saveProgress();
+            }
+        });
     </script>
 </body>
 </html>
