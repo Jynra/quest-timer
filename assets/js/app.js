@@ -10,6 +10,9 @@ class QuestTimerApp {
         this.initializeApp();
         this.setupEventListeners();
         this.requestNotificationPermission();
+        
+        // 🔥 HOT RELOAD: Simple initialization (no UI, integrated in debug)
+        this.initializeHotReload();
     }
 
     initializeApp() {
@@ -61,16 +64,41 @@ class QuestTimerApp {
         }, 250));
     }
 
+    // 🔥 HOT RELOAD: Simple initialization (no UI, managed by debug mode)
+    initializeHotReload() {
+        this.isDevelopment = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+        
+        if (this.isDevelopment) {
+            console.log('🔥 Hot Reload: Development mode detected (managed by debug panel)');
+            
+            // Listen for Service Worker messages only
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.addEventListener('message', (event) => {
+                    if (event.data.type === 'SW_UPDATED') {
+                        console.log(`🔥 Hot Reload: Service Worker updated to v${event.data.version}`);
+                    }
+                });
+            }
+            
+            // Make hot reload functions available globally for console use
+            window.hotReload = {
+                clearCache: () => this.debugMode.clearCacheAndReload(),
+                reload: () => this.debugMode.hardReload(),
+                getVersion: () => this.debugMode.getServiceWorkerVersion()
+            };
+            
+            console.log('🔥 Hot Reload: Functions available at window.hotReload and in debug panel');
+        }
+    }
+
     // ===== TIMER EVENT HANDLERS =====
 
     handleTimerStart() {
         console.log('🎯 Timer started');
-        // Could add additional logic here like analytics tracking
     }
 
     handleTimerPause() {
         console.log('⏸️ Timer paused');
-        // Save state in case of unexpected closure
         this.rpgSystem.saveProgress();
     }
 
@@ -113,21 +141,16 @@ class QuestTimerApp {
     // ===== APP EVENT HANDLERS =====
 
     handleAppHidden() {
-        // App is hidden (tab switched, minimized, etc.)
-        // Save current state
         this.rpgSystem.saveProgress();
         console.log('📱 App hidden - progress saved');
     }
 
     handleAppVisible() {
-        // App is visible again
-        // Check if significant time has passed
         this.checkForTimeJump();
         console.log('📱 App visible');
     }
 
     handleAppUnload() {
-        // App is being closed
         this.rpgSystem.saveProgress();
         console.log('💾 App unload - progress saved');
     }
@@ -159,7 +182,6 @@ class QuestTimerApp {
     }
 
     handleWindowResize() {
-        // Handle any responsive adjustments if needed
         console.log('📐 Window resized');
     }
 
@@ -177,17 +199,13 @@ class QuestTimerApp {
 
     playCompletionSound() {
         // Could add audio feedback here
-        // const audio = new Audio('assets/sounds/complete.mp3');
-        // audio.play().catch(() => {}); // Ignore if audio fails
     }
 
     checkForTimeJump() {
-        // Check if the timer should have expired while app was hidden
         const lastUpdate = loadFromStorage('lastUpdateTime', Date.now());
         const now = Date.now();
         const timeDiff = now - lastUpdate;
         
-        // If more than 2 minutes passed and timer was running, pause it
         if (timeDiff > 120000 && this.timer.isRunning) {
             this.timer.pauseTimer();
             showNotification('⏰ Timer paused due to inactivity');
@@ -204,6 +222,13 @@ class QuestTimerApp {
             navigator.serviceWorker.register('sw.js')
                 .then(registration => {
                     console.log('✅ Service Worker registered:', registration);
+                    
+                    // 🔥 HOT RELOAD: Listen for updates in development
+                    if (this.isDevelopment) {
+                        registration.addEventListener('updatefound', () => {
+                            console.log('🔥 Hot Reload: Service Worker update found');
+                        });
+                    }
                 })
                 .catch(error => {
                     console.log('❌ Service Worker registration failed:', error);
@@ -226,7 +251,6 @@ class QuestTimerApp {
     }
 
     showInstallPrompt() {
-        // Could show a custom install prompt here
         console.log('📱 PWA install prompt available');
     }
 
@@ -247,16 +271,12 @@ class QuestTimerApp {
     // ===== ANALYTICS & TRACKING =====
 
     trackEvent(eventName, properties = {}) {
-        // Could integrate with analytics service here
         console.log('📊 Event:', eventName, properties);
         
-        // Example: Send to analytics service
-        // analytics.track(eventName, {
-        //     ...properties,
-        //     timestamp: Date.now(),
-        //     userLevel: this.rpgSystem.level,
-        //     sessionsCompleted: this.rpgSystem.completedSessions
-        // });
+        if (this.isDevelopment) {
+            properties.hotReload = true;
+            properties.environment = 'development';
+        }
     }
 
     // ===== ERROR HANDLING =====
@@ -264,13 +284,10 @@ class QuestTimerApp {
     handleError(error, context = 'Unknown') {
         console.error(`❌ Error in ${context}:`, error);
         
-        // Show user-friendly error message
         showNotification('⚠️ Something went wrong. Progress has been saved.');
         
-        // Save current state to prevent data loss
         this.rpgSystem.saveProgress();
         
-        // Could send error to monitoring service here
         this.trackEvent('error', {
             context,
             message: error.message,
@@ -284,7 +301,8 @@ class QuestTimerApp {
         return {
             timer: this.timer.getSessionInfo(),
             rpg: this.rpgSystem.getStats(),
-            isDebugMode: this.debugMode.isEnabled
+            isDebugMode: this.debugMode.isEnabled,
+            isDevelopment: this.isDevelopment
         };
     }
 
@@ -302,7 +320,6 @@ class QuestTimerApp {
 // Global error handler
 window.addEventListener('error', (e) => {
     console.error('💥 Global error:', e.error);
-    // Try to save progress even if there's an error
     try {
         if (window.questTimer) {
             window.questTimer.rpgSystem.saveProgress();

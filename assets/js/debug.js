@@ -1,10 +1,11 @@
-// ===== DEBUG MODE MODULE =====
+// ===== DEBUG MODE MODULE WITH HOT RELOAD =====
 
 class DebugMode {
     constructor(timer, rpgSystem) {
         this.timer = timer;
         this.rpgSystem = rpgSystem;
         this.isEnabled = false;
+        this.isDevelopment = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
         
         this.initializeDebugPanel();
         this.setupEventListeners();
@@ -19,6 +20,11 @@ class DebugMode {
         if (this.isEnabled) {
             this.showPanel();
         }
+        
+        // 🔥 HOT RELOAD: Add hot reload buttons to existing debug panel
+        if (this.isDevelopment) {
+            this.addHotReloadControls();
+        }
     }
 
     setupEventListeners() {
@@ -29,6 +35,11 @@ class DebugMode {
 
         // Debug controls
         this.setupDebugControls();
+        
+        // 🔥 HOT RELOAD: Setup hot reload controls
+        if (this.isDevelopment) {
+            this.setupHotReloadControls();
+        }
         
         // Keyboard shortcuts (only when debug mode is enabled)
         document.addEventListener('keydown', (e) => {
@@ -61,8 +72,80 @@ class DebugMode {
                         e.preventDefault();
                         this.unlockAchievement();
                         break;
+                    // 🔥 HOT RELOAD: Hot reload shortcuts
+                    case 'R':
+                        if (this.isDevelopment) {
+                            e.preventDefault();
+                            this.clearCacheAndReload();
+                        }
+                        break;
+                    case 'H':
+                        if (this.isDevelopment) {
+                            e.preventDefault();
+                            this.togglePanel(); // Show debug panel with hot reload tools
+                        }
+                        break;
                 }
             }
+        });
+    }
+
+    // 🔥 HOT RELOAD: Add hot reload controls to existing debug panel
+    addHotReloadControls() {
+        const debugControls = document.querySelector('.debug-controls');
+        
+        // Add separator
+        const separator = document.createElement('div');
+        separator.style.cssText = 'border-top: 1px solid #4b5563; margin: 10px 0; padding-top: 10px;';
+        separator.innerHTML = '<div style="color: #10b981; font-size: 0.8rem; font-weight: bold; margin-bottom: 8px;">🔥 HOT RELOAD</div>';
+        debugControls.appendChild(separator);
+        
+        // Hard reload button
+        const hardReloadBtn = document.createElement('button');
+        hardReloadBtn.className = 'debug-btn';
+        hardReloadBtn.id = 'hardReload';
+        hardReloadBtn.innerHTML = '🔄 Hard Reload';
+        hardReloadBtn.style.background = '#059669';
+        debugControls.appendChild(hardReloadBtn);
+        
+        // Clear cache button
+        const clearCacheBtn = document.createElement('button');
+        clearCacheBtn.className = 'debug-btn';
+        clearCacheBtn.id = 'clearCache';
+        clearCacheBtn.innerHTML = '🧹 Clear Cache';
+        clearCacheBtn.style.background = '#0d9488';
+        debugControls.appendChild(clearCacheBtn);
+        
+        // SW version button
+        const swVersionBtn = document.createElement('button');
+        swVersionBtn.className = 'debug-btn';
+        swVersionBtn.id = 'swVersion';
+        swVersionBtn.innerHTML = '📦 SW Version';
+        swVersionBtn.style.background = '#0891b2';
+        debugControls.appendChild(swVersionBtn);
+        
+        // Hot reload status
+        const statusDiv = document.createElement('div');
+        statusDiv.style.cssText = 'font-size: 0.75rem; color: #10b981; margin-top: 5px; text-align: center;';
+        statusDiv.innerHTML = '✅ Hot Reload Active';
+        debugControls.appendChild(statusDiv);
+    }
+
+    // 🔥 HOT RELOAD: Setup hot reload event listeners
+    setupHotReloadControls() {
+        // Hard reload
+        document.getElementById('hardReload')?.addEventListener('click', () => {
+            this.hardReload();
+        });
+
+        // Clear cache
+        document.getElementById('clearCache')?.addEventListener('click', () => {
+            this.clearCacheAndReload();
+        });
+
+        // SW version
+        document.getElementById('swVersion')?.addEventListener('click', () => {
+            this.getServiceWorkerVersion();
         });
     }
 
@@ -120,7 +203,12 @@ class DebugMode {
         this.debugToggle.style.background = '#8b5cf6';
         this.debugToggle.textContent = '🛠️';
         
-        showNotification('🐛 Debug Mode Enabled');
+        // 🔥 HOT RELOAD: Show different message based on hot reload availability
+        const message = this.isDevelopment ? 
+            '🐛 Debug Mode + Hot Reload Enabled' : 
+            '🐛 Debug Mode Enabled';
+        showNotification(message);
+        
         this.logDebugInfo();
     }
 
@@ -137,6 +225,13 @@ class DebugMode {
         console.log('Timer State:', this.timer.getSessionInfo());
         console.log('RPG Stats:', this.rpgSystem.getStats());
         console.log('PWA Mode:', window.matchMedia('(display-mode: standalone)').matches ? 'Standalone' : 'Browser');
+        
+        // 🔥 HOT RELOAD: Add hot reload info
+        if (this.isDevelopment) {
+            console.log('🔥 Hot Reload: ACTIVE');
+            console.log('🔥 Environment: Development');
+        }
+        
         console.log('Storage Data:', {
             level: loadFromStorage('level'),
             xp: loadFromStorage('xp'),
@@ -150,6 +245,14 @@ class DebugMode {
         console.log('  Ctrl+Shift+L: Level Up');
         console.log('  Ctrl+Shift+S: Add Streak');
         console.log('  Ctrl+Shift+A: Random Achievement');
+        
+        // 🔥 HOT RELOAD: Add hot reload shortcuts
+        if (this.isDevelopment) {
+            console.log('🔥 Hot Reload Shortcuts:');
+            console.log('  Ctrl+Shift+R: Clear Cache + Reload');
+            console.log('  Ctrl+Shift+H: Toggle Debug Panel');
+        }
+        
         console.groupEnd();
     }
 
@@ -161,7 +264,6 @@ class DebugMode {
         console.log(`⏩ Fast forwarded ${minutes} minutes`);
     }
 
-    // CORRECTION PRINCIPALE : Complete Session pour PWA Standalone
     completeSession() {
         const wasBreak = this.timer.isBreak;
         const sessionCount = this.timer.currentSessionCount;
@@ -204,8 +306,8 @@ class DebugMode {
                     showNotification(`✅ Debug: Focus completed → ${breakType} ready`);
                     console.log(`✅ Debug: Focus session completed, switched to ${breakType}`);
                 }
-            }, 100); // Délai pour PWA standalone
-        }, 50); // Délai initial pour PWA standalone
+            }, 100);
+        }, 50);
     }
 
     addXP(amount = 100) {
@@ -233,7 +335,6 @@ class DebugMode {
         console.log('🏆 Random achievement unlocked');
     }
 
-    // CORRECTION PRINCIPALE : Reset complet de l'application
     resetProgress() {
         if (confirm('⚠️ This will reset ALL your progress AND return to initial state! Are you sure?')) {
             console.log('💀 Starting complete reset...');
@@ -242,7 +343,7 @@ class DebugMode {
             const wasReset = this.rpgSystem.resetAllProgress();
             
             if (wasReset) {
-                // 2. Reset Timer to initial state (NOUVELLE FONCTIONNALITÉ)
+                // 2. Reset Timer to initial state
                 console.log('🔄 Resetting timer to initial state...');
                 this.timer.resetToInitialState();
                 
@@ -270,6 +371,80 @@ class DebugMode {
             return false;
         }
         return false;
+    }
+
+    // ===== HOT RELOAD ACTIONS =====
+
+    // 🔥 HOT RELOAD: Hard reload
+    hardReload() {
+        showNotification('🔄 Hard reloading...');
+        console.log('🔥 Hot Reload: Hard reload initiated');
+        setTimeout(() => {
+            location.reload(true);
+        }, 500);
+    }
+
+    // 🔥 HOT RELOAD: Clear cache and reload
+    clearCacheAndReload() {
+        showNotification('🧹 Clearing cache...');
+        console.log('🔥 Hot Reload: Clearing cache and reloading');
+        
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.ready.then(registration => {
+                const messageChannel = new MessageChannel();
+                messageChannel.port1.onmessage = (event) => {
+                    if (event.data.success) {
+                        console.log('🧹 Cache cleared successfully');
+                        setTimeout(() => location.reload(), 1000);
+                    }
+                };
+                
+                registration.active.postMessage({
+                    type: 'CLEAR_CACHE'
+                }, [messageChannel.port2]);
+            });
+        } else {
+            // Fallback: clear browser cache
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    names.forEach(name => {
+                        if (name.startsWith('quest-timer')) {
+                            caches.delete(name);
+                        }
+                    });
+                }).then(() => {
+                    setTimeout(() => location.reload(), 1000);
+                });
+            }
+        }
+    }
+
+    // 🔥 HOT RELOAD: Get Service Worker version
+    getServiceWorkerVersion() {
+        console.log('🔥 Hot Reload: Getting Service Worker version...');
+        
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.ready.then(registration => {
+                const messageChannel = new MessageChannel();
+                messageChannel.port1.onmessage = (event) => {
+                    const { version, cacheName, isDevelopment } = event.data;
+                    const message = `SW v${version} (${isDevelopment ? 'Dev' : 'Prod'})`;
+                    showNotification(`📦 ${message}`);
+                    console.log('🔥 Hot Reload Info:', {
+                        version,
+                        cacheName,
+                        isDevelopment,
+                        timestamp: new Date(event.data.timestamp)
+                    });
+                };
+                
+                registration.active.postMessage({
+                    type: 'GET_VERSION'
+                }, [messageChannel.port2]);
+            });
+        } else {
+            showNotification('❌ Service Worker not available');
+        }
     }
 
     // ===== PWA STANDALONE UTILITIES =====
@@ -342,7 +517,8 @@ class DebugMode {
             bestStreak: this.rpgSystem.bestStreak,
             achievements: this.rpgSystem.achievements,
             lastActiveDate: this.rpgSystem.lastActiveDate,
-            pwaModeStandalone: this.isPWAStandalone()
+            pwaModeStandalone: this.isPWAStandalone(),
+            hotReloadEnabled: this.isDevelopment
         };
         
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -422,7 +598,8 @@ class DebugMode {
             memoryUsage: [],
             frameRates: [],
             timerAccuracy: [],
-            pwaModeStandalone: this.isPWAStandalone()
+            pwaModeStandalone: this.isPWAStandalone(),
+            hotReloadEnabled: this.isDevelopment
         };
         
         // Monitor memory usage (if available)
@@ -464,6 +641,7 @@ class DebugMode {
         console.group('📊 Performance Report');
         console.log('Monitoring Duration:', `${Math.round(duration)}ms`);
         console.log('PWA Mode:', this.performanceData.pwaModeStandalone ? 'Standalone' : 'Browser');
+        console.log('Hot Reload:', this.performanceData.hotReloadEnabled ? 'Enabled' : 'Disabled');
         console.log('Memory Samples:', this.performanceData.memoryUsage.length);
         console.log('Timer Accuracy Samples:', this.performanceData.timerAccuracy.length);
         
@@ -531,6 +709,7 @@ class DebugMode {
             timestamp: new Date().toISOString(),
             userAgent: navigator.userAgent,
             pwaModeStandalone: this.isPWAStandalone(),
+            hotReloadEnabled: this.isDevelopment,
             viewport: {
                 width: window.innerWidth,
                 height: window.innerHeight

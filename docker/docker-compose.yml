@@ -2,6 +2,7 @@ version: '3.8'
 
 # Stack name: quest-timer
 # Usage: docker-compose -p quest-timer up -d
+# HOT RELOAD: Les modifications sont instantanées sans rebuild
 
 services:
   quest-timer:
@@ -12,14 +13,27 @@ services:
     ports:
       - "3046:80"
     restart: unless-stopped
+    # ===== HOT RELOAD VOLUMES =====
+    # Montage des fichiers sources pour modifications instantanées
+    volumes:
+      # Assets (CSS, JS, Icons)
+      - ../assets:/usr/share/nginx/html/assets:ro
+      # Fichiers principaux
+      - ../index.html:/usr/share/nginx/html/index.html:ro
+      - ../manifest.json:/usr/share/nginx/html/manifest.json:ro
+      - ../sw.js:/usr/share/nginx/html/sw.js:ro
+      # Optionnel : Autres fichiers
+      - ../README.md:/usr/share/nginx/html/README.md:ro
     environment:
       - NGINX_HOST=localhost
       - NGINX_PORT=80
+      - HOT_RELOAD=true
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.quest-timer.rule=Host(`localhost`)"
       - "traefik.http.services.quest-timer.loadbalancer.server.port=80"
-      - "stack=quest-timer"  # Label pour identifier la stack
+      - "stack=quest-timer"
+      - "hot-reload=enabled"
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
       interval: 30s
