@@ -57,6 +57,8 @@
                 <button class="debug-btn" id="levelUp">🚀 Force Level Up</button>
                 <button class="debug-btn" id="addStreak">🔥 Add to Streak</button>
                 <button class="debug-btn" id="unlockAchievement">🏆 Random Achievement</button>
+                <button class="debug-btn" id="toggleSound">🔔 Toggle Sound</button>
+                <button class="debug-btn" id="testSound">🎵 Test Sound</button>
                 <button class="debug-btn danger" id="resetProgress">💀 Reset All Progress</button>
             </div>
         </div>
@@ -105,6 +107,22 @@
                 <button class="btn btn-primary" id="startBtn">Start Quest</button>
                 <button class="btn btn-secondary" id="resetBtn">Reset</button>
             </div>
+            
+            <!-- NOUVEAU: Contrôles sonores -->
+            <div class="sound-controls" style="margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                <button class="btn btn-secondary" id="soundToggle" style="padding: 8px 12px; font-size: 0.9rem;">
+                    🔔 Sound
+                </button>
+                <select id="soundType" style="padding: 8px; border-radius: 6px; background: rgba(255, 255, 255, 0.1); color: #e5e7eb; border: 1px solid rgba(255, 255, 255, 0.2);">
+                    <option value="chime">🎵 Chime</option>
+                    <option value="bell">🔔 Bell</option>
+                    <option value="success">✨ Success</option>
+                    <option value="beep">📢 Beep</option>
+                </select>
+                <input type="range" id="volumeSlider" min="0" max="100" value="70" 
+                       style="width: 80px; accent-color: #6366f1;" 
+                       title="Volume">
+            </div>
         </div>
 
         <div class="achievements">
@@ -117,9 +135,53 @@
 
     <!-- JavaScript Files -->
     <script src="./assets/js/utils.js"></script>
+    <script src="./assets/js/sound.js"></script>
     <script src="./assets/js/timer.js"></script>
     <script src="./assets/js/rpg.js"></script>
     <script src="./assets/js/debug.js"></script>
     <script src="./assets/js/app.js"></script>
+    
+    <!-- NOUVEAU: Script pour contrôles sonores -->
+    <script>
+        // Initialize sound controls when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            // Wait for app initialization
+            setTimeout(() => {
+                if (window.soundSystem) {
+                    initializeSoundControls();
+                }
+            }, 100);
+        });
+        
+        function initializeSoundControls() {
+            const soundToggle = document.getElementById('soundToggle');
+            const soundType = document.getElementById('soundType');
+            const volumeSlider = document.getElementById('volumeSlider');
+            
+            // Update UI based on current settings
+            const settings = window.soundSystem.getSettings();
+            soundToggle.textContent = settings.enabled ? '🔔 Sound' : '🔇 Muted';
+            soundType.value = settings.soundType;
+            volumeSlider.value = settings.volume * 100;
+            
+            // Sound toggle
+            soundToggle.addEventListener('click', () => {
+                window.soundSystem.toggle();
+                const newSettings = window.soundSystem.getSettings();
+                soundToggle.textContent = newSettings.enabled ? '🔔 Sound' : '🔇 Muted';
+            });
+            
+            // Sound type selection
+            soundType.addEventListener('change', (e) => {
+                window.soundSystem.setSoundType(e.target.value);
+            });
+            
+            // Volume control
+            volumeSlider.addEventListener('input', (e) => {
+                const volume = e.target.value / 100;
+                window.soundSystem.setVolume(volume);
+            });
+        }
+    </script>
 </body>
 </html>
