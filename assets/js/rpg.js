@@ -290,7 +290,7 @@ class RPGSystem {
         // Level display
         this.levelEl.textContent = this.level;
         
-        // XP bar
+        // XP bar - CORRECTION ICI
         const currentLevelXP = this.level === 1 ? 0 : this.getXPForLevel(this.level - 1);
         const nextLevelXP = this.getXPForLevel(this.level);
         const progressXP = this.xp - currentLevelXP;
