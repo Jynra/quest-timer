@@ -55,12 +55,13 @@ quest-timer/
 - **Transitions automatiques** entre Focus et Break
 
 ### 🎮 Mécaniques RPG
-- **Système de niveaux de personnage** avec exigences XP progressives
-- **Récompenses XP** pour les sessions terminées (50 + 5 par niveau)
+- **Système de niveaux de personnage** avec progression XP équilibrée
+- **Récompenses XP croissantes** pour les sessions terminées (50 + 5 × niveau)
 - **Système de succès** avec badges débloquables
 - **Suivi des séries** pour la cohérence quotidienne
 - **XP flottant animé** pour un retour immédiat
 - **Tableau de bord des statistiques** montrant le progrès total
+- **Progression intelligente** : Plus on monte en niveau, plus on gagne d'XP par session
 
 ### 📱 Fonctionnalités PWA
 - **Progressive Web App** - fonctionne hors ligne et peut être installée
@@ -76,7 +77,7 @@ quest-timer/
 - **Outils de développement** pour tester rapidement les fonctionnalités
 - **Avance rapide du timer** (5 minutes par défaut)
 - **Achèvement instantané de session** (compatible PWA standalone)
-- **Manipulation manuelle XP/niveau**
+- **Manipulation précise XP/niveau** - Ajout exact d'XP et level up intelligent
 - **Outils de test des succès**
 - **Reset complet** - Remet l'app à l'état initial
 - **Raccourcis clavier** - Ctrl+Shift+[touches]
@@ -202,11 +203,27 @@ npx serve .
 4. **Prenez votre pause méritée** (5 ou 15 minutes)
 5. **Répétez et construisez des séries** pour des récompenses maximales
 
-### Système de niveaux
-- **Niveau 1** : 100 XP requis
-- **Niveau 2** : 250 XP requis
-- **Niveau 3** : 450 XP requis
-- **Formule** : `niveau * 100 + (niveau - 1) * 50`
+### Système de niveaux et XP
+
+#### **Progression des niveaux (XP total requis) :**
+- **Niveau 1** : 100 XP total
+- **Niveau 2** : 250 XP total (+150 XP)
+- **Niveau 3** : 450 XP total (+200 XP)
+- **Niveau 4** : 700 XP total (+250 XP)
+- **Niveau 5** : 1000 XP total (+300 XP)
+
+#### **Récompenses XP par session (formule : 50 + 5 × niveau) :**
+- **Niveau 1** : 55 XP par session focus
+- **Niveau 2** : 60 XP par session focus
+- **Niveau 3** : 65 XP par session focus
+- **Niveau 10** : 100 XP par session focus
+
+#### **Sessions nécessaires par niveau :**
+- **Niveau 1 → 2** : ~2 sessions (100 XP ÷ 55 XP/session)
+- **Niveau 2 → 3** : ~3 sessions (150 XP ÷ 60 XP/session)
+- **Niveau 3 → 4** : ~4 sessions (200 XP ÷ 65 XP/session)
+
+*Cette progression équilibrée évite le grind et récompense la persévérance !*
 
 ### Exemples de succès
 - 🎯 **Première Quête** : Terminez votre premier Pomodoro
@@ -233,15 +250,16 @@ npx serve .
 - `resetToInitialState()` pour reset complet
 
 #### `rpg.js` - Système RPG
-- Gestion XP et niveaux
+- Gestion XP et niveaux avec progression équilibrée
 - Système de succès
 - Suivi des statistiques
 - Persistance des données
+- Récompenses XP croissantes par niveau
 
 #### `debug.js` - Mode debug
 - Panel de debug simplifié
 - Raccourcis clavier
-- Outils de test
+- Outils de test précis (XP exact, level up intelligent)
 - Compatible PWA standalone
 - Reset complet de l'application
 
@@ -422,10 +440,15 @@ ports:
 - **Échap** : Fermer le panel debug
 - **Ctrl+Shift+C** : Complete session (debug)
 - **Ctrl+Shift+F** : Fast forward (debug)
-- **Ctrl+Shift+X** : Add XP (debug)
-- **Ctrl+Shift+L** : Level up (debug)
+- **Ctrl+Shift+X** : Add 100 XP (debug)
+- **Ctrl+Shift+L** : Level up intelligent (debug)
 - **Ctrl+Shift+S** : Add streak (debug)
 - **Ctrl+Shift+A** : Random achievement (debug)
+
+**Fonctionnalités debug améliorées :**
+- **Add 100 XP** : Ajoute exactement 100 XP avec vérification de level up
+- **Level Up** : Calcule et ajoute l'XP exact nécessaire pour monter d'un niveau
+- **Synchronisation parfaite** avec le système de progression
 
 ## 🤝 Contribution
 
@@ -442,7 +465,6 @@ ports:
 - **Tests PWA** sur mobile et desktop
 - Documentation des nouvelles fonctionnalités
 - Tests Docker avant commit
-
 
 ## 🙏 Remerciements
 
@@ -489,6 +511,12 @@ Veuillez ouvrir une issue sur GitHub avec :
 - 🔧 **Logs Stack** : `./deploy.sh logs`
 
 ## 🎯 Changelog récent
+
+### v1.4.0 - Système XP Équilibré
+- ✅ **Progression XP corrigée** - Niveaux 1: 100, 2: 250, 3: 450 XP
+- ✅ **Récompenses croissantes** - 50 + 5×niveau XP par session
+- ✅ **Debug intelligent** - Level up et XP précis
+- ✅ **Équilibrage parfait** - ~3-4 sessions par niveau
 
 ### v1.3.0 - Développement Instantané
 - ✅ **Modifications instantanées** - Git pull + F5 = changements visibles
