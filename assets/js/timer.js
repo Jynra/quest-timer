@@ -147,6 +147,11 @@ class Timer {
             // Completed a focus session
             this.currentSessionCount++;
             
+            // NOUVEAU: Son pour fin de focus
+            if (window.soundSystem) {
+                window.soundSystem.playFocusComplete();
+            }
+            
             // Switch to break
             this.isBreak = true;
             this.currentTime = this.getBreakTime();
@@ -159,6 +164,12 @@ class Timer {
             }
         } else {
             // Completed a break
+            
+            // NOUVEAU: Son pour fin de pause
+            if (window.soundSystem) {
+                window.soundSystem.playBreakComplete();
+            }
+            
             this.isBreak = false;
             this.currentTime = this.focusTime;
             this.sessionType.textContent = '🎯 Focus Quest';
@@ -220,7 +231,7 @@ class Timer {
         this.updateDisplay();
         this.updateProgressRing();
         
-        // Always trigger complete session logic (CORRECTION)
+        // Always trigger complete session logic
         this.completeSession();
         
         // Debug feedback

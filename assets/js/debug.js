@@ -65,6 +65,10 @@ class DebugMode {
                         e.preventDefault();
                         this.unlockAchievement();
                         break;
+                    case 'T':
+                        e.preventDefault();
+                        this.testSound();
+                        break;
                 }
             }
         });
@@ -106,6 +110,16 @@ class DebugMode {
             this.unlockAchievement();
         });
 
+        // NOUVEAU: Toggle sound
+        document.getElementById('toggleSound').addEventListener('click', () => {
+            this.toggleSound();
+        });
+
+        // NOUVEAU: Test sound
+        document.getElementById('testSound').addEventListener('click', () => {
+            this.testSound();
+        });
+
         // Reset all progress
         document.getElementById('resetProgress').addEventListener('click', () => {
             this.resetProgress();
@@ -145,13 +159,21 @@ class DebugMode {
         console.group('🐛 Quest Timer Debug Info');
         console.log('Timer State:', this.timer.getSessionInfo());
         console.log('RPG Stats:', this.rpgSystem.getStats());
+        
+        // NOUVEAU: Log sound system info
+        if (window.soundSystem) {
+            console.log('Sound Settings:', window.soundSystem.getSettings());
+        }
+        
         console.log('PWA Mode:', window.matchMedia('(display-mode: standalone)').matches ? 'Standalone' : 'Browser');
         
         console.log('Storage Data:', {
             level: loadFromStorage('level'),
             xp: loadFromStorage('xp'),
             completedSessions: loadFromStorage('completedSessions'),
-            achievements: loadFromStorage('achievements')
+            achievements: loadFromStorage('achievements'),
+            soundEnabled: loadFromStorage('soundEnabled'), // NOUVEAU
+            soundType: loadFromStorage('soundType') // NOUVEAU
         });
         
         console.log('Keyboard Shortcuts:');
@@ -162,6 +184,7 @@ class DebugMode {
         console.log('  Ctrl+Shift+L: Level Up');
         console.log('  Ctrl+Shift+S: Add Streak');
         console.log('  Ctrl+Shift+A: Random Achievement');
+        console.log('  Ctrl+Shift+T: Test Sound'); // NOUVEAU
         
         console.groupEnd();
     }
@@ -286,6 +309,49 @@ class DebugMode {
         console.log('🏆 Random achievement unlocked');
     }
 
+    // NOUVEAU: Debug sound functions
+    toggleSound() {
+        if (window.soundSystem) {
+            window.soundSystem.toggle();
+            const settings = window.soundSystem.getSettings();
+            console.log(`🔔 Debug: Sound ${settings.enabled ? 'enabled' : 'disabled'}`);
+        } else {
+            showNotification('❌ Sound system not available');
+            console.warn('Sound system not initialized');
+        }
+    }
+
+    testSound() {
+        if (window.soundSystem) {
+            console.log('🎵 Debug: Testing all sounds...');
+            showNotification('🎵 Testing all sounds...');
+            
+            // Test sequence with delays
+            setTimeout(() => {
+                console.log('🎵 Testing Focus Complete sound...');
+                window.soundSystem.playFocusComplete();
+            }, 0);
+            
+            setTimeout(() => {
+                console.log('🎵 Testing Break Complete sound...');
+                window.soundSystem.playBreakComplete();
+            }, 2000);
+            
+            setTimeout(() => {
+                console.log('🎵 Testing Level Up sound...');
+                window.soundSystem.playLevelUpSound();
+            }, 4000);
+            
+            setTimeout(() => {
+                console.log('🎵 Sound test completed');
+                showNotification('✅ Sound test completed');
+            }, 6000);
+        } else {
+            showNotification('❌ Sound system not available');
+            console.warn('Sound system not initialized');
+        }
+    }
+
     resetProgress() {
         if (confirm('⚠️ This will reset ALL your progress AND return to initial state! Are you sure?')) {
             console.log('💀 Starting complete reset...');
@@ -301,16 +367,25 @@ class DebugMode {
                 // 3. Clear any debug state
                 console.log('🧹 Clearing debug state...');
                 
-                // 4. Confirmation and logging
+                // 4. NOUVEAU: Reset sound settings (optional)
+                if (window.soundSystem) {
+                    console.log('🔔 Resetting sound settings...');
+                    saveToStorage('soundEnabled', true);
+                    saveToStorage('soundType', 'chime');
+                    saveToStorage('soundVolume', 0.7);
+                }
+                
+                // 5. Confirmation and logging
                 console.log('💀 Complete reset finished:');
                 console.log('  - RPG progress: RESET');
                 console.log('  - Timer state: RESET to Focus Quest');
                 console.log('  - Session count: RESET to 0');
+                console.log('  - Sound settings: RESET to defaults');
                 console.log('  - All displays: UPDATED');
                 
                 showNotification('🔄 Complete reset successful! Ready for a new quest!');
                 
-                // 5. Visual feedback
+                // 6. Visual feedback
                 const characterCard = document.querySelector('.character-card');
                 const timerSection = document.querySelector('.timer-section');
                 
@@ -355,6 +430,32 @@ class DebugMode {
         showNotification('🧪 Stress test completed');
     }
 
+    // NOUVEAU: Test all sound types
+    testAllSoundTypes() {
+        if (!window.soundSystem) {
+            showNotification('❌ Sound system not available');
+            return;
+        }
+        
+        console.log('🎵 Testing all sound types...');
+        const types = ['chime', 'bell', 'success', 'beep'];
+        
+        types.forEach((type, index) => {
+            setTimeout(() => {
+                const originalType = window.soundSystem.soundType;
+                window.soundSystem.setSoundType(type);
+                console.log(`🎵 Testing ${type} sound...`);
+                showNotification(`🎵 Testing ${type.toUpperCase()} sound`);
+                window.soundSystem.playFocusComplete();
+                
+                // Restore original type after test
+                setTimeout(() => {
+                    window.soundSystem.setSoundType(originalType);
+                }, 1000);
+            }, index * 2000);
+        });
+    }
+
     exportProgress() {
         const data = {
             exportDate: new Date().toISOString(),
@@ -366,7 +467,9 @@ class DebugMode {
             bestStreak: this.rpgSystem.bestStreak,
             achievements: this.rpgSystem.achievements,
             lastActiveDate: this.rpgSystem.lastActiveDate,
-            pwaModeStandalone: this.isPWAStandalone()
+            pwaModeStandalone: this.isPWAStandalone(),
+            // NOUVEAU: Export sound settings
+            soundSettings: window.soundSystem ? window.soundSystem.getSettings() : null
         };
         
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -430,6 +533,23 @@ class DebugMode {
         this.rpgSystem.achievements = data.achievements || [];
         this.rpgSystem.lastActiveDate = data.lastActiveDate || '';
         
+        // NOUVEAU: Import sound settings if available
+        if (data.soundSettings && window.soundSystem) {
+            if (typeof data.soundSettings.enabled === 'boolean') {
+                saveToStorage('soundEnabled', data.soundSettings.enabled);
+            }
+            if (data.soundSettings.soundType) {
+                saveToStorage('soundType', data.soundSettings.soundType);
+            }
+            if (typeof data.soundSettings.volume === 'number') {
+                saveToStorage('soundVolume', data.soundSettings.volume);
+            }
+            // Reinitialize sound system with new settings
+            window.soundSystem.isEnabled = loadFromStorage('soundEnabled', true);
+            window.soundSystem.soundType = loadFromStorage('soundType', 'chime');
+            window.soundSystem.volume = loadFromStorage('soundVolume', 0.7);
+        }
+        
         // Save and update display
         this.rpgSystem.saveProgress();
         this.rpgSystem.updateDisplay();
@@ -446,6 +566,8 @@ class DebugMode {
             },
             timer: this.timer.getSessionInfo(),
             rpg: this.rpgSystem.getStats(),
+            // NOUVEAU: Include sound system info
+            sound: window.soundSystem ? window.soundSystem.getSettings() : null,
             storage: {
                 available: 'localStorage' in window,
                 usage: this.calculateStorageUsage()

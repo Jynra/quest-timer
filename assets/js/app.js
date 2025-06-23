@@ -5,7 +5,11 @@ class QuestTimerApp {
         // Initialize core systems
         this.timer = new Timer();
         this.rpgSystem = new RPGSystem();
+        this.soundSystem = new SoundSystem(); // NOUVEAU: Système sonore
         this.debugMode = new DebugMode(this.timer, this.rpgSystem);
+        
+        // Make sound system globally available
+        window.soundSystem = this.soundSystem; // NOUVEAU: Accès global
         
         this.initializeApp();
         this.setupEventListeners();
@@ -36,6 +40,9 @@ class QuestTimerApp {
         
         // Initialize PWA features if available
         this.initializePWA();
+        
+        // NOUVEAU: Request audio permission on first user interaction
+        this.setupAudioPermissionRequest();
     }
 
     setupEventListeners() {
@@ -62,6 +69,21 @@ class QuestTimerApp {
         window.addEventListener('resize', debounce(() => {
             this.handleWindowResize();
         }, 250));
+    }
+
+    // NOUVEAU: Setup audio permission request
+    setupAudioPermissionRequest() {
+        // Request audio permission on first user interaction
+        const requestPermission = () => {
+            this.soundSystem.requestAudioPermission();
+            document.removeEventListener('click', requestPermission);
+            document.removeEventListener('keydown', requestPermission);
+            document.removeEventListener('touchstart', requestPermission);
+        };
+
+        document.addEventListener('click', requestPermission, { once: true });
+        document.addEventListener('keydown', requestPermission, { once: true });
+        document.addEventListener('touchstart', requestPermission, { once: true });
     }
 
     // 🔥 HOT RELOAD: Simple initialization (no UI, managed by debug mode)
@@ -95,6 +117,11 @@ class QuestTimerApp {
 
     handleTimerStart() {
         console.log('🎯 Timer started');
+        
+        // NOUVEAU: Son de début de session (optionnel)
+        if (this.soundSystem.getSettings().enabled) {
+            this.soundSystem.playSessionStart();
+        }
     }
 
     handleTimerPause() {
@@ -130,8 +157,7 @@ class QuestTimerApp {
         // Save progress after any session completion
         this.rpgSystem.saveProgress();
         
-        // Play completion sound if available
-        this.playCompletionSound();
+        // Play completion sound if available (sounds are handled in timer.js)
         
         // Update last active date
         this.rpgSystem.lastActiveDate = new Date().toDateString();
@@ -173,6 +199,14 @@ class QuestTimerApp {
             this.timer.resetTimer();
         }
         
+        // NOUVEAU: S key: Toggle sound
+        if (e.key === 's' || e.key === 'S') {
+            if (e.ctrlKey || e.metaKey) {
+                e.preventDefault();
+                this.soundSystem.toggle();
+            }
+        }
+        
         // Escape key: Close debug panel if open
         if (e.key === 'Escape') {
             if (this.debugMode.isEnabled) {
@@ -195,10 +229,6 @@ class QuestTimerApp {
 
     requestNotificationPermission() {
         requestNotificationPermission();
-    }
-
-    playCompletionSound() {
-        // Could add audio feedback here
     }
 
     checkForTimeJump() {
@@ -301,6 +331,7 @@ class QuestTimerApp {
         return {
             timer: this.timer.getSessionInfo(),
             rpg: this.rpgSystem.getStats(),
+            sound: this.soundSystem.getSettings(), // NOUVEAU
             isDebugMode: this.debugMode.isEnabled,
             isDevelopment: this.isDevelopment
         };
@@ -341,6 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 app: window.questTimer,
                 timer: window.questTimer.timer,
                 rpg: window.questTimer.rpgSystem,
+                sound: window.questTimer.soundSystem, // NOUVEAU
                 debug: window.questTimer.debugMode,
                 exportData: () => window.questTimer.exportAppData(),
                 importData: () => window.questTimer.importAppData(),
@@ -366,5 +398,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Export for potential module use
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { QuestTimerApp, Timer, RPGSystem, DebugMode };
+    module.exports = { QuestTimerApp, Timer, RPGSystem, SoundSystem, DebugMode };
 }
