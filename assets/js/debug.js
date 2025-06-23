@@ -211,17 +211,52 @@ class DebugMode {
     }
 
     addXP(amount = 100) {
-        this.rpgSystem.addDebugXP(amount);
-        showNotification(`⭐ Added ${amount} XP`);
-        console.log(`⭐ Added ${amount} XP`);
+        // CORRECTION: Utiliser directement gainXP au lieu de addDebugXP
+        const beforeXP = this.rpgSystem.xp;
+        const beforeLevel = this.rpgSystem.level;
+        
+        this.rpgSystem.xp += amount; // Ajouter XP directement
+        this.rpgSystem.showFloatingXP(amount); // Afficher l'animation XP
+        
+        // Vérifier level up manuellement
+        const xpForCurrentLevel = this.rpgSystem.getXPForLevel(this.rpgSystem.level);
+        if (this.rpgSystem.xp >= xpForCurrentLevel) {
+            this.rpgSystem.levelUp();
+        }
+        
+        // Sauvegarder et mettre à jour
+        this.rpgSystem.saveProgress();
+        this.rpgSystem.updateDisplay();
+        
+        showNotification(`⭐ Added ${amount} XP (${beforeXP} → ${this.rpgSystem.xp})`);
+        console.log(`⭐ Added ${amount} XP - Level ${beforeLevel} → ${this.rpgSystem.level}`);
     }
 
     levelUp() {
         const currentLevel = this.rpgSystem.level;
-        const xpNeeded = this.rpgSystem.getXPForLevel(currentLevel + 1) - this.rpgSystem.xp;
-        this.rpgSystem.gainXP(xpNeeded);
-        showNotification(`🚀 Forced level up to ${this.rpgSystem.level}`);
-        console.log(`🚀 Forced level up from ${currentLevel} to ${this.rpgSystem.level}`);
+        const currentXP = this.rpgSystem.xp;
+        
+        // CORRECTION: Calculer l'XP exact nécessaire pour le niveau actuel
+        const xpForCurrentLevel = this.rpgSystem.getXPForLevel(currentLevel);
+        const xpNeeded = xpForCurrentLevel - currentXP;
+        
+        console.log(`🚀 Debug Level Up:`);
+        console.log(`   Current Level: ${currentLevel}`);
+        console.log(`   Current XP: ${currentXP}`);
+        console.log(`   XP needed for level ${currentLevel}: ${xpForCurrentLevel}`);
+        console.log(`   XP to add: ${xpNeeded}`);
+        
+        if (xpNeeded > 0) {
+            // Ajouter exactement l'XP nécessaire
+            this.rpgSystem.xp += xpNeeded;
+            this.rpgSystem.showFloatingXP(xpNeeded);
+        }
+        
+        // Forcer le level up
+        this.rpgSystem.levelUp();
+        
+        showNotification(`🚀 Debug Level Up: ${currentLevel} → ${this.rpgSystem.level}`);
+        console.log(`🚀 Debug Level Up completed: ${currentLevel} → ${this.rpgSystem.level}`);
     }
 
     addStreak() {
