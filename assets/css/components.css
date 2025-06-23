@@ -1,44 +1,215 @@
-/* ===== BOTTOM NAV COMPONENTS ===== */
-
-/* ===== HEADER SECTION ===== */
-.header {
-    text-align: center;
-    padding: 1rem 0;
-    margin-bottom: 1rem;
+/* ===== CHARACTER CARD ===== */
+.character-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.title {
-    font-size: 1.8rem;
-    font-weight: 800;
-    background: linear-gradient(45deg, #fbbf24, #f59e0b);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 0.5rem;
+.character-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
 }
 
-.status-indicator {
+.character-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #fbbf24;
+}
+
+.level-badge {
+    background: linear-gradient(45deg, #6366f1, #8b5cf6);
+    padding: 4px 12px;
+    border-radius: 20px;
     font-size: 0.9rem;
-    opacity: 0.8;
+    font-weight: 600;
+}
+
+/* ===== XP BAR ===== */
+.xp-bar-container {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    height: 20px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.xp-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #34d399);
+    transition: width 0.5s ease;
+    border-radius: 10px;
+}
+
+.xp-text {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #9ca3af;
+}
+
+/* ===== STATS GRID ===== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fbbf24;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: #9ca3af;
+}
+
+/* ===== TIMER SECTION ===== */
+.timer-section {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+}
+
+.timer-display {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #fbbf24;
+    margin-bottom: 20px;
+    font-family: 'Courier New', monospace;
+}
+
+.session-type {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
     color: #34d399;
 }
 
-/* ===== DEBUG COMPONENTS ===== */
-.debug-toggle {
+/* ===== PROGRESS RING ===== */
+.progress-ring {
+    transform: rotate(-90deg);
+    margin-bottom: 20px;
+}
+
+.progress-ring-circle {
+    transition: stroke-dashoffset 0.1s linear;
+    stroke: #34d399;
+    stroke-width: 4;
+    fill: none;
+}
+
+.progress-ring-bg {
+    stroke: rgba(255, 255, 255, 0.1);
+    stroke-width: 4;
+    fill: none;
+}
+
+/* ===== NOTIFICATIONS ===== */
+.notification {
     position: fixed;
     top: 20px;
     right: 20px;
-    width: 40px;
-    height: 40px;
+    background: linear-gradient(45deg, #10b981, #34d399);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+    z-index: 100;
+    font-weight: 600;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+/* ===== ACHIEVEMENTS ===== */
+.achievements {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.achievement-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
+.achievement-icon {
+    font-size: 1.5rem;
+}
+
+.achievement-text {
+    flex-grow: 1;
+}
+
+.achievement-title {
+    font-weight: 600;
+    color: #fbbf24;
+}
+
+.achievement-desc {
+    font-size: 0.8rem;
+    color: #9ca3af;
+}
+
+/* ===== DEBUG PANEL ===== */
+.debug-panel {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid #6366f1;
+    border-radius: 10px;
+    padding: 15px;
+    z-index: 1000;
+    transform: translateX(-300px);
+    transition: transform 0.3s ease;
+    width: 280px;
+}
+
+.debug-panel.show {
+    transform: translateX(0);
+}
+
+.debug-toggle {
+    position: fixed;
+    top: 20px;
+    left: 20px;
     background: #6366f1;
     color: white;
     border: none;
     border-radius: 50%;
+    width: 40px;
+    height: 40px;
     font-size: 1.2rem;
     cursor: pointer;
     z-index: 1001;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }
 
 .debug-toggle:hover {
@@ -46,55 +217,32 @@
     transform: scale(1.1);
 }
 
-.debug-panel {
-    position: fixed;
-    top: 70px;
-    right: 20px;
-    background: rgba(0, 0, 0, 0.95);
-    backdrop-filter: blur(15px);
-    border: 2px solid #6366f1;
-    border-radius: 12px;
-    padding: 1rem;
-    z-index: 2000;
-    width: 250px;
-    color: white;
-    transform: translateX(300px);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-}
-
-.debug-panel.show {
-    transform: translateX(0);
-}
-
 .debug-title {
     color: #fbbf24;
     font-weight: bold;
-    margin-bottom: 1rem;
+    margin-bottom: 10px;
     text-align: center;
-    font-size: 1rem;
 }
 
 .debug-controls {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 8px;
 }
 
 .debug-btn {
-    padding: 0.6rem;
-    background: #374151;
-    color: white;
+    padding: 8px 12px;
     border: none;
     border-radius: 6px;
+    background: #374151;
+    color: white;
     cursor: pointer;
-    font-size: 0.85rem;
-    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    transition: background 0.2s;
 }
 
 .debug-btn:hover {
     background: #4b5563;
-    transform: translateY(-1px);
 }
 
 .debug-btn.danger {
@@ -103,553 +251,4 @@
 
 .debug-btn.danger:hover {
     background: #ef4444;
-}
-
-/* ===== ACHIEVEMENTS BUTTON ===== */
-.achievements-btn {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    width: 40px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: none;
-    border-radius: 50%;
-    color: #fbbf24;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    z-index: 1001;
-}
-
-.achievements-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: scale(1.1);
-}
-
-/* ===== TIMER HERO SECTION ===== */
-.timer-hero {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 1rem;
-    margin-bottom: 1rem;
-}
-
-.level-indicator {
-    margin-bottom: 1rem;
-}
-
-.level-badge {
-    display: inline-block;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    padding: 0.8rem 1.5rem;
-    border-radius: 25px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #fbbf24;
-}
-
-/* ===== PROGRESS CIRCLE ===== */
-.progress-circle {
-    width: 180px;
-    height: 180px;
-    position: relative;
-    margin: 0.5rem auto 1rem;
-}
-
-.progress-ring {
-    transform: rotate(-90deg);
-    width: 100%;
-    height: 100%;
-}
-
-.progress-ring-bg {
-    stroke: rgba(255, 255, 255, 0.1);
-    stroke-width: 8;
-    fill: none;
-}
-
-.progress-ring-circle {
-    stroke: #34d399;
-    stroke-width: 8;
-    fill: none;
-    stroke-linecap: round;
-    transition: stroke-dashoffset 0.3s ease;
-}
-
-.timer-content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-}
-
-.timer-display {
-    font-size: 2.8rem;
-    font-weight: 900;
-    color: #fbbf24;
-    margin-bottom: 0.3rem;
-    line-height: 1;
-    font-family: 'SF Mono', 'Consolas', monospace;
-    text-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
-}
-
-.session-type {
-    font-size: 1.1rem;
-    color: #34d399;
-    font-weight: 500;
-}
-
-/* ===== MINI STATS ===== */
-.stats-mini {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    margin: 1rem 0;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.mini-stat {
-    text-align: center;
-}
-
-.mini-stat .value {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #fbbf24;
-    margin-bottom: 0.2rem;
-}
-
-.mini-stat .label {
-    font-size: 0.75rem;
-    opacity: 0.7;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-/* ===== XP PROGRESS SECTION ===== */
-.xp-section {
-    margin: 0.5rem 0 1rem;
-    padding: 0 1rem;
-}
-
-.xp-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-}
-
-.character-name {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #e5e7eb;
-}
-
-.xp-info {
-    font-size: 0.8rem;
-    opacity: 0.7;
-}
-
-.xp-bar-container {
-    height: 12px;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 6px;
-    overflow: hidden;
-    position: relative;
-}
-
-.xp-bar {
-    height: 100%;
-    background: linear-gradient(90deg, #10b981, #34d399);
-    width: 0%;
-    border-radius: 6px;
-    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-}
-
-.xp-bar::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 4px;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 0 6px 6px 0;
-}
-
-/* ===== BOTTOM NAVIGATION ===== */
-.bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.95);
-    backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 1rem;
-    z-index: 1000;
-}
-
-.sound-controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.8rem;
-    margin-bottom: 1rem;
-    padding: 0.8rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-}
-
-.sound-toggle {
-    padding: 0.5rem 1rem;
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
-    border-radius: 8px;
-    color: #e5e7eb;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.sound-toggle:hover {
-    background: rgba(255, 255, 255, 0.15);
-}
-
-.sound-select {
-    padding: 0.5rem;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 6px;
-    color: #e5e7eb;
-    font-size: 0.8rem;
-    cursor: pointer;
-}
-
-.sound-select option {
-    background: #1a1a2e;
-    color: #e5e7eb;
-}
-
-.volume-slider {
-    width: 60px;
-    accent-color: #6366f1;
-    cursor: pointer;
-}
-
-.bottom-controls {
-    display: flex;
-    gap: 1rem;
-    max-width: 400px;
-    margin: 0 auto;
-}
-
-.btn {
-    flex: 1;
-    padding: 1rem;
-    border: none;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 1rem;
-    min-height: 52px;
-    position: relative;
-    overflow: hidden;
-}
-
-.btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: all 0.3s ease;
-}
-
-.btn:active::before {
-    width: 100%;
-    height: 100%;
-}
-
-.btn-primary {
-    background: linear-gradient(45deg, #6366f1, #8b5cf6);
-    color: white;
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
-}
-
-.btn-secondary {
-    background: rgba(255, 255, 255, 0.1);
-    color: #e5e7eb;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.15);
-}
-
-/* ===== ACHIEVEMENTS MODAL ===== */
-.achievements-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.9);
-    backdrop-filter: blur(10px);
-    z-index: 2000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-}
-
-.achievements-modal.show {
-    display: flex;
-}
-
-.modal-content {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(20px);
-    border-radius: 20px;
-    padding: 2rem;
-    max-width: 350px;
-    width: 100%;
-    max-height: 70vh;
-    overflow-y: auto;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-}
-
-.modal-title {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: #fbbf24;
-}
-
-.close-btn {
-    background: none;
-    border: none;
-    color: #e5e7eb;
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 50%;
-    transition: all 0.3s ease;
-}
-
-.close-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.achievement-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    margin-bottom: 0.8rem;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
-}
-
-.achievement-item:hover {
-    background: rgba(0, 0, 0, 0.3);
-    transform: translateX(5px);
-}
-
-.achievement-icon {
-    font-size: 1.5rem;
-    width: 40px;
-    text-align: center;
-    transition: transform 0.3s ease;
-}
-
-.achievement-item:hover .achievement-icon {
-    transform: rotate(360deg);
-}
-
-.achievement-text {
-    flex: 1;
-}
-
-.achievement-title {
-    font-weight: 600;
-    color: #fbbf24;
-    margin-bottom: 0.2rem;
-}
-
-.achievement-desc {
-    font-size: 0.8rem;
-    opacity: 0.7;
-}
-
-/* ===== NOTIFICATION ===== */
-.notification {
-    position: fixed;
-    top: 80px;
-    right: 20px;
-    background: linear-gradient(45deg, #10b981, #34d399);
-    color: white;
-    padding: 1rem 1.5rem;
-    border-radius: 12px;
-    transform: translateX(400px);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 1500;
-    font-weight: 600;
-    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
-}
-
-.notification.show {
-    transform: translateX(0);
-}
-
-/* ===== TIMER RUNNING EFFECTS ===== */
-.timer-running .timer-display {
-    animation: timerGlow 2s ease-in-out infinite alternate;
-}
-
-@keyframes timerGlow {
-    from {
-        text-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
-    }
-    to {
-        text-shadow: 0 0 30px rgba(251, 191, 36, 0.6);
-    }
-}
-
-.timer-running .progress-ring-circle {
-    stroke: #f59e0b;
-    filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.5));
-}
-
-/* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 375px) {
-    .timer-display {
-        font-size: 2.4rem;
-    }
-    
-    .progress-circle {
-        width: 160px;
-        height: 160px;
-    }
-    
-    .stats-mini {
-        gap: 1.5rem;
-        padding: 0.8rem;
-    }
-    
-    .mini-stat .value {
-        font-size: 1.1rem;
-    }
-    
-    .bottom-controls {
-        gap: 0.8rem;
-    }
-    
-    .btn {
-        padding: 0.8rem;
-        font-size: 0.9rem;
-    }
-    
-    .debug-panel {
-        width: 200px;
-        right: 10px;
-    }
-}
-
-@media (max-width: 320px) {
-    .title {
-        font-size: 1.5rem;
-    }
-    
-    .timer-display {
-        font-size: 2.2rem;
-    }
-    
-    .progress-circle {
-        width: 140px;
-        height: 140px;
-    }
-    
-    .stats-mini {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-    }
-    
-    .debug-panel {
-        width: 180px;
-    }
-}
-
-/* ===== HOVER EFFECTS ===== */
-.level-badge:hover {
-    transform: scale(1.05);
-}
-
-.mini-stat:hover .value {
-    color: #34d399;
-    transform: scale(1.1);
-}
-
-.xp-bar-container:hover .xp-bar::after {
-    background: rgba(255, 255, 255, 1);
-}
-
-/* ===== ACCESSIBILITY ===== */
-.btn:focus,
-.debug-toggle:focus,
-.achievements-btn:focus,
-.sound-toggle:focus,
-.sound-select:focus,
-.close-btn:focus {
-    outline: 2px solid #6366f1;
-    outline-offset: 2px;
-}
-
-/* ===== PERFORMANCE OPTIMIZATIONS ===== */
-.progress-ring-circle {
-    will-change: stroke-dashoffset;
-}
-
-.timer-display {
-    will-change: transform;
-}
-
-.xp-bar {
-    will-change: width;
-}
-
-.floating-xp {
-    will-change: transform, opacity;
 }
