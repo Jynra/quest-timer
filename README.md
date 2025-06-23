@@ -4,529 +4,207 @@
 
 Quest Timer transforme la technique Pomodoro traditionnelle en une expérience RPG engageante. Complétez des sessions de concentration pour gagner de l'XP, faire évoluer votre personnage, débloquer des succès et construire des séries de productivité - tout en maintenant une concentration maximale et une efficacité de travail.
 
-**✨ Nouveauté : PWA Standalone disponible !** L'application peut maintenant être installée comme une vraie app native sur mobile et desktop.
+**✨ PWA Standalone disponible !** L'application peut être installée comme une vraie app native sur mobile et desktop.
 
-## 📁 Structure du projet
+## ✨ Fonctionnalités principales
 
-```
-quest-timer/
-├── index.html                 # Page principale (HTML minimal)
-├── manifest.json             # Manifeste PWA (optimisé standalone)
-├── sw.js                     # Service Worker (pas de cache)
-├── README.md                 # Cette documentation
-├── assets/
-│   ├── css/
-│   │   ├── main.css          # Styles de base et layout
-│   │   ├── components.css    # Styles des composants UI
-│   │   └── animations.css    # Animations et effets visuels
-│   ├── js/
-│   │   ├── utils.js          # Fonctions utilitaires
-│   │   ├── timer.js          # Logique du timer Pomodoro + reset complet
-│   │   ├── rpg.js           # Système RPG (XP, niveaux, succès)
-│   │   ├── debug.js         # Mode debug simplifié
-│   │   └── app.js           # Application principale et initialisation
-│   └── icons/               # Icônes PWA (192x192, 512x512 requis)
-│       ├── icon-72.png
-│       ├── icon-96.png
-│       ├── icon-128.png
-│       ├── icon-144.png
-│       ├── icon-152.png
-│       ├── icon-192.png     # ⭐ Critique pour PWA
-│       ├── icon-384.png
-│       ├── icon-512.png     # ⭐ Critique pour PWA
-│       └── hourglass.png    # Favicon
-├── docker/
-│   ├── Dockerfile           # Image Docker pour déploiement
-│   ├── nginx.conf          # Configuration Nginx (pas de cache)
-│   ├── docker-compose.yml # Volumes source pour modifications instantanées
-│   └── deploy.sh          # Script de déploiement automatisé
-└── docs/
-    └── README_expand.md     # Documentation des fonctionnalités futures
-```
+### 🍅 Timer Pomodoro intelligent
+- **Sessions de 25 minutes** avec pauses de 5/15 minutes
+- **Anneau de progression visuel** et affichage temps restant
+- **Alarmes sonores personnalisables** - 4 types de sons (Chime, Bell, Success, Beep)
+- **Contrôle volume** et activation/désactivation des sons
+- **Fonctionnalité pause/reprise** et transitions automatiques
 
-## ✨ Fonctionnalités
+### 🎮 Système RPG complet
+- **Progression XP équilibrée** : Plus on monte en niveau, plus on gagne d'XP
+- **Récompenses croissantes** : 55 XP → 60 XP → 65 XP par session
+- **Système de niveaux** : 100 → 250 → 450 → 700 XP total
+- **11 succès débloquables** : Première quête, Streak warrior, Time master...
+- **Statistiques détaillées** : Sessions, temps total, streaks
+- **Effets visuels** : XP flottant, animations de level up
 
-### 🍅 Fonctionnalité Pomodoro de base
-- **Sessions de concentration de 25 minutes** avec timer personnalisable
-- **Pauses courtes de 5 minutes** et **pauses longues de 15 minutes**
-- **Anneau de progression visuel** montrant l'achèvement de la session
-- **Notifications audio/visuelles** pour les transitions de session
-- **Fonctionnalité pause/reprise** pour la flexibilité
-- **Transitions automatiques** entre Focus et Break
+### 📱 Application PWA native
+- **Installation sur mobile/desktop** - Fonctionne comme une vraie app
+- **Mode Standalone** - S'ouvre sans barre d'adresse
+- **Fonctionne hors ligne** - Tout sauvé localement
+- **Design responsive** - Optimisé tous écrans
 
-### 🎮 Mécaniques RPG
-- **Système de niveaux de personnage** avec progression XP équilibrée
-- **Récompenses XP croissantes** pour les sessions terminées (50 + 5 × niveau)
-- **Système de succès** avec badges débloquables
-- **Suivi des séries** pour la cohérence quotidienne
-- **XP flottant animé** pour un retour immédiat
-- **Tableau de bord des statistiques** montrant le progrès total
-- **Progression intelligente** : Plus on monte en niveau, plus on gagne d'XP par session
+### 🛠️ Mode Debug avancé
+- **Skip 1/5 minutes** - Test rapide du timer
+- **Complete Session** - Simulation de fin de session
+- **Add XP/Level Up** - Manipulation précise de la progression  
+- **Test des sons** - Vérification du système audio
+- **Reset complet** - Remise à zéro totale
+- **10 raccourcis clavier** - Contrôle rapide
 
-### 📱 Fonctionnalités PWA
-- **Progressive Web App** - fonctionne hors ligne et peut être installée
-- **Mode Standalone** - S'ouvre comme une vraie app (sans barre d'adresse)
-- **Installation native** - "Ajouter à l'écran d'accueil" sur mobile/desktop
-- **Design responsive** - optimisé pour mobile et desktop
-- **Stockage local** - tout le progrès sauvegardé localement
-- **Multiplateforme** - fonctionne sur tout appareil avec navigateur web
-- **Service Worker** - Pas de cache pour modifications instantanées
-- **HTTPS requis** - Sécurité maximale pour mode standalone
+## 🚀 Installation rapide
 
-### 🛠️ Mode Debug
-- **Outils de développement** pour tester rapidement les fonctionnalités
-- **Avance rapide du timer** (5 minutes par défaut)
-- **Achèvement instantané de session** (compatible PWA standalone)
-- **Manipulation précise XP/niveau** - Ajout exact d'XP et level up intelligent
-- **Outils de test des succès**
-- **Reset complet** - Remet l'app à l'état initial
-- **Raccourcis clavier** - Ctrl+Shift+[touches]
-
-### 🔥 Développement instantané
-- **Volumes Docker** - Modifications instantanées sans rebuild
-- **Pas de cache** - Network First toujours
-- **Git pull + F5** - Voir les changements immédiatement
-
-## 🚀 Installation et utilisation
-
-### Prérequis
-- Navigateur web moderne (Chrome, Firefox, Safari, Edge)
-- **HTTPS requis** pour le mode PWA standalone
-- Docker et Docker Compose (pour le déploiement containerisé)
-
-### 🐳 Déploiement Docker (Recommandé)
-
-**1. Clonez le repository :**
+### 🐳 Docker (Recommandé)
 ```bash
 git clone <repository-url>
-cd quest-timer
-```
-
-**2. Déployez avec Docker :**
-```bash
-cd docker
+cd quest-timer/docker
 chmod +x deploy.sh
 ./deploy.sh full
 ```
+➜ **App disponible sur** http://localhost:3046
 
-**3. Accédez à l'application :**
-- **URL Locale :** http://localhost:3046
-- **URL Publique :** https://votre-domaine.com (pour PWA standalone)
-- **PWA :** Installable comme application native
-
-**4. Gestion de la stack :**
-```bash
-# Voir les logs de la stack
-./deploy.sh logs
-
-# Vérifier la santé de la stack
-./deploy.sh health
-
-# Redémarrer la stack
-./deploy.sh restart
-
-# Arrêter la stack
-./deploy.sh stop
-
-# Informations de la stack
-./deploy.sh info
-
-# Nettoyage complet de la stack
-./deploy.sh cleanup
-```
-
-### 🔥 Workflow de développement
-
-**1. Modifiez vos fichiers :**
-```bash
-# Modifiez assets/css/main.css, assets/js/*.js, index.html, etc.
-# Ou faites un git pull pour récupérer les modifications
-git pull
-```
-
-**2. Voir les changements :**
-```bash
-# Actualisez le navigateur (F5)
-# Les changements sont INSTANTANÉS !
-```
-
-### 🔒 Configuration HTTPS pour PWA Standalone
-
-**Option 1 : Reverse Proxy (Recommandé)**
-```bash
-# Utilisez Nginx Proxy Manager ou Traefik
-# Exemple avec domaine : https://pomodoro.votre-domaine.com
-# Certificat SSL automatique avec Let's Encrypt
-```
-
-**Option 2 : Certificat auto-signé (Dev)**
-```bash
-# Modifiez nginx.conf pour inclure SSL
-# Générez un certificat auto-signé
-# Acceptez l'avertissement de sécurité du navigateur
-```
-
-### 💻 Installation basique (sans Docker)
-
-**1. Téléchargez les fichiers :**
+### 💻 Installation locale
 ```bash
 git clone <repository-url>
 cd quest-timer
-```
-
-**2. Générez les icônes PWA :**
-- Utilisez le générateur d'icônes fourni
-- Placez toutes les icônes dans `assets/icons/`
-- Vérifiez que icon-192.png et icon-512.png sont présents
-
-**3. Pour déploiement PWA :**
-- Hébergez les fichiers sur un serveur HTTPS
-- Les utilisateurs peuvent "Ajouter à l'écran d'accueil"
-
-### 🔧 Développement local
-```bash
-# Serveur local simple
 python -m http.server 8000
-# ou
-npx serve .
-
-# Ouvrez http://localhost:8000
-# Note: PWA standalone nécessite HTTPS
+# ou: npx serve .
 ```
+➜ **App disponible sur** http://localhost:8000
 
-## 🎮 Comment jouer
+### 📱 Installation PWA
+1. **Ouvrez l'app en HTTPS** (requis pour PWA)
+2. **"Ajouter à l'écran d'accueil"** sur mobile
+3. **"Installer l'application"** sur desktop
+4. **L'app s'ouvre en mode standalone** 🎉
+
+## 🎮 Guide de jeu
 
 ### Démarrage
-1. **Commencez votre première quête** en cliquant sur "Start Quest"
-2. **Concentrez-vous pendant 25 minutes** - résistez aux distractions !
-3. **Terminez la session** pour gagner de l'XP et monter de niveau
-4. **Prenez votre pause méritée** (5 ou 15 minutes)
-5. **Répétez et construisez des séries** pour des récompenses maximales
+1. **Start Quest** → Démarrer une session focus de 25min
+2. **Restez concentré** jusqu'à l'alarme sonore
+3. **Gagnez 55+ XP** et montez de niveau
+4. **Prenez votre pause** de 5 ou 15min
+5. **Construisez des streaks** quotidiens
 
-### Système de niveaux et XP
+### Progression XP
+| Niveau | XP Total | XP Requis | XP/Session | Sessions |
+|--------|----------|-----------|------------|----------|
+| 1 → 2  | 100      | 100       | 55         | ~2       |
+| 2 → 3  | 250      | +150      | 60         | ~3       |
+| 3 → 4  | 450      | +200      | 65         | ~4       |
+| 4 → 5  | 700      | +250      | 70         | ~4       |
 
-#### **Progression des niveaux (XP total requis) :**
-- **Niveau 1** : 100 XP total
-- **Niveau 2** : 250 XP total (+150 XP)
-- **Niveau 3** : 450 XP total (+200 XP)
-- **Niveau 4** : 700 XP total (+250 XP)
-- **Niveau 5** : 1000 XP total (+300 XP)
+*Progression parfaitement équilibrée - pas de grind !*
 
-#### **Récompenses XP par session (formule : 50 + 5 × niveau) :**
-- **Niveau 1** : 55 XP par session focus
-- **Niveau 2** : 60 XP par session focus
-- **Niveau 3** : 65 XP par session focus
-- **Niveau 10** : 100 XP par session focus
+### Succès emblématiques
+- 🎯 **Première Quête** - Terminez votre premier Pomodoro
+- 🔥 **Streak Warrior** - 5 jours consécutifs  
+- ⏰ **Time Master** - 10 heures de focus total
+- 👑 **Productivity Guru** - Atteignez le niveau 20
 
-#### **Sessions nécessaires par niveau :**
-- **Niveau 1 → 2** : ~2 sessions (100 XP ÷ 55 XP/session)
-- **Niveau 2 → 3** : ~3 sessions (150 XP ÷ 60 XP/session)
-- **Niveau 3 → 4** : ~4 sessions (200 XP ÷ 65 XP/session)
+## ⚙️ Contrôles et raccourcis
 
-*Cette progression équilibrée évite le grind et récompense la persévérance !*
+### Interface principale
+- **🔔 Sound** - Active/désactive les alarmes
+- **🎵 Type** - Choisit le son (Chime/Bell/Success/Beep)
+- **🔊 Volume** - Ajuste le volume des alarmes
 
-### Exemples de succès
-- 🎯 **Première Quête** : Terminez votre premier Pomodoro
-- 💪 **Dévoué** : Terminez 10 Pomodoros
-- 🧠 **Maître Concentré** : Terminez 25 Pomodoros
-- 🔥 **Guerrier des Séries** : Maintenez une série de 5 jours
-- ⏰ **Maître du Temps** : Concentrez-vous pendant 10 heures au total
+### Raccourcis clavier
+- **Espace** - Start/Pause timer
+- **R** - Reset timer  
+- **Ctrl+S** - Toggle son
+- **Échap** - Fermer debug
+
+### Mode Debug (🐛)
+- **Ctrl+Shift+F** - Skip 5 minutes
+- **Ctrl+Shift+M** - Skip 1 minute
+- **Ctrl+Shift+C** - Complete session
+- **Ctrl+Shift+L** - Level up
+- **Ctrl+Shift+T** - Test sons
 
 ## 🔧 Architecture technique
 
-### Modules JavaScript
-
-#### `utils.js` - Fonctions utilitaires
-- Formatage du temps
-- Gestion des notifications
-- Stockage localStorage
-- Animations et utilitaires
-
-#### `timer.js` - Logique du timer
-- Classe Timer principale
-- Gestion des sessions (focus/pause)
-- Anneau de progression
-- Callbacks pour intégration RPG
-- `resetToInitialState()` pour reset complet
-
-#### `rpg.js` - Système RPG
-- Gestion XP et niveaux avec progression équilibrée
-- Système de succès
-- Suivi des statistiques
-- Persistance des données
-- Récompenses XP croissantes par niveau
-
-#### `debug.js` - Mode debug
-- Panel de debug simplifié
-- Raccourcis clavier
-- Outils de test précis (XP exact, level up intelligent)
-- Compatible PWA standalone
-- Reset complet de l'application
-
-#### `app.js` - Application principale
-- Initialisation de l'app
-- Coordination des modules
-- Gestion des événements
-- Fonctionnalités PWA
-
-### Styles CSS
-
-#### `main.css` - Styles de base
-- Reset et styles de base
-- Layout et grille
-- Boutons et contrôles
-- Design responsive
-
-#### `components.css` - Composants UI
-- Carte de personnage
-- Section timer
-- Panneau de succès
-- Panel de debug
-
-#### `animations.css` - Animations
-- Effets de niveau
-- XP flottant
-- Transitions
-- Effets de hover
-
-### 🐳 Infrastructure Docker
-
-#### `Dockerfile`
-- Image Nginx Alpine optimisée
-- Configuration PWA intégrée
-- Pas de copie des sources (volumes uniquement)
-
-#### `nginx.conf`
-- Configuration PWA optimisée
-- Headers de sécurité
-- Compression gzip
-- **Pas de cache** - modifications instantanées
-
-#### `docker-compose.yml`
-- Volumes source montés
-- Modifications instantanées sans rebuild
-- Health checks automatiques
-- Port mapping configuré
-
-#### `deploy.sh`
-- Script de déploiement automatisé
-- Gestion du cycle de vie
-- Monitoring intégré
-- Commandes utilitaires
-
-#### `sw.js` - Service Worker
-- **Pas de cache** - Network First toujours
-- Support PWA minimal
-- Pas de cache hors ligne
-
-## 🌟 Stack technologique
-
-- **Frontend** : HTML5, CSS3, JavaScript (ES6+) pur
-- **Stockage** : API localStorage du navigateur
-- **Notifications** : API Web Notifications
-- **PWA** : Service Workers, Manifeste d'application web
-- **Styling** : CSS Grid, Flexbox, Animations CSS
-- **Icônes** : Emojis Unicode + icônes PNG PWA
-- **Infrastructure** : Docker + Nginx Alpine
-- **Déploiement** : Docker Compose + Scripts automatisés
-- **Développement** : Modifications instantanées avec volumes Docker
-- **Sécurité** : HTTPS, CSP, Headers sécurisés
-
-## 📊 Support navigateur
-
-- ✅ Chrome 60+ (PWA standalone excellent)
-- ✅ Firefox 55+ (PWA standalone bon)
-- ✅ Safari 11+ (PWA standalone limité)
-- ✅ Edge 79+ (PWA standalone excellent)
-- ✅ Navigateurs mobiles (iOS Safari, Chrome Mobile)
-
-## 🐳 Configuration Docker
-
-### Variables d'environnement
-```bash
-# Port de l'application (modifiable dans docker-compose.yml)
-PORT=3046
-
-# Configuration Nginx
-NGINX_HOST=localhost
-NGINX_PORT=80
-
-# Stack Docker
-STACK_NAME=quest-timer
+### Structure du projet
+```
+quest-timer/
+├── index.html              # Interface utilisateur
+├── manifest.json           # Configuration PWA
+├── sw.js                   # Service Worker
+├── assets/
+│   ├── css/                # Styles (main, components, animations)
+│   ├── js/
+│   │   ├── sound.js        # 🔔 Système sonore (NOUVEAU)
+│   │   ├── timer.js        # ⏱️ Logique timer + alarmes
+│   │   ├── rpg.js          # 🎮 Système XP/niveaux
+│   │   ├── debug.js        # 🛠️ Mode debug + contrôles sons
+│   │   ├── app.js          # 🚀 Application principale
+│   │   └── utils.js        # 🔧 Fonctions utilitaires
+│   └── icons/              # Icônes PWA (192x192, 512x512)
+└── docker/                 # Infrastructure Docker
 ```
 
-### Health Checks
-- **Intervalle** : 30 secondes
-- **Timeout** : 10 secondes
-- **Retries** : 3 tentatives
-- **Start period** : 40 secondes
+### Stack technologique
+- **Frontend** : HTML5, CSS3, JavaScript ES6+ pur
+- **Audio** : Web Audio API (sons générés, pas de fichiers)
+- **PWA** : Service Workers, Manifeste
+- **Stockage** : localStorage (tout sauvé localement)
+- **Infra** : Docker + Nginx Alpine
+- **Développement** : Modifications instantanées (pas de cache)
 
-### Sécurité
-- Headers de sécurité configurés
-- CSP (Content Security Policy)
-- Protection XSS et CSRF
-- HTTPS ready
+## 🐳 Gestion Docker
+
+### Commandes essentielles
+```bash
+cd docker
+./deploy.sh full      # 🚀 Déploiement complet
+./deploy.sh logs      # 📋 Voir les logs  
+./deploy.sh restart   # 🔄 Redémarrer
+./deploy.sh stop      # 🛑 Arrêter
+./deploy.sh cleanup   # 🧹 Nettoyage complet
+```
+
+### Configuration
+- **Port** : 3046 (modifiable dans docker-compose.yml)
+- **Volumes** : Sources montées → modifications instantanées
+- **Cache** : Désactivé → Git pull + F5 = changements visibles
+- **HTTPS** : Requis pour PWA standalone
 
 ## 🚨 Dépannage
 
-### Problèmes PWA Standalone
-
-**PWA s'ouvre dans le navigateur au lieu de standalone :**
+### PWA ne s'installe pas
 ```bash
-# 1. Vérifiez HTTPS
-# La PWA DOIT être servie en HTTPS pour le mode standalone
-
-# 2. Vérifiez les icônes
-# Les icônes 192x192 et 512x512 sont OBLIGATOIRES
-
-# 3. Vider le cache
-# F12 → Application → Storage → Clear storage
+# 1. Vérifiez HTTPS (obligatoire)
+# 2. Vérifiez les icônes 192x192 et 512x512
+# 3. F12 → Application → Clear storage
 ```
 
-**Générer les icônes PWA :**
+### Sons ne fonctionnent pas
+- **Vérifiez** que les sons sont activés (🔔)
+- **Testez** différents types de sons
+- **Interaction requise** : Cliquez dans l'app avant le premier son
+
+### Modifications non visibles
 ```bash
-# Utilisez le générateur d'icônes fourni
-# Ou créez manuellement :
-mkdir -p assets/icons
-# Placez icon-72.png, icon-96.png, ..., icon-512.png, hourglass.png
+# 1. Hard refresh : Ctrl+Shift+R
+# 2. Redémarrer Docker : ./deploy.sh restart
+# 3. Clear storage : F12 → Application → Storage
 ```
 
-### Problèmes de développement
+## 🎯 Changelog
 
-**Les modifications ne sont pas visibles :**
-```bash
-# 1. Hard refresh
-# Ctrl+Shift+R dans le navigateur
+### v1.5.0 - Système Sonore Complet 🔔
+- ✅ **Alarmes personnalisables** - 4 types de sons
+- ✅ **Contrôle volume** et activation/désactivation
+- ✅ **Sons intelligents** - Uniquement fin de timer et tests
+- ✅ **Mode debug sonore** - Test et contrôle avancés
+- ✅ **Web Audio API** - Sons générés, pas de fichiers
 
-# 2. Vérifiez les volumes Docker
-# docker-compose.yml doit avoir le volume source monté
+### v1.4.0 - Système XP Équilibré 🎮
+- ✅ **Progression corrigée** - 100 → 250 → 450 XP
+- ✅ **Récompenses croissantes** - 55 → 60 → 65 XP/session
+- ✅ **Debug intelligent** - Level up et XP précis
+- ✅ **Skip 1 minute** - Contrôle précis du timer
 
-# 3. Redémarrez le container si nécessaire
-./deploy.sh restart
-```
-
-### Problèmes Docker courants
-
-**Port déjà utilisé :**
-```bash
-# Modifier le port dans docker-compose.yml
-ports:
-  - "NOUVEAU_PORT:80"
-```
-
-**Stack ne démarre pas :**
-```bash
-# Vérifier les logs de la stack
-./deploy.sh logs
-
-# Vérifier l'état de la stack
-./deploy.sh info
-
-# Rebuild complet de la stack
-./deploy.sh cleanup
-./deploy.sh full
-```
-
-### Debugging de l'application
-
-**Mode Debug :**
-- Cliquez sur l'icône 🐛 en haut à gauche
-- Utilisez les raccourcis clavier (Ctrl+Shift+...)
-- Consultez la console du navigateur
-
-**Raccourcis clavier :**
-- **Espace** : Start/Pause timer
-- **R** : Reset timer
-- **Échap** : Fermer le panel debug
-- **Ctrl+Shift+C** : Complete session (debug)
-- **Ctrl+Shift+F** : Fast forward (debug)
-- **Ctrl+Shift+X** : Add 100 XP (debug)
-- **Ctrl+Shift+L** : Level up intelligent (debug)
-- **Ctrl+Shift+S** : Add streak (debug)
-- **Ctrl+Shift+A** : Random achievement (debug)
-
-**Fonctionnalités debug améliorées :**
-- **Add 100 XP** : Ajoute exactement 100 XP avec vérification de level up
-- **Level Up** : Calcule et ajoute l'XP exact nécessaire pour monter d'un niveau
-- **Synchronisation parfaite** avec le système de progression
-
-## 🤝 Contribution
-
-1. Forkez le repository
-2. Créez une branche de fonctionnalité
-3. Effectuez vos modifications (git pull + F5 pour tester)
-4. Testez minutieusement (incluant les tests Docker et PWA)
-5. Soumettez une pull request
-
-### Standards de développement
-- Code JavaScript ES6+
-- CSS avec préfixes vendor si nécessaire
-- Tests de compatibilité navigateur
-- **Tests PWA** sur mobile et desktop
-- Documentation des nouvelles fonctionnalités
-- Tests Docker avant commit
-
-## 🙏 Remerciements
-
-- **Technique Pomodoro** par Francesco Cirillo
-- **Mécaniques RPG** inspirées des systèmes de progression classiques
-- **Design Glassmorphism** tendance pour l'esthétique UI moderne
-- **Docker & Nginx** pour l'infrastructure robuste
-- **PWA Standards** pour l'expérience native
-
-## 🐛 Rapports de bugs et demandes de fonctionnalités
-
-Veuillez ouvrir une issue sur GitHub avec :
-- **Navigateur et version**
-- **Environnement** (Docker/Local/PWA Standalone/PWA Browser)
-- **Mode d'accès** (HTTP/HTTPS)
-- **Étapes pour reproduire**
-- **Comportement attendu vs réel**
-- **Captures d'écran si applicable**
-- **Logs Docker si pertinents**
-
-### Logs utiles pour debug
-```bash
-# Logs de la stack
-./deploy.sh logs
-
-# État de la stack
-./deploy.sh info
-
-# Santé de la stack
-./deploy.sh health
-```
+### v1.3.0 - PWA Standalone 📱
+- ✅ **App native** - Installation mobile/desktop
+- ✅ **Mode standalone** - Sans barre d'adresse
+- ✅ **Développement instantané** - Git pull + F5
 
 ---
 
-**🎮 Transformez votre productivité en aventure épique !**  
-**⚔️ Que votre concentration soit légendaire ! ✨**
-
 ## 🔗 Liens rapides
 
-- 🚀 **Déploiement rapide** : `cd docker && ./deploy.sh full`
-- 🌐 **Application locale** : http://localhost:3046
-- 📱 **PWA Standalone** : Servir en HTTPS puis "Ajouter à l'écran d'accueil"
-- 🛠️ **Debug** : Cliquez sur 🐛 dans l'app
-- 🔧 **Logs Stack** : `./deploy.sh logs`
+- 🚀 **Déploiement** : `cd docker && ./deploy.sh full`
+- 🌐 **URL locale** : http://localhost:3046  
+- 📱 **PWA** : Ajouter à l'écran d'accueil (HTTPS requis)
+- 🐛 **Debug** : Cliquez sur 🐛 dans l'app
+- 📋 **Logs** : `./deploy.sh logs`
 
-## 🎯 Changelog récent
-
-### v1.4.0 - Système XP Équilibré
-- ✅ **Progression XP corrigée** - Niveaux 1: 100, 2: 250, 3: 450 XP
-- ✅ **Récompenses croissantes** - 50 + 5×niveau XP par session
-- ✅ **Debug intelligent** - Level up et XP précis
-- ✅ **Équilibrage parfait** - ~3-4 sessions par niveau
-
-### v1.3.0 - Développement Instantané
-- ✅ **Modifications instantanées** - Git pull + F5 = changements visibles
-- ✅ **Pas de cache** - Service Worker et Nginx sans cache
-- ✅ **Volumes source** - Docker monte directement le projet
-- ✅ **Debug simplifié** - Outils essentiels uniquement
-
-### v1.2.0 - PWA Standalone & Améliorations Debug
-- ✅ **PWA Standalone** - Vraie app native
-- ✅ **Reset complet** - Mode debug amélioré
-- ✅ **Docker Stack** - Gestion organisée des containers
-- ✅ **HTTPS Support** - Requis pour PWA standalone
-- ✅ **Compatible mobile** - Optimisé pour smartphone/tablet
+**🎮 Transformez votre productivité en aventure épique !**  
+**⚔️ Que votre concentration soit légendaire ! 🔔✨**
