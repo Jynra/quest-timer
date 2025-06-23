@@ -315,6 +315,7 @@ class DebugMode {
             window.soundSystem.toggle();
             const settings = window.soundSystem.getSettings();
             console.log(`🔔 Debug: Sound ${settings.enabled ? 'enabled' : 'disabled'}`);
+            // PAS DE SON lors du toggle debug
         } else {
             showNotification('❌ Sound system not available');
             console.warn('Sound system not initialized');

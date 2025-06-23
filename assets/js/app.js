@@ -118,10 +118,7 @@ class QuestTimerApp {
     handleTimerStart() {
         console.log('🎯 Timer started');
         
-        // NOUVEAU: Son de début de session (optionnel)
-        if (this.soundSystem.getSettings().enabled) {
-            this.soundSystem.playSessionStart();
-        }
+        // PAS DE SON au démarrage du timer
     }
 
     handleTimerPause() {
@@ -199,7 +196,7 @@ class QuestTimerApp {
             this.timer.resetTimer();
         }
         
-        // NOUVEAU: S key: Toggle sound
+        // NOUVEAU: S key: Toggle sound (PAS DE SON lors du toggle)
         if (e.key === 's' || e.key === 'S') {
             if (e.ctrlKey || e.metaKey) {
                 e.preventDefault();

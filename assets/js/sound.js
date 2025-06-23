@@ -127,10 +127,8 @@ class SoundSystem {
     }
 
     playSessionStart() {
-        if (!this.isEnabled) return;
-        
-        // Son court pour le début de session (optionnel)
-        this.playBeep(500, 100, 'square');
+        // SUPPRIMÉ: Pas de son au début de session
+        return;
     }
 
     // ===== MÉTHODES DE CONTRÔLE =====
@@ -139,31 +137,22 @@ class SoundSystem {
         this.isEnabled = !this.isEnabled;
         saveToStorage('soundEnabled', this.isEnabled);
         
-        if (this.isEnabled) {
-            this.requestAudioPermission().then(() => {
-                this.playBeep(600, 200);
-            });
-            showNotification('🔔 Sons activés');
-        } else {
-            showNotification('🔇 Sons désactivés');
-        }
+        // PAS DE SON lors du toggle - juste les notifications
+        showNotification(this.isEnabled ? '🔔 Sons activés' : '🔇 Sons désactivés');
     }
 
     setVolume(volume) {
         this.volume = Math.max(0, Math.min(1, volume));
         saveToStorage('soundVolume', this.volume);
         
-        // Son de test pour le volume
-        if (this.isEnabled) {
-            this.playBeep(600, 200);
-        }
+        // PAS DE SON lors du changement de volume
     }
 
     setSoundType(type) {
         this.soundType = type;
         saveToStorage('soundType', type);
         
-        // Test du nouveau son
+        // SEULEMENT jouer le son lors du changement de type (pour tester)
         if (this.isEnabled) {
             this.playFocusComplete();
         }
