@@ -12,7 +12,7 @@ Quest Timer transforme la technique Pomodoro traditionnelle en une expérience R
 quest-timer/
 ├── index.html                 # Page principale (HTML minimal)
 ├── manifest.json             # Manifeste PWA (optimisé standalone)
-├── sw.js                     # Service Worker (cache adaptatif + versioning)
+├── sw.js                     # Service Worker (pas de cache)
 ├── README.md                 # Cette documentation
 ├── assets/
 │   ├── css/
@@ -23,7 +23,7 @@ quest-timer/
 │   │   ├── utils.js          # Fonctions utilitaires
 │   │   ├── timer.js          # Logique du timer Pomodoro + reset complet
 │   │   ├── rpg.js           # Système RPG (XP, niveaux, succès)
-│   │   ├── debug.js         # Mode debug + Hot Reload intégré
+│   │   ├── debug.js         # Mode debug simplifié
 │   │   └── app.js           # Application principale et initialisation
 │   └── icons/               # Icônes PWA (192x192, 512x512 requis)
 │       ├── icon-72.png
@@ -37,9 +37,8 @@ quest-timer/
 │       └── hourglass.png    # Favicon
 ├── docker/
 │   ├── Dockerfile           # Image Docker pour déploiement
-│   ├── nginx.conf          # Configuration Nginx optimisée PWA
-│   ├── docker-compose.yml # Hot Reload + Stack nommée
-│   ├── .dockerignore      # Fichiers à exclure du build
+│   ├── nginx.conf          # Configuration Nginx (pas de cache)
+│   ├── docker-compose.yml # Volumes source pour modifications instantanées
 │   └── deploy.sh          # Script de déploiement automatisé
 └── docs/
     └── README_expand.md     # Documentation des fonctionnalités futures
@@ -63,35 +62,29 @@ quest-timer/
 - **XP flottant animé** pour un retour immédiat
 - **Tableau de bord des statistiques** montrant le progrès total
 
-### 📱 Fonctionnalités PWA (Nouveauté !)
+### 📱 Fonctionnalités PWA
 - **Progressive Web App** - fonctionne hors ligne et peut être installée
 - **Mode Standalone** - S'ouvre comme une vraie app (sans barre d'adresse)
 - **Installation native** - "Ajouter à l'écran d'accueil" sur mobile/desktop
 - **Design responsive** - optimisé pour mobile et desktop
 - **Stockage local** - tout le progrès sauvegardé localement
 - **Multiplateforme** - fonctionne sur tout appareil avec navigateur web
-- **Service Worker** - Cache intelligent pour usage hors ligne
+- **Service Worker** - Pas de cache pour modifications instantanées
 - **HTTPS requis** - Sécurité maximale pour mode standalone
 
-### 🛠️ Mode Debug + Hot Reload (Amélioré)
+### 🛠️ Mode Debug
 - **Outils de développement** pour tester rapidement les fonctionnalités
 - **Avance rapide du timer** (5 minutes par défaut)
 - **Achèvement instantané de session** (compatible PWA standalone)
 - **Manipulation manuelle XP/niveau**
 - **Outils de test des succès**
-- **Reset complet** - Remet l'app à l'état initial (nouveau !)
-- **Hot Reload intégré** - Modifications instantanées en développement
-- **Clear Cache** - Outils de gestion du cache PWA
-- **Service Worker versioning** - Information et contrôle SW
+- **Reset complet** - Remet l'app à l'état initial
 - **Raccourcis clavier** - Ctrl+Shift+[touches]
-- **Diagnostic PWA** - Vérification des critères standalone
 
-### 🔥 Hot Reload & Développement
+### 🔥 Développement instantané
 - **Volumes Docker** - Modifications instantanées sans rebuild
-- **Cache adaptatif** - Network First en dev, Cache First en prod
-- **Outils intégrés** dans le panel debug (pas d'interface séparée)
-- **Versioning automatique** du Service Worker
-- **Console utilities** - `window.hotReload` pour debug avancé
+- **Pas de cache** - Network First toujours
+- **Git pull + F5** - Voir les changements immédiatement
 
 ## 🚀 Installation et utilisation
 
@@ -100,7 +93,7 @@ quest-timer/
 - **HTTPS requis** pour le mode PWA standalone
 - Docker et Docker Compose (pour le déploiement containerisé)
 
-### 🐳 Déploiement Docker avec Hot Reload (Recommandé)
+### 🐳 Déploiement Docker (Recommandé)
 
 **1. Clonez le repository :**
 ```bash
@@ -108,7 +101,7 @@ git clone <repository-url>
 cd quest-timer
 ```
 
-**2. Déployez avec Docker Stack + Hot Reload :**
+**2. Déployez avec Docker :**
 ```bash
 cd docker
 chmod +x deploy.sh
@@ -119,7 +112,6 @@ chmod +x deploy.sh
 - **URL Locale :** http://localhost:3046
 - **URL Publique :** https://votre-domaine.com (pour PWA standalone)
 - **PWA :** Installable comme application native
-- **Hot Reload :** Modifications instantanées en développement
 
 **4. Gestion de la stack :**
 ```bash
@@ -142,25 +134,20 @@ chmod +x deploy.sh
 ./deploy.sh cleanup
 ```
 
-### 🔥 Workflow de développement avec Hot Reload
+### 🔥 Workflow de développement
 
 **1. Modifiez vos fichiers :**
 ```bash
-# Éditez assets/css/main.css, assets/js/*.js, index.html, etc.
-# Les changements sont instantanés !
+# Modifiez assets/css/main.css, assets/js/*.js, index.html, etc.
+# Ou faites un git pull pour récupérer les modifications
+git pull
 ```
 
 **2. Voir les changements :**
 ```bash
 # Actualisez le navigateur (F5)
-# Pour PWA : Ctrl+Shift+R (hard refresh)
+# Les changements sont INSTANTANÉS !
 ```
-
-**3. Outils Hot Reload dans le debug :**
-- **🐛 Debug Panel** → Section "🔥 HOT RELOAD"
-- **🔄 Hard Reload** - Rechargement complet
-- **🧹 Clear Cache** - Vider cache PWA + reload
-- **📦 SW Version** - Info Service Worker
 
 ### 🔒 Configuration HTTPS pour PWA Standalone
 
@@ -204,7 +191,6 @@ npx serve .
 
 # Ouvrez http://localhost:8000
 # Note: PWA standalone nécessite HTTPS
-# Note: Hot reload nécessite Docker
 ```
 
 ## 🎮 Comment jouer
@@ -244,7 +230,7 @@ npx serve .
 - Gestion des sessions (focus/pause)
 - Anneau de progression
 - Callbacks pour intégration RPG
-- **Nouveau :** `resetToInitialState()` pour reset complet
+- `resetToInitialState()` pour reset complet
 
 #### `rpg.js` - Système RPG
 - Gestion XP et niveaux
@@ -252,23 +238,18 @@ npx serve .
 - Suivi des statistiques
 - Persistance des données
 
-#### `debug.js` - Mode debug + Hot Reload
-- Panel de debug
-- **Nouveau :** Hot Reload intégré (pas d'interface séparée)
-- **Nouveau :** Outils de cache PWA
-- **Nouveau :** Service Worker versioning
+#### `debug.js` - Mode debug
+- Panel de debug simplifié
 - Raccourcis clavier
 - Outils de test
-- **Nouveau :** Compatible PWA standalone
-- **Nouveau :** Reset complet de l'application
-- **Nouveau :** Diagnostic PWA intégré
+- Compatible PWA standalone
+- Reset complet de l'application
 
 #### `app.js` - Application principale
 - Initialisation de l'app
 - Coordination des modules
 - Gestion des événements
 - Fonctionnalités PWA
-- **Nouveau :** Hot Reload simplifié (géré par debug)
 
 ### Styles CSS
 
@@ -295,34 +276,30 @@ npx serve .
 #### `Dockerfile`
 - Image Nginx Alpine optimisée
 - Configuration PWA intégrée
-- Build multi-étapes efficace
+- Pas de copie des sources (volumes uniquement)
 
 #### `nginx.conf`
 - Configuration PWA optimisée
 - Headers de sécurité
 - Compression gzip
-- Cache stratégique
-- Support HTTPS
+- **Pas de cache** - modifications instantanées
 
 #### `docker-compose.yml`
-- **Nouveau :** Volumes Hot Reload montés
-- Orchestration des services avec stack nommée
+- Volumes source montés
+- Modifications instantanées sans rebuild
 - Health checks automatiques
 - Port mapping configuré
-- Labels pour identification de la stack
 
 #### `deploy.sh`
-- Script de déploiement automatisé avec support stack
+- Script de déploiement automatisé
 - Gestion du cycle de vie
 - Monitoring intégré
 - Commandes utilitaires
 
 #### `sw.js` - Service Worker
-- **Nouveau :** Cache adaptatif (Network First en dev, Cache First en prod)
-- **Nouveau :** Versioning automatique pour Hot Reload
-- **Nouveau :** Messages et contrôles Hot Reload
-- Cache intelligent
-- Support hors ligne
+- **Pas de cache** - Network First toujours
+- Support PWA minimal
+- Pas de cache hors ligne
 
 ## 🌟 Stack technologique
 
@@ -334,7 +311,7 @@ npx serve .
 - **Icônes** : Emojis Unicode + icônes PNG PWA
 - **Infrastructure** : Docker + Nginx Alpine
 - **Déploiement** : Docker Compose + Scripts automatisés
-- **Développement** : Hot Reload avec volumes Docker
+- **Développement** : Modifications instantanées avec volumes Docker
 - **Sécurité** : HTTPS, CSP, Headers sécurisés
 
 ## 📊 Support navigateur
@@ -358,9 +335,6 @@ NGINX_PORT=80
 
 # Stack Docker
 STACK_NAME=quest-timer
-
-# Hot Reload
-HOT_RELOAD=true  # Activé automatiquement en développement
 ```
 
 ### Health Checks
@@ -387,12 +361,8 @@ HOT_RELOAD=true  # Activé automatiquement en développement
 # 2. Vérifiez les icônes
 # Les icônes 192x192 et 512x512 sont OBLIGATOIRES
 
-# 3. Diagnostic PWA
-# F12 → Console → Tapez : diagnosePWA()
-
-# 4. Vider le cache
+# 3. Vider le cache
 # F12 → Application → Storage → Clear storage
-# Ou: Debug panel → 🧹 Clear Cache
 ```
 
 **Générer les icônes PWA :**
@@ -403,21 +373,18 @@ mkdir -p assets/icons
 # Placez icon-72.png, icon-96.png, ..., icon-512.png, hourglass.png
 ```
 
-### Problèmes Hot Reload
+### Problèmes de développement
 
 **Les modifications ne sont pas visibles :**
 ```bash
-# 1. Vérifiez que vous êtes en localhost
-# Hot Reload ne fonctionne qu'en développement (localhost)
-
-# 2. Hard refresh
+# 1. Hard refresh
 # Ctrl+Shift+R dans le navigateur
 
-# 3. Utilisez les outils debug
-# 🐛 → 🔥 HOT RELOAD → 🧹 Clear Cache
+# 2. Vérifiez les volumes Docker
+# docker-compose.yml doit avoir le volume source monté
 
-# 4. Vérifiez les volumes Docker
-# docker-compose.yml doit avoir les volumes montés
+# 3. Redémarrez le container si nécessaire
+./deploy.sh restart
 ```
 
 ### Problèmes Docker courants
@@ -444,9 +411,8 @@ ports:
 
 ### Debugging de l'application
 
-**Mode Debug + Hot Reload :**
+**Mode Debug :**
 - Cliquez sur l'icône 🐛 en haut à gauche
-- Section "🔥 HOT RELOAD" visible en développement
 - Utilisez les raccourcis clavier (Ctrl+Shift+...)
 - Consultez la console du navigateur
 
@@ -457,23 +423,15 @@ ports:
 - **Ctrl+Shift+C** : Complete session (debug)
 - **Ctrl+Shift+F** : Fast forward (debug)
 - **Ctrl+Shift+X** : Add XP (debug)
-- **Ctrl+Shift+R** : Clear cache + reload (hot reload)
-- **Ctrl+Shift+H** : Toggle debug panel (hot reload)
-
-**Outils Hot Reload :**
-```javascript
-// Dans la console (F12)
-diagnosePWA()           // Diagnostic PWA
-hotReload.clearCache()  // Vider le cache
-hotReload.reload()      // Rechargement dur
-hotReload.getVersion()  // Version Service Worker
-```
+- **Ctrl+Shift+L** : Level up (debug)
+- **Ctrl+Shift+S** : Add streak (debug)
+- **Ctrl+Shift+A** : Random achievement (debug)
 
 ## 🤝 Contribution
 
 1. Forkez le repository
 2. Créez une branche de fonctionnalité
-3. Effectuez vos modifications avec Hot Reload actif
+3. Effectuez vos modifications (git pull + F5 pour tester)
 4. Testez minutieusement (incluant les tests Docker et PWA)
 5. Soumettez une pull request
 
@@ -482,13 +440,9 @@ hotReload.getVersion()  // Version Service Worker
 - CSS avec préfixes vendor si nécessaire
 - Tests de compatibilité navigateur
 - **Tests PWA** sur mobile et desktop
-- **Tests Hot Reload** en développement
 - Documentation des nouvelles fonctionnalités
 - Tests Docker avant commit
 
-## 📝 Licence
-
-Licence MIT - voir le fichier LICENSE pour les détails
 
 ## 🙏 Remerciements
 
@@ -497,7 +451,6 @@ Licence MIT - voir le fichier LICENSE pour les détails
 - **Design Glassmorphism** tendance pour l'esthétique UI moderne
 - **Docker & Nginx** pour l'infrastructure robuste
 - **PWA Standards** pour l'expérience native
-- **Hot Reload** pour l'efficacité de développement
 
 ## 🐛 Rapports de bugs et demandes de fonctionnalités
 
@@ -505,12 +458,10 @@ Veuillez ouvrir une issue sur GitHub avec :
 - **Navigateur et version**
 - **Environnement** (Docker/Local/PWA Standalone/PWA Browser)
 - **Mode d'accès** (HTTP/HTTPS)
-- **Hot Reload** (Actif/Inactif)
 - **Étapes pour reproduire**
 - **Comportement attendu vs réel**
 - **Captures d'écran si applicable**
 - **Logs Docker si pertinents**
-- **Résultat du diagnostic PWA** (`diagnosePWA()`)
 
 ### Logs utiles pour debug
 ```bash
@@ -522,12 +473,6 @@ Veuillez ouvrir une issue sur GitHub avec :
 
 # Santé de la stack
 ./deploy.sh health
-
-# Diagnostic PWA (dans la console navigateur)
-diagnosePWA()
-
-# Info Hot Reload (dans la console navigateur)
-hotReload.getVersion()
 ```
 
 ---
@@ -540,25 +485,20 @@ hotReload.getVersion()
 - 🚀 **Déploiement rapide** : `cd docker && ./deploy.sh full`
 - 🌐 **Application locale** : http://localhost:3046
 - 📱 **PWA Standalone** : Servir en HTTPS puis "Ajouter à l'écran d'accueil"
-- 🛠️ **Debug + Hot Reload** : Cliquez sur 🐛 dans l'app
+- 🛠️ **Debug** : Cliquez sur 🐛 dans l'app
 - 🔧 **Logs Stack** : `./deploy.sh logs`
-- 📊 **Diagnostic PWA** : Console → `diagnosePWA()`
-- 🔥 **Hot Reload Tools** : Console → `hotReload.*`
 
 ## 🎯 Changelog récent
 
-### v1.2.0 - Hot Reload & Développement Amélioré
-- ✅ **Hot Reload intégré** - Modifications instantanées sans rebuild
-- ✅ **Cache adaptatif** - Network First en dev, Cache First en prod
-- ✅ **Service Worker versioning** - Gestion automatique des versions
-- ✅ **Debug panel amélioré** - Hot Reload intégré (pas d'interface séparée)
-- ✅ **Volumes Docker** - Montage des fichiers sources
-- ✅ **Outils console** - `window.hotReload` pour debug avancé
+### v1.3.0 - Développement Instantané
+- ✅ **Modifications instantanées** - Git pull + F5 = changements visibles
+- ✅ **Pas de cache** - Service Worker et Nginx sans cache
+- ✅ **Volumes source** - Docker monte directement le projet
+- ✅ **Debug simplifié** - Outils essentiels uniquement
 
-### v1.1.0 - PWA Standalone & Améliorations Debug
+### v1.2.0 - PWA Standalone & Améliorations Debug
 - ✅ **PWA Standalone** - Vraie app native
 - ✅ **Reset complet** - Mode debug amélioré
 - ✅ **Docker Stack** - Gestion organisée des containers
 - ✅ **HTTPS Support** - Requis pour PWA standalone
-- ✅ **Diagnostic intégré** - Vérification PWA automatique
 - ✅ **Compatible mobile** - Optimisé pour smartphone/tablet
