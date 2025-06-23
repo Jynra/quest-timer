@@ -486,6 +486,9 @@ hotReload.getVersion()  // Version Service Worker
 - Documentation des nouvelles fonctionnalités
 - Tests Docker avant commit
 
+## 📝 Licence
+
+Licence MIT - voir le fichier LICENSE pour les détails
 
 ## 🙏 Remerciements
 
