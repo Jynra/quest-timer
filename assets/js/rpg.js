@@ -2,7 +2,7 @@
 
 class RPGSystem {
     constructor() {
-        // Load saved data
+        // Load saved data - VALEURS INITIALES CORRECTES
         this.level = parseInt(localStorage.getItem('level') || '1');
         this.xp = parseInt(localStorage.getItem('xp') || '0');
         this.completedSessions = parseInt(localStorage.getItem('completedSessions') || '0');
@@ -26,17 +26,19 @@ class RPGSystem {
         this.streakEl = document.getElementById('streak');
         this.bestStreakEl = document.getElementById('bestStreak');
         this.achievementsList = document.getElementById('achievementsList');
+        this.levelBadge = document.getElementById('levelBadge');
+        this.characterName = document.getElementById('characterName');
     }
 
-    // ===== XP & LEVELING =====
+    // ===== XP & LEVELING - CORRECTION ICI =====
     
     gainXP(amount) {
         this.xp += amount;
         this.showFloatingXP(amount);
         
-        // Check for level up - CORRECTION ICI
-        const xpForCurrentLevel = this.getXPForLevel(this.level);
-        if (this.xp >= xpForCurrentLevel) {
+        // Check for level up - CORRECTION: Vérifier le niveau suivant
+        const xpForNextLevel = this.getXPForLevel(this.level + 1);
+        if (this.xp >= xpForNextLevel) {
             this.levelUp();
         }
         
@@ -45,18 +47,19 @@ class RPGSystem {
     }
 
     getXPForLevel(level) {
-        // Progression selon la documentation README:
-        // Niveau 1: 100 XP, Niveau 2: 250 XP, Niveau 3: 450 XP
-        // Pattern: 100 -> +150 -> +200 -> +250 -> +300...
+        // Progression selon README: 100 → 250 → 450 → 700 → 1000...
+        // Pattern: +100, +150, +200, +250, +300, +350...
         if (level === 1) return 100;
         if (level === 2) return 250;
         if (level === 3) return 450;
+        if (level === 4) return 700;
+        if (level === 5) return 1000;
         
-        // Pour les niveaux supérieurs, progression croissante
-        let total = 450; // XP pour niveau 3
-        for (let i = 4; i <= level; i++) {
-            // Increment: 250 pour niveau 4, 300 pour niveau 5, etc.
-            let increment = 200 + 50 * (i - 3);
+        // Pour les niveaux supérieurs : progression croissante
+        let total = 1000; // XP pour niveau 5
+        for (let i = 6; i <= level; i++) {
+            // Increment croissant: 350 pour niveau 6, 400 pour niveau 7, etc.
+            let increment = 250 + 50 * (i - 4);
             total += increment;
         }
         return total;
@@ -70,27 +73,20 @@ class RPGSystem {
         this.addAchievement('Level Up!', `Reached level ${this.level}`, '⭐');
         
         // Add visual effects
-        const characterCard = document.querySelector('.character-card');
-        addTemporaryClass(characterCard, 'level-up-celebration', 2000);
-        addTemporaryClass(characterCard, 'pulse', 2000);
-        
-        // Play level up sound effect (if available)
-        this.playLevelUpEffect();
+        const levelBadge = this.levelBadge || document.getElementById('levelBadge');
+        if (levelBadge) {
+            addTemporaryClass(levelBadge, 'level-up-celebration', 2000);
+            addTemporaryClass(levelBadge, 'pulse', 2000);
+        }
         
         // Check for another level up (in case of multiple level ups from debug)
-        const xpForCurrentLevel = this.getXPForLevel(this.level);
-        if (this.xp >= xpForCurrentLevel) {
+        const xpForNextLevel = this.getXPForLevel(this.level + 1);
+        if (this.xp >= xpForNextLevel) {
             setTimeout(() => this.levelUp(), 100); // Slight delay for visual effect
         }
         
         this.saveProgress();
         this.updateDisplay();
-    }
-
-    playLevelUpEffect() {
-        // Could add audio here if desired
-        // const audio = new Audio('assets/sounds/levelup.mp3');
-        // audio.play().catch(() => {}); // Ignore if audio fails
     }
 
     showFloatingXP(amount) {
@@ -115,8 +111,8 @@ class RPGSystem {
         this.totalMinutes += 25; // Standard pomodoro length
         this.updateStreak();
         
-        // Calculate XP reward
-        const xpGained = 50 + (this.level * 5);
+        // Calculate XP reward - PROGRESSION ÉQUILIBRÉE
+        const xpGained = 55 + (this.level * 5);
         this.gainXP(xpGained);
         
         this.checkAchievements();
@@ -280,6 +276,8 @@ class RPGSystem {
     }
 
     updateAchievements() {
+        if (!this.achievementsList) return;
+        
         this.achievementsList.innerHTML = '';
         
         if (this.achievements.length === 0) {
@@ -310,32 +308,39 @@ class RPGSystem {
     
     updateDisplay() {
         // Level display
-        this.levelEl.textContent = this.level;
+        if (this.levelEl) this.levelEl.textContent = this.level;
+        if (this.levelBadge) this.levelBadge.textContent = `Level ${this.level} • Productivity Warrior`;
         
-        // XP bar - CORRECTION ICI
-        const currentLevelXP = this.level === 1 ? 0 : this.getXPForLevel(this.level - 1);
-        const nextLevelXP = this.getXPForLevel(this.level);
+        // XP bar - CORRECTION: Calcul correct pour le niveau actuel
+        const currentLevelXP = this.level === 1 ? 0 : this.getXPForLevel(this.level);
+        const nextLevelXP = this.getXPForLevel(this.level + 1);
         const progressXP = this.xp - currentLevelXP;
         const requiredXP = nextLevelXP - currentLevelXP;
         
-        const xpProgress = (progressXP / requiredXP) * 100;
-        this.xpBar.style.width = `${Math.min(xpProgress, 100)}%`;
-        this.xpText.textContent = `${progressXP} / ${requiredXP} XP`;
+        const xpProgress = Math.max(0, Math.min((progressXP / requiredXP) * 100, 100));
+        if (this.xpBar) this.xpBar.style.width = `${xpProgress}%`;
+        if (this.xpText) this.xpText.textContent = `${progressXP} / ${requiredXP} XP`;
         
         // Stats
-        animateNumber(this.completedSessionsEl, 
-            parseInt(this.completedSessionsEl.textContent) || 0, 
-            this.completedSessions, 500);
+        if (this.completedSessionsEl) {
+            animateNumber(this.completedSessionsEl, 
+                parseInt(this.completedSessionsEl.textContent) || 0, 
+                this.completedSessions, 500);
+        }
         
-        this.totalTimeEl.textContent = formatTotalTime(this.totalMinutes);
+        if (this.totalTimeEl) this.totalTimeEl.textContent = formatTotalTime(this.totalMinutes);
         
-        animateNumber(this.streakEl, 
-            parseInt(this.streakEl.textContent) || 0, 
-            this.currentStreak, 500);
-            
-        animateNumber(this.bestStreakEl, 
-            parseInt(this.bestStreakEl.textContent) || 0, 
-            this.bestStreak, 500);
+        if (this.streakEl) {
+            animateNumber(this.streakEl, 
+                parseInt(this.streakEl.textContent) || 0, 
+                this.currentStreak, 500);
+        }
+        
+        if (this.bestStreakEl) {
+            animateNumber(this.bestStreakEl, 
+                parseInt(this.bestStreakEl.textContent) || 0, 
+                this.bestStreak, 500);
+        }
         
         this.updateAchievements();
     }
@@ -381,6 +386,8 @@ class RPGSystem {
 
     resetAllProgress() {
         if (confirm('⚠️ This will reset ALL your progress! Are you sure?')) {
+            console.log('💀 Starting complete reset...');
+            
             // Clear storage
             clearStorage();
             
@@ -400,6 +407,7 @@ class RPGSystem {
             // Show confirmation
             showNotification('🔄 All progress reset!');
             
+            console.log('✅ Reset completed - ready for a fresh start!');
             return true;
         }
         return false;

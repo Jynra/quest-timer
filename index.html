@@ -1,474 +1,85 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quest Timer - Bottom Nav</title>
+    <title>Quest Timer - RPG Pomodoro</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#6366f1">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            color: #e5e7eb;
-            min-height: 100vh;
-            padding-bottom: 100px;
-        }
-
-        .container {
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 1rem;
-        }
-
-        .header {
-            text-align: center;
-            padding: 1rem 0;
-        }
-
-        .app-title {
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: linear-gradient(45deg, #fbbf24, #f59e0b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
-        }
-
-        .status-indicator {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            color: #34d399;
-        }
-
-        .debug-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
-            background: #6366f1;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            cursor: pointer;
-            z-index: 1001;
-        }
-
-        .achievements-btn {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            color: #fbbf24;
-            border: none;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            cursor: pointer;
-            z-index: 1001;
-        }
-
-        .timer-hero {
-            text-align: center;
-            padding: 1rem;
-        }
-
-        .level-badge {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 0.8rem 1.5rem;
-            border-radius: 25px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #fbbf24;
-            margin-bottom: 1rem;
-        }
-
-        .progress-circle {
-            width: 180px;
-            height: 180px;
-            position: relative;
-            margin: 0.5rem auto 1rem;
-        }
-
-        .progress-ring {
-            transform: rotate(-90deg);
-            width: 100%;
-            height: 100%;
-        }
-
-        .progress-ring-bg {
-            stroke: rgba(255, 255, 255, 0.1);
-            stroke-width: 8;
-            fill: none;
-        }
-
-        .progress-ring-circle {
-            stroke: #34d399;
-            stroke-width: 8;
-            fill: none;
-            transition: stroke-dashoffset 0.3s ease;
-        }
-
-        .timer-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-        }
-
-        .timer-display {
-            font-size: 2.8rem;
-            font-weight: 900;
-            color: #fbbf24;
-            margin-bottom: 0.3rem;
-            font-family: monospace;
-        }
-
-        .session-type {
-            font-size: 1.1rem;
-            color: #34d399;
-            font-weight: 500;
-        }
-
-        .stats-mini {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin: 1rem 0;
-            padding: 1rem;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-        }
-
-        .mini-stat {
-            text-align: center;
-        }
-
-        .mini-stat .value {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #fbbf24;
-        }
-
-        .mini-stat .label {
-            font-size: 0.75rem;
-            opacity: 0.7;
-            text-transform: uppercase;
-        }
-
-        .xp-section {
-            margin: 0.5rem 0 1rem;
-            padding: 0 1rem;
-        }
-
-        .xp-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .character-name {
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .xp-info {
-            font-size: 0.8rem;
-            opacity: 0.7;
-        }
-
-        .xp-bar-container {
-            height: 12px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 6px;
-            overflow: hidden;
-        }
-
-        .xp-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #10b981, #34d399);
-            width: 75%;
-            transition: width 0.8s ease;
-        }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(20px);
-            padding: 1rem;
-            z-index: 1000;
-        }
-
-        .sound-controls {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.8rem;
-            margin-bottom: 1rem;
-            padding: 0.8rem;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-        }
-
-        .sound-toggle {
-            padding: 0.5rem 1rem;
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            border-radius: 8px;
-            color: #e5e7eb;
-            font-size: 0.8rem;
-            cursor: pointer;
-        }
-
-        .sound-select {
-            padding: 0.5rem;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 6px;
-            color: #e5e7eb;
-            font-size: 0.8rem;
-        }
-
-        .volume-slider {
-            width: 60px;
-            accent-color: #6366f1;
-        }
-
-        .bottom-controls {
-            display: flex;
-            gap: 1rem;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 1rem;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 1rem;
-            min-height: 52px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(45deg, #6366f1, #8b5cf6);
-            color: white;
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: #e5e7eb;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .debug-panel {
-            position: fixed;
-            top: 70px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.95);
-            border: 2px solid #6366f1;
-            border-radius: 12px;
-            padding: 1rem;
-            z-index: 2000;
-            width: 250px;
-            color: white;
-            transform: translateX(300px);
-            transition: transform 0.3s ease;
-        }
-
-        .debug-panel.show {
-            transform: translateX(0);
-        }
-
-        .debug-title {
-            color: #fbbf24;
-            font-weight: bold;
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-
-        .debug-controls {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .debug-btn {
-            padding: 0.6rem;
-            background: #374151;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.85rem;
-        }
-
-        .debug-btn.danger {
-            background: #dc2626;
-        }
-
-        .achievements-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 2000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-        }
-
-        .achievements-modal.show {
-            display: flex;
-        }
-
-        .modal-content {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 2rem;
-            max-width: 350px;
-            width: 100%;
-            max-height: 70vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .modal-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #fbbf24;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            color: #e5e7eb;
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 50%;
-        }
-
-        .achievement-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem;
-            margin-bottom: 0.8rem;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 12px;
-        }
-
-        .achievement-icon {
-            font-size: 1.5rem;
-            width: 40px;
-            text-align: center;
-        }
-
-        .achievement-title {
-            font-weight: 600;
-            color: #fbbf24;
-        }
-
-        .achievement-desc {
-            font-size: 0.8rem;
-            opacity: 0.7;
-        }
-
-        .notification {
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            background: linear-gradient(45deg, #10b981, #34d399);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            transform: translateX(400px);
-            transition: transform 0.3s ease;
-            z-index: 1500;
-            font-weight: 600;
-        }
-
-        .notification.show {
-            transform: translateX(0);
-        }
-
-        .floating-xp {
-            position: fixed;
-            font-weight: bold;
-            color: #10b981;
-            font-size: 1.5rem;
-            pointer-events: none;
-            z-index: 1600;
-            animation: floatUp 2.5s forwards;
-        }
-
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0) scale(0.8); }
-            30% { transform: translateY(-30px) scale(1.2); }
-            100% { opacity: 0; transform: translateY(-100px) scale(0.6); }
-        }
-
-        .level-up-celebration {
-            animation: levelUpBounce 1.5s ease-in-out;
-        }
-
-        @keyframes levelUpBounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-20px); }
-            60% { transform: translateY(-10px); }
-        }
-
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.05); }
-        }
-
-        @media (max-width: 375px) {
-            .timer-display { font-size: 2.4rem; }
-            .progress-circle { width: 160px; height: 160px; }
-            .stats-mini { gap: 1.5rem; }
-        }
-    </style>
+    
+    <!-- Favicons & Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/icons/hourglass.png">
+    <link rel="shortcut icon" href="./assets/icons/hourglass.png">
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="./assets/icons/icon-192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/icon-192.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="./assets/icons/icon-152.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="./assets/icons/icon-144.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="./assets/icons/icon-128.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="./assets/icons/icon-128.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="./assets/icons/icon-96.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="./assets/icons/icon-72.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="./assets/icons/icon-72.png">
+    <link rel="apple-touch-icon" sizes="57x57" href="./assets/icons/icon-72.png">
+    
+    <!-- Microsoft Tiles -->
+    <meta name="msapplication-TileImage" content="./assets/icons/icon-144.png">
+    <meta name="msapplication-TileColor" content="#6366f1">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="application-name" content="Quest Timer">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Quest Timer">
+    <meta name="description" content="Transform your Pomodoro sessions into epic RPG adventures">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="./assets/css/main.css">
+    <link rel="stylesheet" href="./assets/css/components.css">
+    <link rel="stylesheet" href="./assets/css/animations.css">
 </head>
 <body>
-    <button class="debug-toggle" id="debugToggle">🐛</button>
-    <button class="achievements-btn" id="achievementsBtn">🏆</button>
-
     <div class="container">
+        <!-- Debug Panel -->
+        <button class="debug-toggle" id="debugToggle">🐛</button>
+        <div class="debug-panel" id="debugPanel">
+            <div class="debug-title">🛠️ Debug Mode</div>
+            <div class="debug-controls">
+                <button class="debug-btn" id="fastForward">⏩ Skip 5 minutes</button>
+                <button class="debug-btn" id="skip1Min">⏱️ Skip 1 minute</button>
+                <button class="debug-btn" id="completeSession">✅ Complete Session</button>
+                <button class="debug-btn" id="addXP">⭐ Add 100 XP</button>
+                <button class="debug-btn" id="levelUp">🚀 Force Level Up</button>
+                <button class="debug-btn" id="addStreak">🔥 Add to Streak</button>
+                <button class="debug-btn" id="unlockAchievement">🏆 Random Achievement</button>
+                <button class="debug-btn" id="toggleSound">🔔 Toggle Sound</button>
+                <button class="debug-btn" id="testSound">🎵 Test Sound</button>
+                <button class="debug-btn danger" id="resetProgress">💀 Reset All Progress</button>
+            </div>
+        </div>
+
+        <!-- Achievements Button -->
+        <button class="achievements-btn" id="achievementsBtn">🏆</button>
+
+        <!-- Header -->
         <div class="header">
-            <h1 class="app-title">⚔️ Quest Timer</h1>
+            <h1 class="title">⚔️ Quest Timer</h1>
             <div class="status-indicator" id="statusIndicator">Ready for your next quest</div>
         </div>
 
-        <div class="timer-hero">
-            <div class="level-badge" id="levelBadge">Level 1 • Productivity Warrior</div>
+        <!-- Timer Hero Section -->
+        <div class="timer-hero" id="timerHero">
+            <!-- Level Indicator -->
+            <div class="level-indicator">
+                <div class="level-badge" id="levelBadge">Level 1 • Productivity Warrior</div>
+            </div>
             
+            <!-- Progress Circle -->
             <div class="progress-circle">
                 <svg class="progress-ring" width="180" height="180">
                     <circle class="progress-ring-bg" cx="90" cy="90" r="80"></circle>
@@ -481,6 +92,7 @@
             </div>
         </div>
 
+        <!-- Mini Stats -->
         <div class="stats-mini">
             <div class="mini-stat">
                 <div class="value" id="completedSessions">0</div>
@@ -496,6 +108,7 @@
             </div>
         </div>
 
+        <!-- XP Progress -->
         <div class="xp-section">
             <div class="xp-header">
                 <div class="character-name" id="characterName">Productivity Warrior</div>
@@ -507,20 +120,9 @@
         </div>
     </div>
 
-    <div class="debug-panel" id="debugPanel">
-        <div class="debug-title">🛠️ Debug Mode</div>
-        <div class="debug-controls">
-            <button class="debug-btn" onclick="questTimer.debugSkipMinutes(5)">⏩ Skip 5 minutes</button>
-            <button class="debug-btn" onclick="questTimer.debugSkipMinutes(1)">⏱️ Skip 1 minute</button>
-            <button class="debug-btn" onclick="questTimer.debugCompleteSession()">✅ Complete Session</button>
-            <button class="debug-btn" onclick="questTimer.debugAddXP(100)">⭐ Add 100 XP</button>
-            <button class="debug-btn" onclick="questTimer.debugLevelUp()">🚀 Force Level Up</button>
-            <button class="debug-btn" onclick="questTimer.debugTestSounds()">🎵 Test Sounds</button>
-            <button class="debug-btn danger" onclick="questTimer.debugReset()">💀 Reset All</button>
-        </div>
-    </div>
-
+    <!-- Bottom Navigation -->
     <div class="bottom-nav">
+        <!-- Sound Controls -->
         <div class="sound-controls">
             <button class="sound-toggle" id="soundToggle">🔔 Sound</button>
             <select class="sound-select" id="soundType">
@@ -532,586 +134,35 @@
             <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="70">
         </div>
         
+        <!-- Main Controls -->
         <div class="bottom-controls">
             <button class="btn btn-primary" id="startBtn">Start Quest</button>
             <button class="btn btn-secondary" id="resetBtn">Reset</button>
         </div>
     </div>
 
+    <!-- Achievements Modal -->
     <div class="achievements-modal" id="achievementsModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title">🏆 Achievements</h3>
                 <button class="close-btn" id="closeAchievements">×</button>
             </div>
-            <div id="achievementsList"></div>
+            <div id="achievementsList">
+                <!-- Achievements populated dynamically by rpg.js -->
+            </div>
         </div>
     </div>
 
+    <!-- Notification -->
     <div class="notification" id="notification"></div>
 
-    <script>
-        class QuestTimer {
-            constructor() {
-                this.focusTime = 25 * 60;
-                this.breakTime = 5 * 60;
-                this.longBreakTime = 15 * 60;
-                this.currentTime = this.focusTime;
-                this.isRunning = false;
-                this.isBreak = false;
-                this.sessionCount = 0;
-                this.timer = null;
-                
-                // RPG Stats - Valeurs par défaut INITIALES
-                this.level = parseInt(localStorage.getItem('level') || '1');
-                this.xp = parseInt(localStorage.getItem('xp') || '0');
-                this.completedSessions = parseInt(localStorage.getItem('completedSessions') || '0');
-                this.totalMinutes = parseInt(localStorage.getItem('totalMinutes') || '0');
-                this.currentStreak = parseInt(localStorage.getItem('currentStreak') || '0');
-                this.achievements = JSON.parse(localStorage.getItem('achievements') || '[]');
-                
-                // Sound settings
-                this.soundEnabled = JSON.parse(localStorage.getItem('soundEnabled') || 'true');
-                this.soundType = localStorage.getItem('soundType') || 'chime';
-                this.volume = parseFloat(localStorage.getItem('soundVolume') || '0.7');
-                
-                this.init();
-            }
-
-            init() {
-                this.setupElements();
-                this.setupEvents();
-                this.setupProgressRing();
-                this.updateAll();
-            }
-
-            setupElements() {
-                this.elements = {
-                    timerDisplay: document.getElementById('timerDisplay'),
-                    sessionType: document.getElementById('sessionType'),
-                    startBtn: document.getElementById('startBtn'),
-                    resetBtn: document.getElementById('resetBtn'),
-                    progressCircle: document.getElementById('progressCircle'),
-                    statusIndicator: document.getElementById('statusIndicator'),
-                    levelBadge: document.getElementById('levelBadge'),
-                    completedSessions: document.getElementById('completedSessions'),
-                    totalTime: document.getElementById('totalTime'),
-                    streak: document.getElementById('streak'),
-                    characterName: document.getElementById('characterName'),
-                    xpText: document.getElementById('xpText'),
-                    xpBar: document.getElementById('xpBar'),
-                    soundToggle: document.getElementById('soundToggle'),
-                    soundType: document.getElementById('soundType'),
-                    volumeSlider: document.getElementById('volumeSlider'),
-                    achievementsList: document.getElementById('achievementsList')
-                };
-            }
-
-            setupEvents() {
-                this.elements.startBtn.addEventListener('click', () => this.toggleTimer());
-                this.elements.resetBtn.addEventListener('click', () => this.resetTimer());
-                
-                document.getElementById('achievementsBtn').addEventListener('click', () => {
-                    document.getElementById('achievementsModal').classList.add('show');
-                });
-                
-                document.getElementById('closeAchievements').addEventListener('click', () => {
-                    document.getElementById('achievementsModal').classList.remove('show');
-                });
-                
-                document.getElementById('debugToggle').addEventListener('click', () => {
-                    document.getElementById('debugPanel').classList.toggle('show');
-                });
-                
-                this.elements.soundToggle.addEventListener('click', () => {
-                    this.soundEnabled = !this.soundEnabled;
-                    this.elements.soundToggle.textContent = this.soundEnabled ? '🔔 Sound' : '🔇 Muted';
-                    this.saveProgress();
-                });
-                
-                this.elements.soundType.addEventListener('change', (e) => {
-                    this.soundType = e.target.value;
-                    this.saveProgress();
-                    if (this.soundEnabled) this.playSound('test');
-                });
-                
-                this.elements.volumeSlider.addEventListener('input', (e) => {
-                    this.volume = e.target.value / 100;
-                    this.saveProgress();
-                });
-
-                document.addEventListener('keydown', (e) => {
-                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
-                    if (e.code === 'Space') { e.preventDefault(); this.toggleTimer(); }
-                    if (e.key === 'r') { e.preventDefault(); this.resetTimer(); }
-                    if (e.key === 'a') document.getElementById('achievementsModal').classList.toggle('show');
-                    if (e.key === 'Escape') document.getElementById('achievementsModal').classList.remove('show');
-                });
-            }
-
-            setupProgressRing() {
-                const radius = 80;
-                const circumference = 2 * Math.PI * radius;
-                this.elements.progressCircle.style.strokeDasharray = circumference;
-                this.elements.progressCircle.style.strokeDashoffset = circumference;
-            }
-
-            updateProgressRing() {
-                const totalTime = this.isBreak ? this.getBreakTime() : this.focusTime;
-                const progress = (totalTime - this.currentTime) / totalTime;
-                const radius = 80;
-                const circumference = 2 * Math.PI * radius;
-                const offset = circumference - (progress * circumference);
-                this.elements.progressCircle.style.strokeDashoffset = offset;
-            }
-
-            toggleTimer() {
-                if (this.isRunning) {
-                    this.pauseTimer();
-                } else {
-                    this.startTimer();
-                }
-            }
-
-            startTimer() {
-                this.isRunning = true;
-                this.elements.startBtn.textContent = 'Pause Quest';
-                this.elements.startBtn.className = 'btn btn-secondary';
-                this.elements.statusIndicator.textContent = 'Quest in progress...';
-                
-                this.timer = setInterval(() => {
-                    this.currentTime--;
-                    this.updateDisplay();
-                    this.updateProgressRing();
-                    
-                    if (this.currentTime <= 0) {
-                        this.completeSession();
-                    }
-                }, 1000);
-            }
-
-            pauseTimer() {
-                this.isRunning = false;
-                this.elements.startBtn.textContent = 'Resume Quest';
-                this.elements.startBtn.className = 'btn btn-primary';
-                this.elements.statusIndicator.textContent = 'Quest paused';
-                clearInterval(this.timer);
-            }
-
-            resetTimer() {
-                this.isRunning = false;
-                this.currentTime = this.isBreak ? this.getBreakTime() : this.focusTime;
-                this.elements.startBtn.textContent = 'Start Quest';
-                this.elements.startBtn.className = 'btn btn-primary';
-                this.elements.statusIndicator.textContent = 'Ready for your next quest';
-                clearInterval(this.timer);
-                this.updateDisplay();
-                this.updateProgressRing();
-            }
-
-            completeSession() {
-                clearInterval(this.timer);
-                this.isRunning = false;
-                
-                if (!this.isBreak) {
-                    this.sessionCount++;
-                    this.completedSessions++;
-                    this.totalMinutes += 25;
-                    
-                    const xpGained = 55 + (this.level * 5);
-                    this.gainXP(xpGained);
-                    this.checkAchievements();
-                    this.playSound('focus');
-                    
-                    this.isBreak = true;
-                    this.currentTime = this.getBreakTime();
-                    this.elements.sessionType.textContent = this.sessionCount % 4 === 0 ? '🌟 Long Rest' : '☕ Short Rest';
-                    this.elements.statusIndicator.textContent = 'Break time! You earned it.';
-                    
-                    this.showNotification(`🎉 Quest Complete! +${xpGained} XP`);
-                } else {
-                    this.playSound('break');
-                    this.isBreak = false;
-                    this.currentTime = this.focusTime;
-                    this.elements.sessionType.textContent = '🎯 Focus Quest';
-                    this.elements.statusIndicator.textContent = 'Ready for the next quest';
-                    this.showNotification('Break complete! Ready for your next quest? 🎯');
-                }
-                
-                this.elements.startBtn.textContent = 'Start Quest';
-                this.elements.startBtn.className = 'btn btn-primary';
-                this.updateAll();
-            }
-
-            getBreakTime() {
-                return this.sessionCount % 4 === 0 ? this.longBreakTime : this.breakTime;
-            }
-
-            updateDisplay() {
-                const minutes = Math.floor(this.currentTime / 60);
-                const seconds = this.currentTime % 60;
-                this.elements.timerDisplay.textContent = 
-                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            }
-
-            gainXP(amount) {
-                this.xp += amount;
-                this.showFloatingXP(amount);
-                
-                const xpForCurrentLevel = this.getXPForLevel(this.level);
-                if (this.xp >= xpForCurrentLevel) {
-                    this.levelUp();
-                }
-                
-                this.updateStats();
-                this.saveProgress();
-            }
-
-            getXPForLevel(level) {
-                // Progression selon README: 100 → 250 → 450 → 700 → 1000...
-                // Pattern: +100, +150, +200, +250, +300, +350...
-                if (level === 1) return 100;
-                if (level === 2) return 250;
-                if (level === 3) return 450;
-                if (level === 4) return 700;
-                if (level === 5) return 1000;
-                
-                // Pour les niveaux supérieurs : progression croissante
-                let total = 1000; // XP pour niveau 5
-                for (let i = 6; i <= level; i++) {
-                    // Increment croissant: 350 pour niveau 6, 400 pour niveau 7, etc.
-                    let increment = 250 + 50 * (i - 4);
-                    total += increment;
-                }
-                return total;
-            }
-
-            levelUp() {
-                this.level++;
-                this.showNotification(`🎊 Level Up! You are now level ${this.level}!`);
-                
-                this.elements.levelBadge.classList.add('level-up-celebration');
-                this.elements.levelBadge.classList.add('pulse');
-                
-                setTimeout(() => {
-                    this.elements.levelBadge.classList.remove('level-up-celebration');
-                    this.elements.levelBadge.classList.remove('pulse');
-                }, 2000);
-                
-                this.updateStats();
-                this.saveProgress();
-                this.checkAchievements();
-            }
-
-            showFloatingXP(amount) {
-                const floating = document.createElement('div');
-                floating.className = 'floating-xp';
-                floating.textContent = `+${amount} XP`;
-                floating.style.left = (window.innerWidth / 2 - 50) + 'px';
-                floating.style.top = (window.innerHeight / 2) + 'px';
-                document.body.appendChild(floating);
-                
-                setTimeout(() => {
-                    if (document.body.contains(floating)) {
-                        document.body.removeChild(floating);
-                    }
-                }, 2500);
-            }
-
-            updateStats() {
-                this.elements.levelBadge.textContent = `Level ${this.level} • Productivity Warrior`;
-                this.elements.completedSessions.textContent = this.completedSessions;
-                this.elements.totalTime.textContent = `${Math.floor(this.totalMinutes / 60)}h ${this.totalMinutes % 60}m`;
-                this.elements.streak.textContent = this.currentStreak;
-                
-                const currentLevelXP = this.level === 1 ? 0 : this.getXPForLevel(this.level - 1);
-                const nextLevelXP = this.getXPForLevel(this.level);
-                const progressXP = this.xp - currentLevelXP;
-                const requiredXP = nextLevelXP - currentLevelXP;
-                
-                const xpProgress = (progressXP / requiredXP) * 100;
-                this.elements.xpBar.style.width = `${Math.min(xpProgress, 100)}%`;
-                this.elements.xpText.textContent = `${progressXP} / ${requiredXP} XP`;
-            }
-
-            checkAchievements() {
-                const defs = [
-                    { id: 'first_quest', title: 'First Quest', desc: 'Complete your first Pomodoro', icon: '🎯', condition: () => this.completedSessions >= 1 },
-                    { id: 'dedicated', title: 'Dedicated', desc: 'Complete 10 Pomodoros', icon: '💪', condition: () => this.completedSessions >= 10 },
-                    { id: 'focused_master', title: 'Focused Master', desc: 'Complete 25 Pomodoros', icon: '🧠', condition: () => this.completedSessions >= 25 },
-                    { id: 'streak_5', title: 'Streak Warrior', desc: 'Maintain a 5-day streak', icon: '🔥', condition: () => this.currentStreak >= 5 },
-                    { id: 'time_master', title: 'Time Master', desc: 'Focus for 10 hours total', icon: '⏰', condition: () => this.totalMinutes >= 600 },
-                    { id: 'level_5', title: 'Experienced', desc: 'Reach level 5', icon: '🎖️', condition: () => this.level >= 5 },
-                    { id: 'level_10', title: 'Expert', desc: 'Reach level 10', icon: '🏆', condition: () => this.level >= 10 }
-                ];
-
-                defs.forEach(achievement => {
-                    if (achievement.condition() && !this.achievements.find(a => a.id === achievement.id)) {
-                        this.addAchievement(achievement.title, achievement.desc, achievement.icon, achievement.id);
-                    }
-                });
-            }
-
-            addAchievement(title, desc, icon, id) {
-                const achievement = { id, title, desc, icon, timestamp: Date.now() };
-                this.achievements.unshift(achievement);
-                this.achievements = this.achievements.slice(0, 10);
-                this.showNotification(`🏆 Achievement Unlocked: ${title}`);
-                this.updateAchievements();
-                this.saveProgress();
-            }
-
-            updateAchievements() {
-                this.elements.achievementsList.innerHTML = '';
-                
-                if (this.achievements.length === 0) {
-                    this.elements.achievementsList.innerHTML = `
-                        <div style="text-align: center; color: #9ca3af; padding: 2rem; opacity: 0.7;">
-                            <div style="font-size: 2rem; margin-bottom: 1rem;">🎯</div>
-                            <div>Complete quests to unlock achievements!</div>
-                        </div>
-                    `;
-                    return;
-                }
-
-                this.achievements.forEach(achievement => {
-                    const item = document.createElement('div');
-                    item.className = 'achievement-item';
-                    item.innerHTML = `
-                        <div class="achievement-icon">${achievement.icon}</div>
-                        <div>
-                            <div class="achievement-title">${achievement.title}</div>
-                            <div class="achievement-desc">${achievement.desc}</div>
-                        </div>
-                    `;
-                    this.elements.achievementsList.appendChild(item);
-                });
-            }
-
-            playSound(type) {
-                if (!this.soundEnabled) return;
-                
-                try {
-                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    
-                    if (this.soundType === 'chime' && type === 'focus') {
-                        this.playChime(audioContext);
-                    } else if (this.soundType === 'bell' && type === 'focus') {
-                        this.playBell(audioContext);
-                    } else if (this.soundType === 'success' && type === 'focus') {
-                        this.playSuccess(audioContext);
-                    } else {
-                        this.playBeep(audioContext, type === 'break' ? 600 : 800);
-                    }
-                } catch (error) {
-                    console.warn('Audio failed:', error);
-                }
-            }
-
-            playBeep(audioContext, frequency = 800) {
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.frequency.value = frequency;
-                oscillator.type = 'sine';
-                
-                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-                gainNode.gain.linearRampToValueAtTime(this.volume, audioContext.currentTime + 0.01);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-                
-                oscillator.start(audioContext.currentTime);
-                oscillator.stop(audioContext.currentTime + 0.3);
-            }
-
-            playChime(audioContext) {
-                const notes = [523.25, 659.25, 783.99];
-                notes.forEach((freq, index) => {
-                    setTimeout(() => {
-                        const oscillator = audioContext.createOscillator();
-                        const gainNode = audioContext.createGain();
-                        
-                        oscillator.connect(gainNode);
-                        gainNode.connect(audioContext.destination);
-                        
-                        oscillator.frequency.value = freq;
-                        oscillator.type = 'sine';
-                        
-                        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-                        gainNode.gain.linearRampToValueAtTime(this.volume, audioContext.currentTime + 0.01);
-                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
-                        
-                        oscillator.start(audioContext.currentTime);
-                        oscillator.stop(audioContext.currentTime + 0.4);
-                    }, index * 150);
-                });
-            }
-
-            playBell(audioContext) {
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.frequency.setValueAtTime(1000, audioContext.currentTime);
-                oscillator.frequency.exponentialRampToValueAtTime(600, audioContext.currentTime + 0.6);
-                oscillator.type = 'sine';
-                
-                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-                gainNode.gain.linearRampToValueAtTime(this.volume, audioContext.currentTime + 0.01);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.6);
-                
-                oscillator.start(audioContext.currentTime);
-                oscillator.stop(audioContext.currentTime + 0.6);
-            }
-
-            playSuccess(audioContext) {
-                const melody = [261.63, 329.63, 392.00, 523.25];
-                melody.forEach((freq, index) => {
-                    setTimeout(() => {
-                        const oscillator = audioContext.createOscillator();
-                        const gainNode = audioContext.createGain();
-                        
-                        oscillator.connect(gainNode);
-                        gainNode.connect(audioContext.destination);
-                        
-                        oscillator.frequency.value = freq;
-                        oscillator.type = 'triangle';
-                        
-                        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-                        gainNode.gain.linearRampToValueAtTime(this.volume, audioContext.currentTime + 0.01);
-                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-                        
-                        oscillator.start(audioContext.currentTime);
-                        oscillator.stop(audioContext.currentTime + 0.2);
-                    }, index * 100);
-                });
-            }
-
-            showNotification(message, duration = 3000) {
-                const notification = document.getElementById('notification');
-                notification.textContent = message;
-                notification.classList.add('show');
-                
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                }, duration);
-            }
-
-            updateAll() {
-                this.updateDisplay();
-                this.updateProgressRing();
-                this.updateStats();
-                this.updateAchievements();
-                this.elements.soundToggle.textContent = this.soundEnabled ? '🔔 Sound' : '🔇 Muted';
-                this.elements.soundType.value = this.soundType;
-                this.elements.volumeSlider.value = this.volume * 100;
-            }
-
-            saveProgress() {
-                const data = {
-                    level: this.level,
-                    xp: this.xp,
-                    completedSessions: this.completedSessions,
-                    totalMinutes: this.totalMinutes,
-                    currentStreak: this.currentStreak,
-                    achievements: this.achievements,
-                    soundEnabled: this.soundEnabled,
-                    soundType: this.soundType,
-                    soundVolume: this.volume
-                };
-                
-                Object.entries(data).forEach(([key, value]) => {
-                    localStorage.setItem(key, JSON.stringify(value));
-                });
-            }
-
-            // Debug functions
-            debugSkipMinutes(minutes) {
-                this.currentTime = Math.max(0, this.currentTime - (minutes * 60));
-                this.updateDisplay();
-                this.updateProgressRing();
-                if (this.currentTime <= 0) this.completeSession();
-                this.showNotification(`⏩ Skipped ${minutes} minute${minutes > 1 ? 's' : ''}`);
-            }
-
-            debugCompleteSession() {
-                this.currentTime = 0;
-                this.completeSession();
-                this.showNotification('✅ Debug: Session completed');
-            }
-
-            debugAddXP(amount) {
-                this.gainXP(amount);
-                this.showNotification(`⭐ Debug: Added ${amount} XP`);
-            }
-
-            debugLevelUp() {
-                const xpNeeded = this.getXPForLevel(this.level) - this.xp;
-                if (xpNeeded > 0) this.gainXP(xpNeeded);
-                this.showNotification('🚀 Debug: Level up triggered');
-            }
-
-            debugTestSounds() {
-                this.showNotification('🎵 Testing sounds...');
-                setTimeout(() => this.playSound('focus'), 0);
-                setTimeout(() => this.playSound('break'), 1000);
-            }
-
-            debugReset() {
-                if (confirm('⚠️ This will reset ALL progress! Are you sure?')) {
-                    // Clear localStorage completely
-                    localStorage.clear();
-                    
-                    // Reset object properties to initial values
-                    this.level = 1;
-                    this.xp = 0;
-                    this.completedSessions = 0;
-                    this.totalMinutes = 0;
-                    this.currentStreak = 0;
-                    this.achievements = [];
-                    this.soundEnabled = true;
-                    this.soundType = 'chime';
-                    this.volume = 0.7;
-                    
-                    // Reset timer state
-                    this.isRunning = false;
-                    this.isBreak = false;
-                    this.currentTime = this.focusTime;
-                    this.sessionCount = 0;
-                    clearInterval(this.timer);
-                    
-                    // Update all displays immediately
-                    this.updateAll();
-                    
-                    // Reset button states
-                    this.elements.startBtn.textContent = 'Start Quest';
-                    this.elements.startBtn.className = 'btn btn-primary';
-                    this.elements.statusIndicator.textContent = 'Ready for your next quest';
-                    this.elements.sessionType.textContent = '🎯 Focus Quest';
-                    
-                    this.showNotification('🔄 All progress reset! Ready for a fresh start!');
-                }
-            }
-        }
-
-        // Initialize
-        let questTimer;
-
-        document.addEventListener('DOMContentLoaded', () => {
-            if ('Notification' in window && Notification.permission === 'default') {
-                Notification.requestPermission();
-            }
-            
-            questTimer = new QuestTimer();
-            window.questTimer = questTimer;
-            
-            console.log('⚔️ Quest Timer - Bottom Nav Design');
-            console.log('🎮 Shortcuts: Space (start/pause), R (reset), A (achievements), Escape (close)');
-        });
-    </script>
+    <!-- JavaScript Files -->
+    <script src="./assets/js/utils.js"></script>
+    <script src="./assets/js/sound.js"></script>
+    <script src="./assets/js/timer.js"></script>
+    <script src="./assets/js/rpg.js"></script>
+    <script src="./assets/js/debug.js"></script>
+    <script src="./assets/js/app.js"></script>
 </body>
 </html>
