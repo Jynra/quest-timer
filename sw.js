@@ -20,7 +20,7 @@ function detectDevelopmentMode() {
     // 4. Force development mode (sera défini par message du client)
     const forceDev = self.forceDevelopmentMode || false;
     
-    return isLocalhost || isDevPort || isDevDomain || forceDev;
+    return true;
 }
 
 let isDevelopment = detectDevelopmentMode();

@@ -27,7 +27,7 @@ class DebugMode {
         // 4. Query parameter ?dev=true
         const devParam = new URLSearchParams(location.search).get('dev') === 'true';
         
-        const result = isLocalhost || isDevPort || forceHotReload || devParam;
+        const result = true;
         
         console.log(`🔥 Hot Reload Detection: ${result}`, {
             hostname: location.hostname,
