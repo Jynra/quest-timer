@@ -1,11 +1,35 @@
 // ===== SERVICE WORKER FOR QUEST TIMER =====
 
 // 🔥 HOT RELOAD: Incrémentez cette version pour forcer la mise à jour du cache
-const CACHE_VERSION = '1.0.1';
+const CACHE_VERSION = '1.0.2';
 const CACHE_NAME = `quest-timer-v${CACHE_VERSION}`;
 
-// 🔧 HOT RELOAD: En mode développement, cache moins agressif
-const isDevelopment = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+// 🔥 CORRECTION: Détection d'environnement FLEXIBLE
+function detectDevelopmentMode() {
+    // 1. Hostname localhost
+    const isLocalhost = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    
+    // 2. Port de développement
+    const isDevPort = location.port === '3046';
+    
+    // 3. Domaine de développement
+    const isDevDomain = location.hostname.includes('dev.') || 
+                       location.hostname.includes('test.') ||
+                       location.hostname.includes('staging.');
+    
+    // 4. Force development mode (sera défini par message du client)
+    const forceDev = self.forceDevelopmentMode || false;
+    
+    return isLocalhost || isDevPort || isDevDomain || forceDev;
+}
+
+let isDevelopment = detectDevelopmentMode();
+
+console.log(`🔥 SW: Development mode = ${isDevelopment}`, {
+    hostname: location.hostname,
+    port: location.port,
+    forceDev: self.forceDevelopmentMode || false
+});
 
 const urlsToCache = [
   './',
@@ -32,7 +56,7 @@ const urlsToCache = [
 
 // ===== INSTALL EVENT =====
 self.addEventListener('install', (event) => {
-  console.log(`⚔️ Service Worker v${CACHE_VERSION} installing...`);
+  console.log(`⚔️ Service Worker v${CACHE_VERSION} installing (dev: ${isDevelopment})...`);
   
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -43,7 +67,9 @@ self.addEventListener('install', (event) => {
           const request = new Request(url, {
             cache: isDevelopment ? 'no-cache' : 'default'
           });
-          return cache.add(request);
+          return cache.add(request).catch(error => {
+            console.warn(`⚠️ Failed to cache ${url}:`, error);
+          });
         });
         return Promise.all(cachePromises);
       })
@@ -59,7 +85,7 @@ self.addEventListener('install', (event) => {
 
 // ===== ACTIVATE EVENT =====
 self.addEventListener('activate', (event) => {
-  console.log(`🚀 Service Worker v${CACHE_VERSION} activating...`);
+  console.log(`🚀 Service Worker v${CACHE_VERSION} activating (dev: ${isDevelopment})...`);
   
   event.waitUntil(
     Promise.all([
@@ -84,7 +110,8 @@ self.addEventListener('activate', (event) => {
         clients.forEach(client => {
           client.postMessage({
             type: 'SW_UPDATED',
-            version: CACHE_VERSION
+            version: CACHE_VERSION,
+            isDevelopment: isDevelopment
           });
         });
       });
@@ -100,14 +127,22 @@ self.addEventListener('fetch', (event) => {
   // Skip external requests
   if (!event.request.url.startsWith(self.location.origin)) return;
   
-  // 🔥 HOT RELOAD: Stratégie différente en développement
+  // 🔥 CORRECTION: Stratégie adaptative selon le mode
   if (isDevelopment) {
-    // En développement: Network First (pour voir les changements immédiatement)
+    // Mode développement: Network First avec bypass cache
+    console.log(`🔥 SW Dev: Network First for ${event.request.url}`);
     event.respondWith(
-      fetch(event.request)
+      fetch(event.request, {
+        cache: 'no-cache',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      })
         .then(response => {
-          // Clone et cache la réponse
-          if (response.status === 200) {
+          // Clone et cache la réponse seulement si elle est valide
+          if (response && response.status === 200 && response.type === 'basic') {
             const responseToCache = response.clone();
             caches.open(CACHE_NAME).then(cache => {
               cache.put(event.request, responseToCache);
@@ -115,15 +150,16 @@ self.addEventListener('fetch', (event) => {
           }
           return response;
         })
-        .catch(() => {
-          // Fallback vers le cache si network fail
+        .catch((error) => {
+          console.warn(`🔥 SW Dev: Network failed for ${event.request.url}, falling back to cache`);
+          // Fallback vers le cache si le réseau échoue
           return caches.match(event.request).then(cachedResponse => {
             return cachedResponse || caches.match('./index.html');
           });
         })
     );
   } else {
-    // En production: Cache First (performance optimale)
+    // Mode production: Cache First (performance optimale)
     event.respondWith(
       caches.match(event.request)
         .then((cachedResponse) => {
@@ -157,7 +193,7 @@ self.addEventListener('fetch', (event) => {
 
 // ===== MESSAGE HANDLING =====
 self.addEventListener('message', (event) => {
-  console.log('💬 Message received:', event.data);
+  console.log('💬 SW Message received:', event.data);
   
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
@@ -172,12 +208,48 @@ self.addEventListener('message', (event) => {
     });
   }
   
-  // 🔥 HOT RELOAD: Clear cache en développement
-  if (event.data && event.data.type === 'CLEAR_CACHE' && isDevelopment) {
-    caches.delete(CACHE_NAME).then(() => {
-      console.log('🧹 Cache cleared for hot reload');
-      event.ports[0].postMessage({ success: true });
+  // 🔥 CORRECTION: Forcer le mode développement
+  if (event.data && event.data.type === 'FORCE_DEV_MODE') {
+    console.log('🔥 SW: Forcing development mode ON');
+    isDevelopment = true;
+    self.forceDevelopmentMode = true;
+    
+    // Notifier tous les clients du changement
+    self.clients.matchAll().then(clients => {
+      clients.forEach(client => {
+        client.postMessage({
+          type: 'DEV_MODE_UPDATED',
+          isDevelopment: true
+        });
+      });
     });
+  }
+  
+  // 🔥 CORRECTION: Clear cache maintenant sans restriction
+  if (event.data && event.data.type === 'CLEAR_CACHE') {
+    const force = event.data.force === true;
+    
+    if (isDevelopment || force) {
+      Promise.all([
+        caches.delete(CACHE_NAME),
+        // Clear all quest-timer caches
+        caches.keys().then(names => {
+          return Promise.all(
+            names.filter(name => name.includes('quest-timer'))
+                 .map(name => caches.delete(name))
+          );
+        })
+      ]).then(() => {
+        console.log('🧹 All caches cleared for hot reload');
+        event.ports[0].postMessage({ success: true });
+      }).catch(error => {
+        console.error('❌ Failed to clear cache:', error);
+        event.ports[0].postMessage({ success: false, error: error.message });
+      });
+    } else {
+      console.log('🔒 Cache clear denied - not in development mode');
+      event.ports[0].postMessage({ success: false, reason: 'not in development mode' });
+    }
   }
 });
 
@@ -193,7 +265,8 @@ self.addEventListener('push', (event) => {
     data: {
       dateOfArrival: Date.now(),
       primaryKey: '2',
-      version: CACHE_VERSION
+      version: CACHE_VERSION,
+      isDevelopment: isDevelopment
     },
     actions: [
       {
@@ -231,7 +304,7 @@ self.addEventListener('notificationclick', (event) => {
     }).then((windowClients) => {
       for (let i = 0; i < windowClients.length; i++) {
         const client = windowClients[i];
-        if (client.url === urlToOpen && 'focus' in client) {
+        if (client.url.includes('quest-timer') && 'focus' in client) {
           return client.focus();
         }
       }
@@ -242,23 +315,6 @@ self.addEventListener('notificationclick', (event) => {
     })
   );
 });
-
-// ===== HOT RELOAD UTILITIES =====
-
-// Fonction pour forcer la mise à jour en développement
-function forceUpdate() {
-  if (isDevelopment) {
-    caches.delete(CACHE_NAME).then(() => {
-      self.clients.matchAll().then(clients => {
-        clients.forEach(client => {
-          client.postMessage({
-            type: 'FORCE_RELOAD'
-          });
-        });
-      });
-    });
-  }
-}
 
 // ===== ERROR HANDLING =====
 self.addEventListener('error', (event) => {
@@ -274,3 +330,4 @@ console.log(`⚔️ Quest Timer Service Worker v${CACHE_VERSION} loaded`);
 console.log(`🔥 Hot Reload Mode: ${isDevelopment ? 'ENABLED' : 'DISABLED'}`);
 console.log('📦 Cache name:', CACHE_NAME);
 console.log('📁 URLs to cache:', urlsToCache.length);
+console.log('🌐 Location:', { hostname: location.hostname, port: location.port });

@@ -5,10 +5,57 @@ class DebugMode {
         this.timer = timer;
         this.rpgSystem = rpgSystem;
         this.isEnabled = false;
-        this.isDevelopment = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+        
+        // 🔥 CORRECTION: Détection d'environnement FLEXIBLE
+        this.isDevelopment = this.detectDevelopmentMode();
         
         this.initializeDebugPanel();
         this.setupEventListeners();
+    }
+
+    // 🔥 NOUVELLE MÉTHODE: Détection flexible
+    detectDevelopmentMode() {
+        // 1. Hostname localhost
+        const isLocalhost = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+        
+        // 2. Port de développement
+        const isDevPort = location.port === '3046';
+        
+        // 3. Override localStorage
+        const forceHotReload = localStorage.getItem('forceHotReload') === 'true';
+        
+        // 4. Query parameter ?dev=true
+        const devParam = new URLSearchParams(location.search).get('dev') === 'true';
+        
+        const result = isLocalhost || isDevPort || forceHotReload || devParam;
+        
+        console.log(`🔥 Hot Reload Detection: ${result}`, {
+            hostname: location.hostname,
+            port: location.port,
+            isLocalhost,
+            isDevPort,
+            forceHotReload,
+            devParam
+        });
+        
+        return result;
+    }
+
+    // 🔥 NOUVELLE MÉTHODE: Activer Hot Reload manuellement
+    enableHotReload() {
+        localStorage.setItem('forceHotReload', 'true');
+        this.isDevelopment = true;
+        
+        // Ajouter les contrôles Hot Reload si pas déjà fait
+        if (!document.getElementById('hardReload')) {
+            this.addHotReloadControls();
+            this.setupHotReloadControls();
+        }
+        
+        showNotification('🔥 Hot Reload ENABLED!');
+        console.log('🔥 Hot Reload manually enabled');
+        
+        return this;
     }
 
     initializeDebugPanel() {
@@ -384,7 +431,7 @@ class DebugMode {
         }, 500);
     }
 
-    // 🔥 HOT RELOAD: Clear cache and reload
+    // 🔥 CORRECTION: Clear cache amélioré
     clearCacheAndReload() {
         showNotification('🧹 Clearing cache...');
         console.log('🔥 Hot Reload: Clearing cache and reloading');
@@ -395,12 +442,13 @@ class DebugMode {
                 messageChannel.port1.onmessage = (event) => {
                     if (event.data.success) {
                         console.log('🧹 Cache cleared successfully');
-                        setTimeout(() => location.reload(), 1000);
+                        setTimeout(() => location.reload(true), 1000);
                     }
                 };
                 
                 registration.active.postMessage({
-                    type: 'CLEAR_CACHE'
+                    type: 'CLEAR_CACHE',
+                    force: true  // 🔥 NOUVEAU: Force clear même en production
                 }, [messageChannel.port2]);
             });
         } else {
@@ -413,7 +461,7 @@ class DebugMode {
                         }
                     });
                 }).then(() => {
-                    setTimeout(() => location.reload(), 1000);
+                    setTimeout(() => location.reload(true), 1000);
                 });
             }
         }
