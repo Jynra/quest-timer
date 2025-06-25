@@ -4,7 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quest Timer - Bottom Nav</title>
+    
+    <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Quest Timer">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- PWA Icons pour iOS -->
+    <link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIj48cmVjdCB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgZmlsbD0iIzYzNjZmMSIgcng9IjQwIi8+PHRleHQgeD0iOTAiIHk9IjExNiIgZm9udC1mYW1pbHk9InN5c3RlbS11aSIgZm9udC1zaXplPSI2OCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuKalDwvdGV4dD48L3N2Zz4=">
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="./manifest.json">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgMzIgMzIiPjxyZWN0IHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzYzNjZmMSIgcng9IjgiLz48dGV4dCB4PSIxNiIgeT0iMjIiIGZvbnQtZmFtaWx5PSJzeXN0ZW0tdWkiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7ijpQ8L3RleHQ+PC9zdmc+">
+    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -449,6 +465,36 @@
             50% { opacity: 0.8; transform: scale(1.05); }
         }
 
+        /* PWA Install Banner */
+        .install-banner {
+            position: fixed;
+            bottom: 120px;
+            left: 1rem;
+            right: 1rem;
+            background: linear-gradient(45deg, #6366f1, #8b5cf6);
+            color: white;
+            padding: 1rem;
+            border-radius: 12px;
+            display: none;
+            align-items: center;
+            gap: 1rem;
+            z-index: 1500;
+        }
+
+        .install-banner.show {
+            display: flex;
+        }
+
+        .install-banner button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
         @media (max-width: 375px) {
             .timer-display { font-size: 2.4rem; }
             .progress-circle { width: 160px; height: 160px; }
@@ -459,6 +505,16 @@
 <body>
     <button class="debug-toggle" id="debugToggle">🐛</button>
     <button class="achievements-btn" id="achievementsBtn">🏆</button>
+
+    <!-- Install Banner -->
+    <div class="install-banner" id="installBanner">
+        <div>
+            <div style="font-weight: 600;">📱 Install Quest Timer</div>
+            <div style="font-size: 0.8rem; opacity: 0.9;">Get the full app experience</div>
+        </div>
+        <button id="installBtn">Install</button>
+        <button id="dismissBtn">×</button>
+    </div>
 
     <div class="container">
         <div class="header">
@@ -575,12 +631,16 @@
                 this.soundType = localStorage.getItem('soundType') || 'chime';
                 this.volume = parseFloat(localStorage.getItem('soundVolume') || '0.7');
                 
+                // PWA install prompt
+                this.deferredPrompt = null;
+                
                 this.init();
             }
 
             init() {
                 this.setupElements();
                 this.setupEvents();
+                this.setupPWA();
                 this.setupProgressRing();
                 this.updateAll();
             }
@@ -603,7 +663,10 @@
                     soundToggle: document.getElementById('soundToggle'),
                     soundType: document.getElementById('soundType'),
                     volumeSlider: document.getElementById('volumeSlider'),
-                    achievementsList: document.getElementById('achievementsList')
+                    achievementsList: document.getElementById('achievementsList'),
+                    installBanner: document.getElementById('installBanner'),
+                    installBtn: document.getElementById('installBtn'),
+                    dismissBtn: document.getElementById('dismissBtn')
                 };
             }
 
@@ -640,6 +703,16 @@
                     this.saveProgress();
                 });
 
+                // PWA Install Events
+                this.elements.installBtn.addEventListener('click', () => {
+                    this.installPWA();
+                });
+
+                this.elements.dismissBtn.addEventListener('click', () => {
+                    this.elements.installBanner.classList.remove('show');
+                    localStorage.setItem('installBannerDismissed', 'true');
+                });
+
                 document.addEventListener('keydown', (e) => {
                     if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
                     if (e.code === 'Space') { e.preventDefault(); this.toggleTimer(); }
@@ -647,6 +720,65 @@
                     if (e.key === 'a') document.getElementById('achievementsModal').classList.toggle('show');
                     if (e.key === 'Escape') document.getElementById('achievementsModal').classList.remove('show');
                 });
+            }
+
+            setupPWA() {
+                // Register Service Worker
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.register('./sw.js')
+                        .then(registration => {
+                            console.log('✅ Service Worker registered:', registration);
+                        })
+                        .catch(error => {
+                            console.log('❌ Service Worker registration failed:', error);
+                        });
+                }
+
+                // Handle PWA install prompt
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    e.preventDefault();
+                    this.deferredPrompt = e;
+                    this.showInstallBanner();
+                });
+
+                // Handle PWA install completion
+                window.addEventListener('appinstalled', () => {
+                    console.log('📱 PWA installed');
+                    this.elements.installBanner.classList.remove('show');
+                    this.showNotification('📱 Quest Timer installed as app!');
+                    this.deferredPrompt = null;
+                });
+
+                // Request notification permission
+                if ('Notification' in window && Notification.permission === 'default') {
+                    Notification.requestPermission();
+                }
+            }
+
+            showInstallBanner() {
+                const dismissed = localStorage.getItem('installBannerDismissed');
+                const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+                
+                if (!dismissed && !isStandalone && this.deferredPrompt) {
+                    setTimeout(() => {
+                        this.elements.installBanner.classList.add('show');
+                    }, 5000); // Show after 5 seconds
+                }
+            }
+
+            installPWA() {
+                if (this.deferredPrompt) {
+                    this.deferredPrompt.prompt();
+                    this.deferredPrompt.userChoice.then((choiceResult) => {
+                        if (choiceResult.outcome === 'accepted') {
+                            console.log('📱 User accepted PWA install');
+                        } else {
+                            console.log('📱 User dismissed PWA install');
+                        }
+                        this.deferredPrompt = null;
+                        this.elements.installBanner.classList.remove('show');
+                    });
+                }
             }
 
             setupProgressRing() {
@@ -729,6 +861,7 @@
                     this.elements.statusIndicator.textContent = 'Break time! You earned it.';
                     
                     this.showNotification(`🎉 Quest Complete! +${xpGained} XP`);
+                    this.showBrowserNotification('Quest Timer', `Quest Complete! +${xpGained} XP`);
                 } else {
                     this.playSound('break');
                     this.isBreak = false;
@@ -736,6 +869,7 @@
                     this.elements.sessionType.textContent = '🎯 Focus Quest';
                     this.elements.statusIndicator.textContent = 'Ready for the next quest';
                     this.showNotification('Break complete! Ready for your next quest? 🎯');
+                    this.showBrowserNotification('Quest Timer', 'Break complete! Ready for your next quest?');
                 }
                 
                 this.elements.startBtn.textContent = 'Start Quest';
@@ -768,18 +902,14 @@
             }
 
             getXPForLevel(level) {
-                // Progression selon README: 100 → 250 → 450 → 700 → 1000...
-                // Pattern: +100, +150, +200, +250, +300, +350...
                 if (level === 1) return 100;
                 if (level === 2) return 250;
                 if (level === 3) return 450;
                 if (level === 4) return 700;
                 if (level === 5) return 1000;
                 
-                // Pour les niveaux supérieurs : progression croissante
-                let total = 1000; // XP pour niveau 5
+                let total = 1000;
                 for (let i = 6; i <= level; i++) {
-                    // Increment croissant: 350 pour niveau 6, 400 pour niveau 7, etc.
                     let increment = 250 + 50 * (i - 4);
                     total += increment;
                 }
@@ -857,6 +987,7 @@
                 this.achievements.unshift(achievement);
                 this.achievements = this.achievements.slice(0, 10);
                 this.showNotification(`🏆 Achievement Unlocked: ${title}`);
+                this.showBrowserNotification('Achievement Unlocked!', title);
                 this.updateAchievements();
                 this.saveProgress();
             }
@@ -1001,6 +1132,15 @@
                 }, duration);
             }
 
+            showBrowserNotification(title, message) {
+                if ('Notification' in window && Notification.permission === 'granted') {
+                    new Notification(title, {
+                        body: message,
+                        icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTIgMTkyIj48cmVjdCB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgZmlsbD0iIzYzNjZmMSIgcng9IjQyIi8+PHRleHQgeD0iOTYiIHk9IjEyNCIgZm9udC1mYW1pbHk9InN5c3RlbS11aSIgZm9udC1zaXplPSI3MiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuKalDwvdGV4dD48L3N2Zz4='
+                    });
+                }
+            }
+
             updateAll() {
                 this.updateDisplay();
                 this.updateProgressRing();
@@ -1102,15 +1242,12 @@
         let questTimer;
 
         document.addEventListener('DOMContentLoaded', () => {
-            if ('Notification' in window && Notification.permission === 'default') {
-                Notification.requestPermission();
-            }
-            
             questTimer = new QuestTimer();
             window.questTimer = questTimer;
             
             console.log('⚔️ Quest Timer - Bottom Nav Design');
             console.log('🎮 Shortcuts: Space (start/pause), R (reset), A (achievements), Escape (close)');
+            console.log('📱 PWA: Ready for installation');
         });
     </script>
 </body>
