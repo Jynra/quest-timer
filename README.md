@@ -8,6 +8,8 @@ Quest Timer transforme la technique Pomodoro traditionnelle en une expérience R
 
 **🎮 Nouveau Design Bottom Nav !** Interface optimisée mobile-first avec contrôles en bas d'écran.
 
+**📱 Installation PWA améliorée !** Icônes natives, prompt d'installation automatique et mode standalone parfait.
+
 ## ✨ Fonctionnalités principales
 
 ### 🍅 Timer Pomodoro intelligent
@@ -34,17 +36,22 @@ Quest Timer transforme la technique Pomodoro traditionnelle en une expérience R
 
 ### 📱 Application PWA native
 - **Installation sur mobile/desktop** - Fonctionne comme une vraie app
-- **Mode Standalone** - S'ouvre sans barre d'adresse
-- **Fonctionne hors ligne** - Tout sauvé localement
+- **Mode Standalone** - S'ouvre sans barre d'adresse ni interface navigateur
+- **Icônes natives PNG** - Toutes les tailles (72x72 à 512x512) pour tous les appareils
+- **Prompt d'installation automatique** - Banner d'installation intelligent après 5 secondes
+- **Support iOS complet** - Apple Touch Icons et métadonnées spécifiques
+- **Notifications push natives** - Pour les achievements et complétion de sessions
+- **Fonctionne hors ligne** - Cache intelligent avec mise à jour automatique
 - **Design responsive** - 320px → desktop, optimisé tous écrans
 
 ### 🛠️ Mode Debug avancé
 - **Skip 1/5 minutes** - Test rapide du timer
 - **Complete Session** - Simulation de fin de session
 - **Add XP/Level Up** - Manipulation précise de la progression  
-- **Test des sons** - Vérification du système audio
+- **Test des sons** - Vérification du système audio complet
 - **Reset complet** - Remise à zéro totale sans rechargement
 - **Panel slide-in** - Interface debug moderne
+- **PWA diagnostics** - Test installation et mode standalone
 
 ## 🚀 Installation rapide
 
@@ -68,9 +75,11 @@ python -m http.server 8000
 
 ### 📱 Installation PWA
 1. **Ouvrez l'app en HTTPS** (requis pour PWA)
-2. **"Ajouter à l'écran d'accueil"** sur mobile
-3. **"Installer l'application"** sur desktop
-4. **L'app s'ouvre en mode standalone** 🎉
+2. **Attendez le prompt automatique** (5 secondes) ou utilisez le menu navigateur
+3. **"Ajouter à l'écran d'accueil"** sur mobile
+4. **"Installer l'application"** sur desktop
+5. **L'app s'ouvre en mode standalone** sans barre d'adresse 🎉
+6. **Icône native** apparaît sur l'écran d'accueil avec le design Quest Timer
 
 ## 🎮 Guide de jeu
 
@@ -108,6 +117,7 @@ python -m http.server 8000
 - **🎵 Type** - Choisit le son (Chime/Bell/Success/Beep)
 - **🔊 Volume** - Ajuste le volume des alarmes (slider)
 - **🏆 Achievements** - Ouvre la modal des succès (top-left)
+- **📱 Install** - Banner d'installation PWA (automatique après 5s)
 
 ### Raccourcis clavier
 - **Espace** - Start/Pause timer
@@ -122,7 +132,7 @@ python -m http.server 8000
 - **Complete Session** - Termine la session instantanément
 - **Add XP** - Ajoute 100 XP
 - **Level Up** - Force le passage au niveau suivant
-- **Test Sounds** - Teste les sons focus/break
+- **Test Sounds** - Teste tous les types de sons (séquence complète)
 - **Reset All** - Remise à zéro complète
 
 ## 🔧 Architecture technique
@@ -130,22 +140,30 @@ python -m http.server 8000
 ### Structure du projet
 ```
 quest-timer/
-├── index.html              # Interface Bottom Nav
-├── manifest.json           # Configuration PWA
-├── sw.js                   # Service Worker
+├── index.html              # Interface Bottom Nav + PWA optimisée
+├── manifest.json           # Configuration PWA avec icônes natives
+├── sw.js                   # Service Worker optimisé PWA
 ├── assets/
 │   ├── css/
 │   │   ├── main.css        # 🎨 Styles de base Bottom Nav
 │   │   ├── components.css  # 🧩 Composants Bottom Nav
 │   │   └── animations.css  # ✨ Animations et effets
 │   ├── js/
-│   │   ├── app.js          # 🚀 Application principale Bottom Nav
+│   │   ├── app.js          # 🚀 Application principale + PWA manager
 │   │   ├── timer.js        # ⏱️ Logique timer + alarmes
 │   │   ├── rpg.js          # 🎮 Système XP/niveaux (corrigé)
 │   │   ├── sound.js        # 🔔 Système sonore
 │   │   ├── debug.js        # 🛠️ Mode debug + contrôles
 │   │   └── utils.js        # 🔧 Fonctions utilitaires
-│   └── icons/              # Icônes PWA (192x192, 512x512)
+│   └── icons/              # 📱 Icônes PWA natives (72x72 → 512x512)
+│       ├── icon-72.png     # Favicon et petites tailles
+│       ├── icon-96.png     # Android standard
+│       ├── icon-128.png    # Windows tiles
+│       ├── icon-144.png    # Android high-res
+│       ├── icon-152.png    # iOS touch icon
+│       ├── icon-192.png    # 🔥 PWA minimum requis
+│       ├── icon-384.png    # Android splash
+│       └── icon-512.png    # 🔥 PWA maskable requis
 └── docker/                 # Infrastructure Docker
 ```
 
@@ -153,7 +171,9 @@ quest-timer/
 - **Frontend** : HTML5, CSS3, JavaScript ES6+ pur (modulaire)
 - **Design** : Mobile-first, Bottom Navigation, Glassmorphism
 - **Audio** : Web Audio API (sons générés, pas de fichiers)
-- **PWA** : Service Workers, Manifeste, Installation native
+- **PWA** : Service Workers optimisés, Manifeste complet, Installation native
+- **Icônes** : PNG natives (toutes tailles), Apple Touch Icons, Maskable
+- **Notifications** : Browser notifications + PWA push (préparé)
 - **Stockage** : localStorage (tout sauvé localement)
 - **Infra** : Docker + Nginx Alpine
 - **Développement** : Modifications instantanées (pas de cache)
@@ -174,7 +194,7 @@ cd docker
 - **Port** : 3046 (modifiable dans docker-compose.yml)
 - **Volumes** : Sources montées → modifications instantanées
 - **Cache** : Désactivé → Git pull + F5 = changements visibles
-- **HTTPS** : Requis pour PWA standalone
+- **HTTPS** : Requis pour PWA standalone et notifications
 
 ## 🚨 Dépannage
 
@@ -186,8 +206,18 @@ cd docker
 ### PWA ne s'installe pas
 ```bash
 # 1. Vérifiez HTTPS (obligatoire)
-# 2. Vérifiez les icônes 192x192 et 512x512
-# 3. F12 → Application → Clear storage
+# 2. Vérifiez les icônes 192x192 et 512x512 dans assets/icons/
+# 3. F12 → Application → Manifest → Vérifiez "Installable"
+# 4. F12 → Application → Clear storage
+# 5. Redémarrez l'app et attendez 5 secondes pour le prompt
+```
+
+### Icône PWA incorrecte
+```bash
+# 1. Vérifiez que assets/icons/ contient tous les PNG
+# 2. Testez l'URL directe: http://localhost:3046/assets/icons/icon-192.png
+# 3. Videz le cache: F12 → Application → Storage → Clear
+# 4. Désinstallez et réinstallez la PWA
 ```
 
 ### Sons ne fonctionnent pas
@@ -195,6 +225,7 @@ cd docker
 - **Testez** différents types de sons via le sélecteur
 - **Interaction requise** : Cliquez dans l'app avant le premier son
 - **Volume** : Ajustez via le slider dans bottom nav
+- **Mode debug** : Utilisez "Test Sounds" pour diagnostic complet
 
 ### XP/Level bugs
 - **XP négatifs** : Fixed! Reset All remet vraiment à zéro
@@ -206,9 +237,20 @@ cd docker
 # 1. Hard refresh : Ctrl+Shift+R
 # 2. Redémarrer Docker : ./deploy.sh restart
 # 3. Clear storage : F12 → Application → Storage
+# 4. Désinstaller/réinstaller PWA si nécessaire
 ```
 
 ## 🎯 Changelog
+
+### v2.1.0 - PWA Installation Parfaite 📱
+- ✅ **Icônes natives PNG** - Toutes les tailles (72x72 à 512x512)
+- ✅ **Prompt d'installation automatique** - Banner intelligent après 5 secondes
+- ✅ **Apple Touch Icons** - Support iOS complet avec métadonnées
+- ✅ **Mode standalone perfectionné** - Sans barre d'adresse
+- ✅ **Notifications push natives** - Achievements et complétion de sessions
+- ✅ **Service Worker optimisé** - Cache intelligent et mise à jour automatique
+- ✅ **Diagnostic PWA** - Outils debug pour installation et standalone
+- ✅ **Favicon natif** - PNG au lieu de SVG pour meilleure compatibilité
 
 ### v2.0.0 - Bottom Nav Design 📱
 - ✅ **Interface Bottom Nav** - Contrôles fixes en bas optimisés mobile
@@ -244,7 +286,7 @@ cd docker
 
 - 🚀 **Déploiement** : `cd docker && ./deploy.sh full`
 - 🌐 **URL locale** : http://localhost:3046  
-- 📱 **PWA** : Ajouter à l'écran d'accueil (HTTPS requis)
+- 📱 **PWA** : Installation automatique (prompt après 5s en HTTPS)
 - 🐛 **Debug** : Cliquez sur 🐛 dans l'app (top-right)
 - 🏆 **Achievements** : Cliquez sur 🏆 (top-left)
 - 📋 **Logs** : `./deploy.sh logs`
@@ -260,7 +302,7 @@ cd docker
 ### Touch Experience
 - **44px minimum** - Tous les éléments tactiles respectent les standards
 - **Vibration feedback** - Retour haptique sur actions importantes
-- **Swipe prevention** - Pas d'interfé avec la navigation bottom nav
+- **Swipe prevention** - Pas d'interférence avec la navigation bottom nav
 - **Viewport adaptatif** - Gestion correcte des height mobile
 
 ### Performance Mobile
@@ -269,6 +311,13 @@ cd docker
 - **Lazy components** - Éléments non-critiques chargés à la demande
 - **PWA optimized** - Installation et mode standalone parfaits
 
+### Installation PWA
+- **Prompt automatique** - Banner d'installation après 5 secondes (désactivable)
+- **Icônes natives** - PNG 72x72 à 512x512 pour tous les appareils
+- **Mode standalone** - Lance sans interface navigateur
+- **Support offline** - Fonctionne sans connexion internet
+- **Notifications** - Achievements et rappels natifs
+
 **🎮 Transformez votre productivité en aventure épique !**  
-**📱 Nouvelle expérience mobile Bottom Nav optimisée !**  
+**📱 Installation PWA native avec icônes parfaites !**  
 **⚔️ Que votre concentration soit légendaire ! 🔔✨**
