@@ -1,28 +1,18 @@
-/* ===== BOTTOM NAV DESIGN STYLES ===== */
+/* ===== STYLES BOTTOM NAV MANQUANTS ===== */
 
-/* Base Layout */
+/* Ajustements body pour bottom nav */
 body {
-    padding-bottom: 100px; /* Space for bottom nav */
+    padding-bottom: 120px !important; /* Space pour bottom nav */
 }
 
-.container {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 1rem;
-}
-
-/* Header */
-.header {
-    text-align: center;
-    padding: 1rem 0;
-}
-
+/* Header ajusté */
 .app-title {
     font-size: 1.8rem;
     font-weight: 800;
     background: linear-gradient(45deg, #fbbf24, #f59e0b);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    background-clip: text;
     margin-bottom: 0.5rem;
 }
 
@@ -32,29 +22,26 @@ body {
     color: #34d399;
 }
 
-/* Fixed positioned buttons */
-.debug-toggle, .achievements-btn {
+/* Bouton achievements */
+.achievements-btn {
     position: fixed;
     top: 20px;
+    left: 20px;
     width: 40px;
     height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fbbf24;
     border: none;
     border-radius: 50%;
     font-size: 1.2rem;
     cursor: pointer;
     z-index: 1001;
+    transition: all 0.3s ease;
 }
 
-.debug-toggle {
-    right: 20px;
-    background: #6366f1;
-    color: white;
-}
-
-.achievements-btn {
-    left: 20px;
-    background: rgba(255, 255, 255, 0.1);
-    color: #fbbf24;
+.achievements-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
 }
 
 /* Timer Hero Section */
@@ -72,6 +59,8 @@ body {
     font-weight: 600;
     color: #fbbf24;
     margin-bottom: 1rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .progress-circle {
@@ -79,25 +68,6 @@ body {
     height: 180px;
     position: relative;
     margin: 0.5rem auto 1rem;
-}
-
-.progress-ring {
-    transform: rotate(-90deg);
-    width: 100%;
-    height: 100%;
-}
-
-.progress-ring-bg {
-    stroke: rgba(255, 255, 255, 0.1);
-    stroke-width: 8;
-    fill: none;
-}
-
-.progress-ring-circle {
-    stroke: #34d399;
-    stroke-width: 8;
-    fill: none;
-    transition: stroke-dashoffset 0.3s ease;
 }
 
 .timer-content {
@@ -131,6 +101,7 @@ body {
     padding: 1rem;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 16px;
+    backdrop-filter: blur(10px);
 }
 
 .mini-stat {
@@ -141,12 +112,14 @@ body {
     font-size: 1.2rem;
     font-weight: bold;
     color: #fbbf24;
+    display: block;
 }
 
 .mini-stat .label {
     font-size: 0.75rem;
     opacity: 0.7;
     text-transform: uppercase;
+    margin-top: 0.2rem;
 }
 
 /* XP Section */
@@ -165,25 +138,13 @@ body {
 .character-name {
     font-size: 1rem;
     font-weight: 600;
+    color: #e5e7eb;
 }
 
 .xp-info {
     font-size: 0.8rem;
     opacity: 0.7;
-}
-
-.xp-bar-container {
-    height: 12px;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 6px;
-    overflow: hidden;
-}
-
-.xp-bar {
-    height: 100%;
-    background: linear-gradient(90deg, #10b981, #34d399);
-    width: 75%;
-    transition: width 0.8s ease;
+    color: #9ca3af;
 }
 
 /* ===== BOTTOM NAVIGATION ===== */
@@ -196,6 +157,7 @@ body {
     backdrop-filter: blur(20px);
     padding: 1rem;
     z-index: 1000;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .sound-controls {
@@ -207,6 +169,7 @@ body {
     padding: 0.8rem;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .sound-toggle {
@@ -217,6 +180,12 @@ body {
     color: #e5e7eb;
     font-size: 0.8rem;
     cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 36px;
+}
+
+.sound-toggle:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .sound-select {
@@ -226,11 +195,20 @@ body {
     border-radius: 6px;
     color: #e5e7eb;
     font-size: 0.8rem;
+    cursor: pointer;
+    min-height: 36px;
+}
+
+.sound-select option {
+    background: #1f2937;
+    color: #e5e7eb;
 }
 
 .volume-slider {
     width: 60px;
+    height: 20px;
     accent-color: #6366f1;
+    cursor: pointer;
 }
 
 .bottom-controls {
@@ -249,20 +227,47 @@ body {
     cursor: pointer;
     font-size: 1rem;
     min-height: 52px;
+    transition: all 0.3s ease;
 }
 
-.btn-primary {
+/* PWA Install Banner */
+.install-banner {
+    position: fixed;
+    bottom: 140px; /* Au-dessus de la bottom nav */
+    left: 1rem;
+    right: 1rem;
     background: linear-gradient(45deg, #6366f1, #8b5cf6);
     color: white;
+    padding: 1rem;
+    border-radius: 12px;
+    display: none;
+    align-items: center;
+    gap: 1rem;
+    z-index: 1500;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
-.btn-secondary {
-    background: rgba(255, 255, 255, 0.1);
-    color: #e5e7eb;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+.install-banner.show {
+    display: flex;
 }
 
-/* ===== MODALS & OVERLAYS ===== */
+.install-banner button {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.install-banner button:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Modal Achievements styles */
 .achievements-modal {
     position: fixed;
     top: 0;
@@ -283,12 +288,14 @@ body {
 
 .modal-content {
     background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
     border-radius: 20px;
     padding: 2rem;
     max-width: 350px;
     width: 100%;
     max-height: 70vh;
     overflow-y: auto;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .modal-header {
@@ -312,94 +319,14 @@ body {
     cursor: pointer;
     padding: 0.5rem;
     border-radius: 50%;
+    transition: all 0.2s ease;
 }
 
-.achievement-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    margin-bottom: 0.8rem;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 12px;
+.close-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
 }
 
-.achievement-icon {
-    font-size: 1.5rem;
-    width: 40px;
-    text-align: center;
-}
-
-.achievement-title {
-    font-weight: 600;
-    color: #fbbf24;
-}
-
-.achievement-desc {
-    font-size: 0.8rem;
-    opacity: 0.7;
-}
-
-/* ===== NOTIFICATIONS ===== */
-.notification {
-    position: fixed;
-    top: 80px;
-    right: 20px;
-    background: linear-gradient(45deg, #10b981, #34d399);
-    color: white;
-    padding: 1rem 1.5rem;
-    border-radius: 12px;
-    transform: translateX(400px);
-    transition: transform 0.3s ease;
-    z-index: 1500;
-    font-weight: 600;
-}
-
-.notification.show {
-    transform: translateX(0);
-}
-
-.floating-xp {
-    position: fixed;
-    font-weight: bold;
-    color: #10b981;
-    font-size: 1.5rem;
-    pointer-events: none;
-    z-index: 1600;
-    animation: floatUp 2.5s forwards;
-}
-
-/* PWA Install Banner */
-.install-banner {
-    position: fixed;
-    bottom: 120px;
-    left: 1rem;
-    right: 1rem;
-    background: linear-gradient(45deg, #6366f1, #8b5cf6);
-    color: white;
-    padding: 1rem;
-    border-radius: 12px;
-    display: none;
-    align-items: center;
-    gap: 1rem;
-    z-index: 1500;
-}
-
-.install-banner.show {
-    display: flex;
-}
-
-.install-banner button {
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    white-space: nowrap;
-}
-
-/* ===== RESPONSIVE DESIGN ===== */
+/* Responsive adjustments */
 @media (max-width: 375px) {
     .timer-display { 
         font-size: 2.4rem; 
@@ -411,18 +338,23 @@ body {
     .stats-mini { 
         gap: 1.5rem; 
     }
-}
-
-@media (max-width: 320px) {
     .sound-controls {
         flex-wrap: wrap;
         gap: 0.5rem;
     }
-    
     .volume-slider {
         width: 100%;
     }
-    
+}
+
+@media (max-width: 320px) {
+    .app-title {
+        font-size: 1.6rem;
+    }
+    .level-badge {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.8rem;
+    }
     .mini-stat .value {
         font-size: 1rem;
     }
