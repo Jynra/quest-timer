@@ -1,0 +1,429 @@
+/* ===== BOTTOM NAV DESIGN STYLES ===== */
+
+/* Base Layout */
+body {
+    padding-bottom: 100px; /* Space for bottom nav */
+}
+
+.container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+/* Header */
+.header {
+    text-align: center;
+    padding: 1rem 0;
+}
+
+.app-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    background: linear-gradient(45deg, #fbbf24, #f59e0b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+}
+
+.status-indicator {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    color: #34d399;
+}
+
+/* Fixed positioned buttons */
+.debug-toggle, .achievements-btn {
+    position: fixed;
+    top: 20px;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+.debug-toggle {
+    right: 20px;
+    background: #6366f1;
+    color: white;
+}
+
+.achievements-btn {
+    left: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fbbf24;
+}
+
+/* Timer Hero Section */
+.timer-hero {
+    text-align: center;
+    padding: 1rem;
+}
+
+.level-badge {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.8rem 1.5rem;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #fbbf24;
+    margin-bottom: 1rem;
+}
+
+.progress-circle {
+    width: 180px;
+    height: 180px;
+    position: relative;
+    margin: 0.5rem auto 1rem;
+}
+
+.progress-ring {
+    transform: rotate(-90deg);
+    width: 100%;
+    height: 100%;
+}
+
+.progress-ring-bg {
+    stroke: rgba(255, 255, 255, 0.1);
+    stroke-width: 8;
+    fill: none;
+}
+
+.progress-ring-circle {
+    stroke: #34d399;
+    stroke-width: 8;
+    fill: none;
+    transition: stroke-dashoffset 0.3s ease;
+}
+
+.timer-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.timer-display {
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: #fbbf24;
+    margin-bottom: 0.3rem;
+    font-family: monospace;
+}
+
+.session-type {
+    font-size: 1.1rem;
+    color: #34d399;
+    font-weight: 500;
+}
+
+/* Stats Mini Grid */
+.stats-mini {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 1rem 0;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+}
+
+.mini-stat {
+    text-align: center;
+}
+
+.mini-stat .value {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #fbbf24;
+}
+
+.mini-stat .label {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    text-transform: uppercase;
+}
+
+/* XP Section */
+.xp-section {
+    margin: 0.5rem 0 1rem;
+    padding: 0 1rem;
+}
+
+.xp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.character-name {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.xp-info {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+.xp-bar-container {
+    height: 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.xp-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #34d399);
+    width: 75%;
+    transition: width 0.8s ease;
+}
+
+/* ===== BOTTOM NAVIGATION ===== */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(20px);
+    padding: 1rem;
+    z-index: 1000;
+}
+
+.sound-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+    padding: 0.8rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+}
+
+.sound-toggle {
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 8px;
+    color: #e5e7eb;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.sound-select {
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    color: #e5e7eb;
+    font-size: 0.8rem;
+}
+
+.volume-slider {
+    width: 60px;
+    accent-color: #6366f1;
+}
+
+.bottom-controls {
+    display: flex;
+    gap: 1rem;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.btn {
+    flex: 1;
+    padding: 1rem;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 1rem;
+    min-height: 52px;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #6366f1, #8b5cf6);
+    color: white;
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: #e5e7eb;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* ===== MODALS & OVERLAYS ===== */
+.achievements-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.achievements-modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 2rem;
+    max-width: 350px;
+    width: 100%;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.modal-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #fbbf24;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: #e5e7eb;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+}
+
+.achievement-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    margin-bottom: 0.8rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+}
+
+.achievement-icon {
+    font-size: 1.5rem;
+    width: 40px;
+    text-align: center;
+}
+
+.achievement-title {
+    font-weight: 600;
+    color: #fbbf24;
+}
+
+.achievement-desc {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+/* ===== NOTIFICATIONS ===== */
+.notification {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    background: linear-gradient(45deg, #10b981, #34d399);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+    z-index: 1500;
+    font-weight: 600;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.floating-xp {
+    position: fixed;
+    font-weight: bold;
+    color: #10b981;
+    font-size: 1.5rem;
+    pointer-events: none;
+    z-index: 1600;
+    animation: floatUp 2.5s forwards;
+}
+
+/* PWA Install Banner */
+.install-banner {
+    position: fixed;
+    bottom: 120px;
+    left: 1rem;
+    right: 1rem;
+    background: linear-gradient(45deg, #6366f1, #8b5cf6);
+    color: white;
+    padding: 1rem;
+    border-radius: 12px;
+    display: none;
+    align-items: center;
+    gap: 1rem;
+    z-index: 1500;
+}
+
+.install-banner.show {
+    display: flex;
+}
+
+.install-banner button {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 375px) {
+    .timer-display { 
+        font-size: 2.4rem; 
+    }
+    .progress-circle { 
+        width: 160px; 
+        height: 160px; 
+    }
+    .stats-mini { 
+        gap: 1.5rem; 
+    }
+}
+
+@media (max-width: 320px) {
+    .sound-controls {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .volume-slider {
+        width: 100%;
+    }
+    
+    .mini-stat .value {
+        font-size: 1rem;
+    }
+}

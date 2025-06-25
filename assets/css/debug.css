@@ -1,0 +1,288 @@
+/* ===== DEBUG MODE STYLES ===== */
+
+/* Debug Toggle Button */
+.debug-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    z-index: 1001;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.debug-toggle:hover {
+    background: #8b5cf6;
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
+}
+
+.debug-toggle:active {
+    transform: scale(0.95);
+}
+
+/* Debug Panel */
+.debug-panel {
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(15px);
+    border: 2px solid #6366f1;
+    border-radius: 12px;
+    padding: 1rem;
+    z-index: 2000;
+    width: 280px;
+    color: white;
+    transform: translateX(320px);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.debug-panel.show {
+    transform: translateX(0);
+}
+
+.debug-title {
+    color: #fbbf24;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-size: 1.1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 0.5rem;
+}
+
+.debug-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.debug-btn {
+    padding: 0.7rem 1rem;
+    background: #374151;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    text-align: left;
+    border: 1px solid transparent;
+}
+
+.debug-btn:hover {
+    background: #4b5563;
+    border-color: #6b7280;
+    transform: translateX(2px);
+}
+
+.debug-btn:active {
+    transform: translateX(0) scale(0.98);
+}
+
+.debug-btn.danger {
+    background: #dc2626;
+    border-color: #ef4444;
+}
+
+.debug-btn.danger:hover {
+    background: #ef4444;
+    border-color: #f87171;
+}
+
+.debug-btn.success {
+    background: #059669;
+    border-color: #10b981;
+}
+
+.debug-btn.success:hover {
+    background: #10b981;
+    border-color: #34d399;
+}
+
+.debug-btn.warning {
+    background: #d97706;
+    border-color: #f59e0b;
+}
+
+.debug-btn.warning:hover {
+    background: #f59e0b;
+    border-color: #fbbf24;
+}
+
+/* Debug info sections */
+.debug-section {
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    border-left: 3px solid #6366f1;
+}
+
+.debug-section-title {
+    font-size: 0.8rem;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.3rem;
+}
+
+.debug-info {
+    font-size: 0.75rem;
+    color: #d1d5db;
+    font-family: 'Courier New', monospace;
+}
+
+/* Debug keyboard shortcuts info */
+.debug-shortcuts {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.debug-shortcut {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.2rem 0;
+    font-size: 0.75rem;
+}
+
+.debug-shortcut-key {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    color: #fbbf24;
+}
+
+.debug-shortcut-desc {
+    color: #9ca3af;
+}
+
+/* Debug status indicators */
+.debug-status {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+}
+
+.debug-status.active {
+    background: #10b981;
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+}
+
+.debug-status.inactive {
+    background: #ef4444;
+}
+
+.debug-status.warning {
+    background: #f59e0b;
+}
+
+/* Debug panel animations */
+@keyframes debugPulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.debug-panel.pulsing {
+    animation: debugPulse 1s infinite;
+}
+
+/* Mobile responsive debug panel */
+@media (max-width: 768px) {
+    .debug-panel {
+        width: calc(100vw - 40px);
+        right: 20px;
+        left: 20px;
+        transform: translateY(-100vh);
+        top: 20px;
+    }
+    
+    .debug-panel.show {
+        transform: translateY(0);
+    }
+    
+    .debug-toggle {
+        top: 15px;
+        right: 15px;
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .debug-panel {
+        padding: 0.8rem;
+        font-size: 0.9rem;
+    }
+    
+    .debug-btn {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    
+    .debug-title {
+        font-size: 1rem;
+        margin-bottom: 0.8rem;
+    }
+}
+
+/* Debug panel close animation */
+.debug-panel.closing {
+    animation: debugSlideOut 0.3s ease-in forwards;
+}
+
+@keyframes debugSlideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(320px);
+        opacity: 0;
+    }
+}
+
+/* Debug panel theme variants */
+.debug-panel.dark-theme {
+    background: rgba(0, 0, 0, 0.98);
+    border-color: #4f46e5;
+}
+
+.debug-panel.light-theme {
+    background: rgba(255, 255, 255, 0.95);
+    color: #1f2937;
+    border-color: #6366f1;
+}
+
+.debug-panel.light-theme .debug-title {
+    color: #6366f1;
+}
+
+.debug-panel.light-theme .debug-btn {
+    background: #f3f4f6;
+    color: #1f2937;
+}
+
+.debug-panel.light-theme .debug-btn:hover {
+    background: #e5e7eb;
+}

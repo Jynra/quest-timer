@@ -11,21 +11,22 @@ body {
     color: #e5e7eb;
     min-height: 100vh;
     overflow-x: hidden;
+    padding-bottom: 100px; /* Space for bottom nav */
 }
 
 /* ===== LAYOUT ===== */
 .container {
     max-width: 400px;
     margin: 0 auto;
-    padding: 20px;
-    min-height: 100vh;
+    padding: 1rem;
+    min-height: calc(100vh - 100px); /* Account for bottom nav */
     display: flex;
     flex-direction: column;
 }
 
 .header {
     text-align: center;
-    margin-bottom: 30px;
+    padding: 1rem 0;
 }
 
 .title {
@@ -49,6 +50,7 @@ body {
     transition: all 0.3s ease;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    min-height: 44px; /* Touch target minimum */
 }
 
 .btn-primary {
@@ -79,10 +81,65 @@ body {
     margin-bottom: 20px;
 }
 
+/* ===== BOTTOM NAV SPECIFIC STYLES ===== */
+.timer-hero {
+    text-align: center;
+    padding: 1rem;
+}
+
+.level-badge {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.8rem 1.5rem;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #fbbf24;
+    margin-bottom: 1rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.app-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    background: linear-gradient(45deg, #fbbf24, #f59e0b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+}
+
+.status-indicator {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    color: #34d399;
+}
+
+/* ===== GLASSMORPHISM EFFECTS ===== */
+.character-card,
+.timer-section,
+.achievements {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.character-card:hover,
+.timer-section:hover,
+.achievements:hover {
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 480px) {
     .timer-display {
-        font-size: 3rem;
+        font-size: 2.4rem;
     }
     .controls {
         flex-direction: column;
@@ -91,5 +148,30 @@ body {
     .btn {
         width: 100%;
         max-width: 200px;
+    }
+}
+
+@media (max-width: 375px) {
+    .container {
+        padding: 0.8rem;
+    }
+    
+    .header {
+        padding: 0.8rem 0;
+    }
+    
+    .app-title {
+        font-size: 1.6rem;
+    }
+}
+
+@media (max-width: 320px) {
+    .app-title {
+        font-size: 1.4rem;
+    }
+    
+    .level-badge {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.8rem;
     }
 }
